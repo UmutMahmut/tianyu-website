@@ -2,8 +2,6 @@
 
 本项目为“天语项目”官方网站，基于 Flask 框架构建，展示了实时气象、团队介绍、新闻动态、科研成果与画廊等内容。支持中英文切换，适配科研展示与对公众开放。
 
-在线访问：
-https://tdli-observatory-1.onrender.com/
 
 项目结构：
 AstronomyInstitute/
