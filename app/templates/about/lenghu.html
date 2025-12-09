@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ (strings.about_lenghu if strings is defined else '冷湖台址') }} - {{ strings.title if strings is defined else '天语计划' }}
+{% endblock %}
+
+{% block content %}
+{% if session.get('lang') == 'zh' %}
+
+<h1>冷湖台址</h1>
+
+<p>
+冷湖天文选址区位于青海省海西州茫崖市冷湖镇，海拔约 4200 米，
+是中国西部重点发展的高海拔天文观测区域之一。
+目前已有多个望远镜平台建设推进，天语望远镜项目也计划在此部署。
+该区域具备干燥气候、稳定的大气条件和良好的视宁度，
+在 2020–2022 年多项选址研究中表现出色，为开展高精度光学巡天提供了优越条件。
+</p>
+
+<h2>高海拔观测优势</h2>
+<ul>
+  <li><strong>大气层薄：</strong> 海拔 4200 米，有效减弱大气散射与吸收，提升透过率；</li>
+  <li><strong>水汽含量低：</strong> 夜间可降至极低的可降水量，有利于中红外与窄带观测；</li>
+  <li><strong>良好的视宁度：</strong> 选址观测统计显示，年中位视宁度可达 ~0.75 角秒；</li>
+  <li><strong>晴夜比例高：</strong> 年晴夜数超过 270 天，为长期时间序列观测提供充足窗口。</li>
+</ul>
+
+<h2>台址环境与基础设施</h2>
+<p>
+冷湖赛什腾山区具备相对平缓的高原地貌，适合建设标准化望远镜平台。
+近年来，当地交通与电力等基础设施持续完善，多台大中型望远镜已在不同平台规划或建设，
+为开展协同观测与多波段联合研究提供了条件。
+</p>
+
+<h2>观测潜力与项目定位</h2>
+<p>
+在天文选址评估中，冷湖被认为具备国际先进水平的光学观测环境，
+适合部署大视场、高时间分辨率的巡天项目。
+天语望远镜计划依托冷湖台址开展长期时间域监测，
+重点面向系外行星、瞬变源和变星等领域的系统性观测，
+为国内时间域天文学的发展提供稳定的数据源与技术平台。
+</p>
+
+<div style="margin-top: 32px; padding: 16px 18px; border-radius: 10px; background: #f9fafb; border: 1px solid #e5e7eb;">
+  <p style="margin:0; font-size:0.95rem; color:#4b5563;">
+    若需查看冷湖站的实时气象与环境监测入口，请访问
+    <a href="{{ url_for('main.weather_lenghu') }}" style="color:#1e3a8a; text-decoration:none;">
+      “{{ strings.lenghu }} {{ strings.weather }}”
+    </a>
+    页面。
+  </p>
+</div>
+
+{% else %}
+
+<h1>Lenghu Site</h1>
+
+<p>
+The Lenghu astronomical site is located near Lenghu Town, Mangya City, Qinghai Province,
+at an elevation of about 4,200 meters. It has been identified as one of the key
+high-altitude observing sites in western China. Several telescope platforms are
+under construction, and the Tianyu telescope is planned to be stationed here.
+The region offers a dry climate, low turbulence, and very good seeing, providing
+favorable conditions for high-precision optical surveys.
+</p>
+
+<h2>Advantages of High-Altitude Observing</h2>
+<ul>
+  <li><strong>Reduced Air Mass:</strong> the 4,200 m altitude significantly reduces atmospheric scattering and absorption;</li>
+  <li><strong>Low Water Vapor:</strong> nighttime precipitable water vapor can be very low, benefiting optical and infrared work;</li>
+  <li><strong>Excellent Seeing:</strong> site-testing campaigns report median seeing around ~0.75 arcsec;</li>
+  <li><strong>High Clear-Night Fraction:</strong> more than 270 clear nights per year, ideal for long time-series monitoring.</li>
+</ul>
+
+<h2>Environment and Infrastructure</h2>
+<p>
+The Saishiteng mountain area near Lenghu provides relatively gentle high-plateau terrain
+suitable for standardized telescope platforms. Recent improvements in road access and
+power infrastructure, together with multiple ongoing telescope projects, enable
+coordinated observations and multi-wavelength campaigns.
+</p>
+
+<h2>Astronomical Suitability and Role of Tianyu</h2>
+<p>
+Lenghu has been evaluated to offer internationally competitive optical observing conditions,
+well suited for wide-field, high-cadence survey facilities. The Tianyu telescope
+will take advantage of this site to conduct long-term time-domain monitoring of
+exoplanets, transients, and variable stars, providing a stable data stream and
+technical testbed for time-domain astronomy in China.
+</p>
+
+<div style="margin-top: 32px; padding: 16px 18px; border-radius: 10px; background: #f9fafb; border: 1px solid #e5e7eb;">
+  <p style="margin:0; font-size:0.95rem; color:#4b5563;">
+    For the real-time environmental monitoring entry of the Lenghu station,
+    please visit the
+    <a href="{{ url_for('main.weather_lenghu') }}" style="color:#1e3a8a; text-decoration:none;">
+      “{{ strings.lenghu }} {{ strings.weather }}”
+    </a>
+    page.
+  </p>
+</div>
+
+{% endif %}
+{% endblock %}

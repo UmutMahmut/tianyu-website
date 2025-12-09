@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('lang', 'zh') }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    {% block title %}
+      {% if strings is defined %}
+        {{ strings.title }}
+      {% else %}
+        天语计划
+      {% endif %}
+    {% endblock %}
+  </title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    /* 全局更稳一点的盒模型 */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "PingFang SC","Hiragino Sans GB","Microsoft YaHei",
+                   "Helvetica Neue", Arial, sans-serif;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      background-color: #f2f2f2;
+      border-bottom: 1px solid #ccc;
+      box-shadow: 0 2px 8px rgba(30,58,138,0.03);
+    }
+    .header-left { display: flex; align-items: center; gap: 18px; }
+    header img { height: 50px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .site-title {
+      font-family: 'Pacifico','Segoe Script','cursive','Arial',sans-serif;
+      font-size: 2rem; color: #1e3a8a; letter-spacing: 2px; user-select: none; margin: 0; line-height: 1;
+      text-shadow: 0 2px 8px rgba(30,58,138,0.07);
+    }
+    @media (max-width: 600px) {
+      .site-title { font-size: 1.2rem; }
+      .header-left { gap: 8px; }
+    }
+
+    nav > ul {
+      list-style: none; padding: 0; margin: 0;
+      display: flex; gap: 24px; align-items: center;
+    }
+    nav > ul > li { position: relative; font-size: 1.05rem; font-weight: 500; }
+
+    nav ul li > a, nav ul li > span {
+      text-decoration: none; color: #1e3a8a;
+      padding: 6px 14px; border-radius: 5px; transition: background .2s, color .2s;
+      cursor: pointer;
+    }
+    nav ul li > a:hover, nav ul li > span:hover {
+      background: #e3e8ef; color: #1976d2;
+    }
+
+    nav ul li.has-sub > ul {
+      display: block;
+      position: absolute;
+      top: 100%; left: 0;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 6px 24px rgba(30,58,138,0.08);
+      border: 1px solid #cfd8dc;
+      min-width: 220px;
+      z-index: 1000;
+      padding: 10px 0;
+      margin-top: 8px;
+
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity .15s ease, transform .15s ease, visibility 0s linear .15s;
+    }
+    nav ul li.has-sub:hover > ul,
+    nav ul li.has-sub:focus-within > ul,
+    nav ul li.has-sub.open > ul {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+      transition: opacity .15s ease, transform .15s ease, visibility 0s;
+    }
+    nav ul li ul li { padding: 0 16px; }
+    nav ul li ul li a {
+      text-decoration: none; color: #333; display: block; padding: 8px 0; border-radius: 5px;
+      transition: background .2s, color .2s;
+    }
+    nav ul li ul li a:hover { background: #e3e8ef; color: #1976d2; }
+
+    main { flex: 1 0 auto; padding: 36px 0; display: flex; justify-content: center; }
+    .main-content {
+      width: 100%; max-width: 1600px; background: #fff; border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(30,58,138,0.06);
+      padding: 36px 36px 32px 36px; min-height: 60vh;
+    }
+    footer {
+      background-color: #f2f2f2; padding: 24px 0 16px 0; border-top: 1px solid #ccc;
+      box-shadow: 0 -2px 8px rgba(30,58,138,0.03); margin-top: 30px;
+    }
+    .footer-content { display: flex; justify-content: center; max-width: 1200px; margin: 0 auto; }
+    .footer-section { flex: 1; padding: 0 20px; min-width: 220px; }
+    .footer-section h3 { margin-top: 0; color: #1976d2; font-size: 1.1rem; margin-bottom: 10px; }
+    .footer-section ul { list-style: none; padding: 0; color: #333; font-size: .98rem; }
+
+    @media (max-width: 900px) {
+      header, .main-content { padding-left: 10px; padding-right: 10px; }
+      .main-content { padding: 18px 8px; }
+      .footer-content { flex-direction: column; align-items: center; }
+    }
+    @media (max-width: 600px) {
+      header { flex-direction: column; gap: 10px; padding: 10px 5px; }
+      nav > ul { gap: 10px; flex-wrap: wrap; }
+      .main-content { padding: 8px 2px; }
+    }
+    .icp-info {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+  </style>
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="/"><img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo"></a>
+      <span class="site-title">
+        {% if strings is defined %}
+          {{ strings.title }}
+        {% else %}
+          天语计划
+        {% endif %}
+      </span>
+    </div>
+    <nav>
+      <ul>
+        <!-- 首页 -->
+        <li>
+          <a href="/">{{ strings.home if strings is defined else '首页' }}</a>
+        </li>
+
+        <!-- 关于天语 -->
+        <li class="has-sub">
+          <span>
+            {{ strings.about if strings is defined else '关于天语' }}
+          </span>
+          <ul>
+            <li>
+              <a href="/about">
+                {{ strings.about_overview if strings is defined else '项目简介' }}
+              </a>
+            </li>
+            <li>
+              <a href="/about/lenghu">
+                {{ strings.about_lenghu if strings is defined else '冷湖台址' }}
+              </a>
+            </li>
+            <li>
+              <a href="/about/optics">
+                {{ strings.about_optics if strings is defined else '光机系统' }}
+              </a>
+            </li>
+            <li>
+              <a href="/about/control">
+                {{ strings.about_control if strings is defined else '观测控制' }}
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- 实时气象 -->
+        <li class="has-sub">
+          <span>{{ strings.weather if strings is defined else '实时气象' }}</span>
+          <ul>
+            <li>
+              <a href="/weather/yuanqi">
+                {{ strings.yuanqi if strings is defined else '源启天文台' }}
+              </a>
+            </li>
+            <li>
+              <a href="/weather/lenghu">
+                {{ strings.lenghu if strings is defined else '冷湖天文站' }}
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- 天语动态 -->
+        <li class="has-sub">
+          <span>{{ strings.news if strings is defined else '天语动态' }}</span>
+          <ul>
+            <li>
+              <a href="/news/events">
+                {{ strings.major_events if strings is defined else '重要事件' }}
+              </a>
+            </li>
+            <li>
+              <a href="/news/gallery">
+                {{ strings.gallery if strings is defined else '画廊' }}
+              </a>
+            </li>
+            <li>
+              <a href="/news/outreach">
+                {{ strings.education_outreach if strings is defined else '科教活动' }}
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- 科学研究 / 团队 -->
+        <li>
+          <a href="/research">
+            {{ strings.research if strings is defined else '科学研究' }}
+          </a>
+        </li>
+        <li>
+          <a href="/team">
+            {{ strings.team if strings is defined else '团队成员' }}
+          </a>
+        </li>
+
+        <!-- 语言切换 -->
+        <li>
+          <a href="/lang/zh">中文</a> | <a href="/lang/en">EN</a>
+        </li>
+      </ul>
+    </nav>
+
+  </header>
+
+  <main>
+    <div class="main-content">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>{{ strings.contact_us if strings is defined else '联系我们' }}</h3>
+        <ul>
+          <li>{{ strings.email if strings is defined else '邮箱' }}: tianyu_team@sjtu.edu.cn</li>
+          <li>{{ strings.phone if strings is defined else '电话' }}: +86-21-34206000</li>
+          <li>{{ strings.address if strings is defined else '上海市浦东新区李所路1号李政道研究所（201210）' }}</li>
+        </ul>
+        <p class="icp-info">备案号：沪交ICP备20250305</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <script>
+    (function () {
+      var hasSubs = document.querySelectorAll('nav li.has-sub');
+      if (!hasSubs || !hasSubs.forEach) return;
+
+      hasSubs.forEach(function (li) {
+        var hideTimer;
+
+        // 鼠标悬停：桌面体验
+        li.addEventListener('mouseenter', function () {
+          clearTimeout(hideTimer);
+          li.classList.add('open');
+        });
+
+        li.addEventListener('mouseleave', function () {
+          hideTimer = setTimeout(function () {
+            li.classList.remove('open');
+          }, 250);
+        });
+
+        // 标题 span：支持点击/键盘展开
+        var label = li.querySelector('span');
+        if (label) {
+          // 让 span 可以通过 Tab 聚焦
+          label.setAttribute('tabindex', '0');
+
+          label.addEventListener('click', function (e) {
+            // 触屏设备上没有 hover，用点击展开
+            if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+              e.preventDefault();
+            }
+            li.classList.toggle('open');
+          });
+
+          label.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              li.classList.toggle('open');
+            }
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

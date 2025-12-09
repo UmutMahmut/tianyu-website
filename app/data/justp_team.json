@@ -1,0 +1,65 @@
+[
+    {
+        "name": "冯发波",
+        "name_en": "Fabo Feng",
+        "position": "首席研究员",
+        "position_en": "Principle Investigator",
+        "description": "",
+        "description_en": "",
+        "image": "ffb.jpg"
+    },
+    {
+        "name": "芮易成",
+        "name_en": "Yicheng Rui", 
+        "position": "软件搭建和设计",
+        "position_en": "Architecture Designer",
+        "description": "",
+        "description_en": "",
+        "image": "ryc.jpg"
+    },
+    {
+        "name": "党政明",
+        "name_en": "Zhengming Dang",
+        "position": "自动化控制",
+        "position_en": "Automatic Engineer", 
+        "description": "",
+        "description_en": "",
+        "image": "dzm.jpg"
+    },
+    {
+        "name": "玉米提·麦合木提",
+        "name_en": "Umut Mahmut",
+        "position": "合作协调",
+        "position_en": "Cooperation Coordinator",
+        "description": "",
+        "description_en": "",
+        "image": "umut.jpg"
+    },
+    {
+        "name": "孙清辉",
+        "name_en": "Qinghui Sun",
+        "position": "数据分析和信号探测",
+        "position_en": "Data Analyst",
+        "description": "",
+        "description_en": "",
+        "image": "noavatar.jpg"
+    },
+    {
+        "name": "李可欣",
+        "name_en": "Kexin Li",
+        "position": "",
+        "position_en": "",
+        "description": "",
+        "description_en": "",
+        "image": "noavatar.jpg"
+    },
+    {
+        "name": "郑书玥",
+        "name_en": "Shuyue Zheng",
+        "position": "",
+        "position_en": "",
+        "description": "",
+        "description_en": "",
+        "image": "noavatar.jpg"
+    }
+]

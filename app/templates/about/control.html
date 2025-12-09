@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ (strings.about_control if strings is defined else '观测控制') }} - {{ strings.title if strings is defined else '天语计划' }}
+{% endblock %}
+
+{% block content %}
+{% if session.get('lang') == 'zh' %}
+
+<h1>观测控制系统</h1>
+
+<p>
+  天语-I 望远镜配备了一套一体化的观测控制与监控系统，用于协调望远镜本体、相机、
+  调焦机构、圆顶以及数据处理流水线。系统支持远程控制与高度自动化的夜间值守，
+  以保障长期稳定的时间域观测。
+</p>
+
+<hr>
+
+<h2>整体架构（简介）</h2>
+<p>
+  整个控制系统大致可以分为以下几个层次：
+</p>
+<ul>
+  <li><strong>设备层：</strong>望远镜本体、赤道仪/支撑结构、焦面机构、相机与滤轮、圆顶与环境监控设备等；</li>
+  <li><strong>控制层：</strong>各设备驱动与控制服务，统一接入调度与状态监控总线；</li>
+  <li><strong>调度层：</strong>根据巡天策略与目标优先级生成观测队列，自动处理天气变化、子夜翻转等情形；</li>
+  <li><strong>数据层：</strong>数据接收、快速质控（QC）、标定与光变曲线构建等流水线；</li>
+  <li><strong>界面层：</strong>通过 Web 前端展示状态总览、观测计划、日志与告警等信息。</li>
+</ul>
+
+<h2>自动化与安全机制（简介）</h2>
+<ul>
+  <li>在满足安全条件（风速/湿度/云量等）时自动开启圆顶并启动观测；</li>
+  <li>根据观测计划自动切换目标、滤光片、曝光模式与焦位；</li>
+  <li>持续监控导星质量、焦面稳定性与数据吞吐情况，超出阈值时触发告警；</li>
+  <li>遇到极端天气或设备异常时，支持自动安全关停并向值班人员推送通知。</li>
+</ul>
+
+<hr>
+
+<h2>内部控制界面（需口令）</h2>
+<p>
+  下方内嵌的是项目组内部使用的实时观测控制界面，
+  展示望远镜状态、观测队列、环境与数据流水线等信息。
+  为避免对外公开完整控制面板，本页面通过简单口令方式进行访问限制。
+</p>
+
+<div id="internal-access-box" style="margin-top: 1rem; padding: 16px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb;">
+  <h3 style="margin-top: 0;">访问内部观测控制界面</h3>
+  <p style="font-size: 0.95rem; color: #4b5563;">
+    如需查看实时控制面板，请输入项目组内部约定的口令。
+  </p>
+  <form id="control-login-form" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px;">
+    <input
+      id="control-password"
+      type="password"
+      placeholder="请输入访问口令"
+      autocomplete="off"
+      style="flex: 1 1 220px; min-width: 180px; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5f5; font-size: 0.95rem;"
+    />
+    <button
+      type="submit"
+      style="padding: 6px 14px; border-radius: 8px; border: 1px solid #1e3a8a; background: #1e3a8a; color: #fff; font-size: 0.95rem; cursor: pointer;"
+    >
+      解锁界面
+    </button>
+    <span id="control-login-msg" style="font-size: 0.9rem; color: #b91c1c; margin-left: 4px;"></span>
+  </form>
+
+  <p style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+    （提示：口令仅用于界面访问控制，请不要在公共场合展示。）
+  </p>
+
+  <div id="control-iframe-wrap" style="display: none; margin-top: 16px;">
+    <iframe
+      src="/internal/observe"
+      width="100%"
+      height="720"
+      style="border: 1px solid #d1d5db; border-radius: 12px; background: #ffffff;"
+    ></iframe>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // TODO: 你可以在这里改成你自己内部约定的口令
+    const CONTROL_PASSWORD = "tianyu";
+
+    const form = document.getElementById("control-login-form");
+    const input = document.getElementById("control-password");
+    const msg = document.getElementById("control-login-msg");
+    const wrap = document.getElementById("control-iframe-wrap");
+
+    if (!form || !input || !wrap) return;
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const pwd = (input.value || "").trim();
+      if (!pwd) {
+        msg.textContent = "请输入口令。";
+        msg.style.color = "#b91c1c";
+        wrap.style.display = "none";
+        return;
+      }
+      if (pwd === CONTROL_PASSWORD) {
+        msg.textContent = "已解锁，正在加载内部界面…";
+        msg.style.color = "#15803d";
+        wrap.style.display = "block";
+      } else {
+        msg.textContent = "口令错误。";
+        msg.style.color = "#b91c1c";
+        wrap.style.display = "none";
+      }
+    });
+  })();
+</script>
+
+{% else %}
+
+<h1>Observation Control System</h1>
+
+<p>
+  The Tianyu-I telescope is equipped with an integrated observation control and monitoring system,
+  coordinating the telescope, camera, focusing units, dome, and data pipelines.
+  It supports remote operation and highly automated night-time observing for long-term time-domain surveys.
+</p>
+
+<hr>
+
+<h2>System Overview</h2>
+<p>
+  The control system can be conceptually divided into:
+</p>
+<ul>
+  <li><strong>Device Layer:</strong> telescope structure, mount, focal plane hardware, cameras &amp; filter wheels, dome and environmental sensors;</li>
+  <li><strong>Control Layer:</strong> low-level drivers and control services exposing a unified interface;</li>
+  <li><strong>Scheduling Layer:</strong> observation queue generation based on survey strategy and target priorities;</li>
+  <li><strong>Data Layer:</strong> data ingest, quick quality control (QC), calibration and light-curve building pipelines;</li>
+  <li><strong>UI Layer:</strong> a web interface that presents global status, observation plans, logs and alerts.</li>
+</ul>
+
+<h2>Automation & Safety</h2>
+<ul>
+  <li>Automatic start/stop of observations when safety and weather constraints are satisfied or violated;</li>
+  <li>Automatic target switching, filter changes, exposure configuration and focus adjustments;</li>
+  <li>Continuous monitoring of guiding quality, focusing stability and data throughput with alert thresholds;</li>
+  <li>Safe shutdown mechanisms and notifications to on-duty staff in case of emergencies.</li>
+</ul>
+
+<hr>
+
+<h2>Internal Control Panel (Password Required)</h2>
+<p>
+  The embedded panel below is the internal real-time control interface used by the Tianyu team.
+  To avoid exposing the full control dashboard publicly, a simple password gate is used here.
+</p>
+
+<div id="internal-access-box" style="margin-top: 1rem; padding: 16px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb;">
+  <h3 style="margin-top: 0;">Access Internal Dashboard</h3>
+  <p style="font-size: 0.95rem; color: #4b5563;">
+    Please enter the internal passphrase to load the real-time control dashboard.
+  </p>
+  <form id="control-login-form" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px;">
+    <input
+      id="control-password"
+      type="password"
+      placeholder="Enter passphrase"
+      autocomplete="off"
+      style="flex: 1 1 220px; min-width: 180px; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5f5; font-size: 0.95rem;"
+    />
+    <button
+      type="submit"
+      style="padding: 6px 14px; border-radius: 8px; border: 1px solid #1e3a8a; background: #1e3a8a; color: #fff; font-size: 0.95rem; cursor: pointer;"
+    >
+      Unlock
+    </button>
+    <span id="control-login-msg" style="font-size: 0.9rem; color: #b91c1c; margin-left: 4px;"></span>
+  </form>
+
+  <p style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+    (Note: this is a UI-level gate only. For stricter protection, please combine with network / server-side access control.)
+  </p>
+
+  <div id="control-iframe-wrap" style="display: none; margin-top: 16px;">
+    <iframe
+      src="/internal/observe"
+      width="100%"
+      height="720"
+      style="border: 1px solid #d1d5db; border-radius: 12px; background: #ffffff;"
+    ></iframe>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const CONTROL_PASSWORD = "tianyu2024";
+
+    const form = document.getElementById("control-login-form");
+    const input = document.getElementById("control-password");
+    const msg = document.getElementById("control-login-msg");
+    const wrap = document.getElementById("control-iframe-wrap");
+
+    if (!form || !input || !wrap) return;
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const pwd = (input.value || "").trim();
+      if (!pwd) {
+        msg.textContent = "Please enter the passphrase.";
+        msg.style.color = "#b91c1c";
+        wrap.style.display = "none";
+        return;
+      }
+      if (pwd === CONTROL_PASSWORD) {
+        msg.textContent = "Unlocked. Loading dashboard…";
+        msg.style.color = "#15803d";
+        wrap.style.display = "block";
+      } else {
+        msg.textContent = "Incorrect passphrase.";
+        msg.style.color = "#b91c1c";
+        wrap.style.display = "none";
+      }
+    });
+  })();
+</script>
+
+{% endif %}
+{% endblock %}

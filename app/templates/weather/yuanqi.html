@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}{{ strings.yuanqi }} - {{ strings.weather }} - {{ strings.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ strings.yuanqi}} {{ strings.weather}}</h1>
+
+{% if session.get('lang') == 'zh' %}
+<p>源启天文台位于上海交通大学李政道研究所（浦东新区）。本页面聚合楼顶全天相机图像与自动气象站数据，用于实时展示当地的观测环境。</p>
+{% else %}
+<p>Yuanqi Observatory is located at the Tsung-Dao Lee Institute (Pudong, Shanghai). This page aggregates the rooftop all-sky camera and automatic weather station to present local observing conditions in real time.</p>
+{% endif %}
+
+<div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 10px; margin: 30px 0;">
+  <h2 style="color: #1565c0; margin-bottom: 12px; text-align: center;">
+    {% if session.get('lang') == 'zh' %}综合气象展示{% else %}Integrated Weather Monitor{% endif %}
+  </h2>
+  <p style="text-align: center; margin: 0; color: #666;">
+    {% if session.get('lang') == 'zh' %}
+    含全天相机与自动气象站数据，便于快速评估观测条件
+    {% else %}
+    Includes all-sky cam and AWS metrics — a quick overview of observing conditions
+    {% endif %}
+  </p>
+</div>
+
+<style>
+  .yq-layout { display: flex; gap: 20px; align-items: flex-start; }
+  .yq-left  { flex: 2; }
+  .yq-iframe {
+    width: 100%; height: min(78vh, 900px); border: 0; display: block;
+  }
+  @media (max-width: 1100px) {
+    .yq-layout { flex-direction: column; }
+    .yq-iframe { height: 60vh; }
+  }
+</style>
+
+<div class="yq-layout">
+  <!-- 左列：整页 iframe -->
+  <div class="yq-left">
+    <iframe
+      class="yq-iframe"
+      src="https://astro-pc.taildfe839.ts.net/"
+      referrerpolicy="no-referrer"
+      loading="lazy">
+    </iframe>
+    <div style="text-align:center; color:#666; margin-top:8px;">
+      {% if session.get('lang') == 'zh' %}
+      若上方未显示，请使用
+      <a href="https://astro-pc.taildfe839.ts.net/" target="_blank" style="color:#1e3a8a; text-decoration:none;">备用链接</a>
+      {% else %}
+      If not visible, use
+      <a href="https://astro-pc.taildfe839.ts.net/" target="_blank" style="color:#1e3a8a; text-decoration:none;">fallback link</a>.
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 32px; padding: 16px; background: #f8f9fa; border-radius: 8px;">
+  <p style="color: #6c757d; font-style: italic; margin:0;">
+    {% if session.get('lang') == 'zh' %}数据自动更新 | 7×24 小时监测{% else %}Automatic updates | 24/7 monitoring{% endif %}
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ (strings.about_optics if strings is defined else '光机系统') }} - {{ strings.title if strings is defined else '天语计划' }}
+{% endblock %}
+
+{% block content %}
+{% if session.get('lang') == 'zh' %}
+
+<h1>光机系统（望远镜光学与相机）</h1>
+
+<p>
+  本页面将简要介绍天语-I 望远镜的光学设计、机械结构，以及焦平面探测器与相机配置。
+  当前为占位版本，后续会根据设计定稿与施工进展补充详细参数和示意图。
+</p>
+
+<hr>
+
+<h2>望远镜光学设计（占位）</h2>
+<p>
+  在这里将说明望远镜的光学类型（例如 Ritchey-Chrétien、三镜系统等）、主镜口径、
+  焦比、有效视场等关键指标，并配合光路示意图进行说明。
+</p>
+
+<h2>机械结构与指向性能（占位）</h2>
+<p>
+  本节将介绍望远镜本体结构、赤道仪或镜筒支撑形式、指向与跟踪精度等信息，
+  以及与穹顶/机房之间的接口关系。
+</p>
+
+<h2>焦平面与相机配置（占位）</h2>
+<p>
+  这里将描述焦平面布置、探测器类型（CCD/CMOS）、像元尺寸、芯片大小、
+  单帧覆盖视场、读出方式等关键参数。后续会根据实际选型更新详细表格。
+</p>
+
+<h2>滤光片与观测波段（占位）</h2>
+<p>
+  本节将列出主要使用的滤光片组及覆盖波段范围，并说明不同科学目标对应的观测模式
+  （例如系外行星监测、瞬变巡天等）。
+</p>
+
+<p style="margin-top: 2rem; color: #666; font-size: 0.95rem;">
+  本页面目前为结构占位，参数和示意图会随着设计与调试进展陆续完善。
+</p>
+
+{% else %}
+
+<h1>Telescope Optics & Camera System</h1>
+
+<p>
+  This page will summarize the optical design, mechanical structure, and focal-plane
+  instrumentation of the Tianyu-I telescope.
+  The current version is a structural placeholder; detailed parameters and figures
+  will be added as the design and construction progress.
+</p>
+
+<hr>
+
+<h2>Telescope Optics (Placeholder)</h2>
+<p>
+  Here we will describe the optical configuration (e.g. Ritchey-Chrétien or other),
+  primary mirror aperture, focal ratio, and effective field of view,
+  accompanied by a schematic optical layout.
+</p>
+
+<h2>Mechanics & Pointing (Placeholder)</h2>
+<p>
+  This section will cover the telescope structure, mount configuration,
+  pointing and tracking performance, and interfaces with the dome / enclosure.
+</p>
+
+<h2>Focal Plane & Detectors (Placeholder)</h2>
+<p>
+  We will summarize the focal-plane layout, detector type (CCD/CMOS), pixel size,
+  sensor format, per-frame field coverage, and readout scheme.
+  A more detailed parameter table will be provided later.
+</p>
+
+<h2>Filters & Bands (Placeholder)</h2>
+<p>
+  This section will list the main filter set and wavelength coverage,
+  and outline observing modes tailored for different science cases
+  such as exoplanet monitoring and transient surveys.
+</p>
+
+<p style="margin-top: 2rem; color: #666; font-size: 0.95rem;">
+  This page is currently a placeholder; parameters and diagrams will be refined
+  as the project moves forward.
+</p>
+
+{% endif %}
+{% endblock %}

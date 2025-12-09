@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}{{ strings.lenghu }} - {{ strings.weather }} - {{ strings.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ strings.lenghu }} {{ strings.weather }}</h1>
+
+{% if session.get('lang') == 'zh' %}
+<p>
+冷湖天文站位于青海省海西州茫崖市冷湖镇高原地区，未来将部署全天相机与自动气象监测设备，
+用于实时评估台址的观测条件。本页面将作为天语项目在冷湖的气象与环境数据入口。
+目前系统仍在建设与联调阶段，仅展示功能占位与访问入口。
+</p>
+{% else %}
+<p>
+The Lenghu station is located on the high plateau near Lenghu Town, Qinghai Province.
+It will host an all-sky camera and an automatic weather station to monitor observing
+conditions in real time. This page serves as the entry point for Tianyu's environmental
+data at Lenghu. The system is still under deployment and commissioning, so only
+placeholders and future access points are shown for now.
+</p>
+{% endif %}
+
+<div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 10px; margin: 30px 0;">
+  <h2 style="color: #1565c0; margin-bottom: 12px; text-align: center;">
+    {% if session.get('lang') == 'zh' %}冷湖站综合气象入口（建设中）{% else %}Lenghu Integrated Weather Monitor (In Preparation){% endif %}
+  </h2>
+  <p style="text-align: center; margin: 0; color: #666;">
+    {% if session.get('lang') == 'zh' %}
+    未来将聚合冷湖全天相机图像与自动气象站数据，用于快速评估台址观测环境。目前仅展示功能占位。
+    {% else %}
+    This page will aggregate all-sky images and AWS metrics at Lenghu for quick
+    assessment of site conditions. For now it only shows placeholder cards.
+    {% endif %}
+  </p>
+</div>
+
+<style>
+  .lh-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .lh-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    width: 100%;
+  }
+  .lh-card {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    padding: 16px 18px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  }
+  .lh-card h3 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    color: #1e3a8a;
+  }
+  .lh-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #e3f2fd;
+    color: #1d4ed8;
+    font-size: 0.75rem;
+    margin-left: 6px;
+  }
+  .lh-desc {
+    font-size: 0.9rem;
+    color: #4b5563;
+    margin: 8px 0 10px;
+  }
+  .lh-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #cbd5f5;
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-decoration: none;
+    background: #f9fafb;
+    cursor: default;
+  }
+  .lh-btn.disabled {
+    opacity: 0.7;
+  }
+  @media (max-width: 900px) {
+    .lh-layout { flex-direction: column; }
+  }
+</style>
+
+<div class="lh-layout">
+  <div class="lh-card-grid">
+    <!-- 全天相机卡片 -->
+    <div class="lh-card">
+      <h3>
+        {% if session.get('lang') == 'zh' %}全天相机（计划部署）{% else %}All-Sky Camera (Planned){% endif %}
+        <span class="lh-tag">
+          {% if session.get('lang') == 'zh' %}建设中{% else %}In Preparation{% endif %}
+        </span>
+      </h3>
+      <p class="lh-desc">
+        {% if session.get('lang') == 'zh' %}
+        未来将提供冷湖站全天空实时图像，用于判断云量、光污染与夜空质量等观测条件。
+        {% else %}
+        A future all-sky camera will provide real-time sky images at Lenghu to assess
+        cloud coverage, light pollution, and overall sky quality.
+        {% endif %}
+      </p>
+      <a class="lh-btn disabled">
+        {% if session.get('lang') == 'zh' %}入口暂未开放{% else %}Endpoint not yet online{% endif %}
+      </a>
+    </div>
+
+    <!-- 自动气象站卡片 -->
+    <div class="lh-card">
+      <h3>
+        {% if session.get('lang') == 'zh' %}自动气象站（计划部署）{% else %}Automatic Weather Station (Planned){% endif %}
+        <span class="lh-tag">
+          {% if session.get('lang') == 'zh' %}接口开发中{% else %}API in Development{% endif %}
+        </span>
+      </h3>
+      <p class="lh-desc">
+        {% if session.get('lang') == 'zh' %}
+        将连续记录温度、湿度、风速、气压等关键参数，并与天语控制系统联动，用于观测安全与自动化调度。
+        {% else %}
+        The AWS will continuously record temperature, humidity, wind speed, pressure
+        and other key parameters, and will be integrated with the Tianyu control
+        system for safety checks and scheduling.
+        {% endif %}
+      </p>
+      <a class="lh-btn disabled">
+        {% if session.get('lang') == 'zh' %}实时页面开发中{% else %}Real-time view under development{% endif %}
+      </a>
+    </div>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 32px; padding: 16px; background: #f8f9fa; border-radius: 8px;">
+  <p style="color: #6c757d; font-style: italic; margin:0;">
+    {% if session.get('lang') == 'zh' %}
+    冷湖站气象系统正在部署 | 未来将提供与源启天文台类似的实时监测界面
+    {% else %}
+    The Lenghu weather system is under deployment and will later provide a
+    real-time interface similar to the Yuanqi Observatory page.
+    {% endif %}
+  </p>
+</div>
+{% endblock %}

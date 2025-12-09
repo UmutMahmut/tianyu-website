@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}{{ strings.publications }}{% endblock %}
+
+{% block head_extra %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <style>
+    /* 让表格按固定布局分列，避免被某一列长文本拖垮 */
+    #pub-table {
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    /* 第 2 列（标题）允许换行，必要时单词中间断行 */
+    #pub-table th:nth-child(2),
+    #pub-table td:nth-child(2) {
+      white-space: normal !important;
+      word-break: break-word;
+    }
+
+    /* 第 3 列（作者）也允许正常换行，避免被 nowrap 锁死 */
+    #pub-table th:nth-child(3),
+    #pub-table td:nth-child(3) {
+      white-space: normal !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+  <h1 class="text-2xl font-semibold mb-6">{{ strings.publications }}</h1>
+
+  <table id="pub-table" class="display w-full text-sm">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>{{ strings['title_col'] if 'title_col' in strings else 'Title' }}</th>
+        <th>{{ strings['authors'] if 'authors' in strings else 'Authors' }}</th>
+        <th>{{ strings['year'] if 'year' in strings else 'Year' }}</th>
+        <th>{{ strings['status'] }}</th>
+        <th>PDF</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for paper in entries %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ paper.title }}</td>
+        <td>
+          {% set authors = paper.authors.split(' and ') %}
+          {% if authors|length > 3 %}
+            {{ authors[0] }}, {{ authors[1] }}, {{ authors[2] }}{% if get_lang() == 'zh' %} 等人{% else %} et al.{% endif %}
+          {% else %}
+            {{ paper.authors }}
+          {% endif %}
+        </td>
+        <td>{{ paper.year }}</td>
+        <td>{{ strings[paper.status] if paper.status in strings else paper.status }}</td>
+        <td>
+          {% if paper.pdf and paper.pdf != '#' %}
+            <a href="{{ paper.pdf }}" target="_blank" rel="noopener noreferrer" title="PDF">📄</a>
+          {% else %}-{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(function() {
+      $('#pub-table').DataTable({
+        paging: false,
+        info: false,
+        ordering: true,
+        order: [[3, 'desc']], // 默认按年份降序
+        language: {
+          search: '{{ "搜索" if get_lang() == "zh" else "Search" }}:',
+          zeroRecords: '{{ "未找到匹配记录" if get_lang() == "zh" else "No matching records found" }}'
+        },
+        columnDefs: [
+          { width: "6%",  targets: 0 },
+          { width: "38%", targets: 1 },  // 标题
+          { width: "30%", targets: 2 },  // 作者
+          { width: "10%", targets: 3 },
+          { width: "10%", targets: 4 },
+          { width: "6%",  targets: 5, orderable: false }
+        ]
+      });
+    });
+  </script>
+{% endblock %}

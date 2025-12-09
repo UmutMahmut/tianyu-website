@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}{{ strings.gallery }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+  <h1 class="text-2xl font-semibold mb-6 text-center" style="color: #1e3a8a;">{{ strings.gallery }}</h1>
+
+  <div class="flex flex-col items-center gap-8">
+    {% for image in images %}
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+      <img src="{{ url_for('static', filename='images/gallery/' + image.filename) }}"
+           alt="Gallery Image"
+           style="max-width: 80%; height: auto; border-radius: 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
+      <p style="margin-top: 10px; font-size: 1rem; color: #4b5563; text-align: center;">{{ image.caption }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

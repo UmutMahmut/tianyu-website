@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>天语 </title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#fff;
+      --text:#1f2a44;
+      --sub:#6b7280;
+      --pri:#1e3a8a;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --bd:#e5e7eb;
+      --chip:#eef2ff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif
+    }
+    .wrap{max-width:2200px;margin:24px auto;padding:0 16px}
+    h1{font-size:22px;margin:0 0 16px}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+    .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 6px 18px rgba(30,58,138,.04)}
+    .kpi{padding:14px}
+    .kpi .lab{font-size:12px;color:var(--sub)}
+    .kpi .val{display:flex;align-items:baseline;gap:8px}
+    .kpi .big{font-size:22px;font-weight:700}
+    .kpi .tag{font-size:11px;color:var(--ok);background:#e8f7ee;border:1px solid #c9f3d8;padding:2px 6px;border-radius:999px}
+
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+    .col{display:flex;flex-direction:column;gap:12px}
+
+    .panel{padding:16px}
+    .panel h2{font-size:14px;margin:0 0 12px;color:var(--pri);display:flex;justify-content:space-between;align-items:center}
+    .muted{color:var(--sub);font-size:12px}
+
+    /* 节点布局优化 */
+    .nodes{
+      display:grid;grid-template-columns:repeat(1,1fr);gap:12px
+    }
+    .tile{border:1px solid var(--bd);border-radius:10px;overflow:hidden;background:#fff}
+    .tile-hd{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--bd);background:#fafbff}
+    .chip{font-size:13px;background:var(--chip);color:var(--pri);padding:2px 6px;border-radius:999px;border:1px solid #dce3ff}
+    .tile-body{
+      display:flex;
+      flex-direction: row;
+      min-height: 320px;
+    }
+    .thumb-toggle { display: none; }
+    .thumb{
+      width: 300px;
+      min-width: 250px;
+      aspect-ratio:3/4;
+      background:#000 center/cover no-repeat;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .thumb-label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 4px 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .kv{
+      flex: 1;
+      padding:16px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+      gap:12px;
+      font-size:13px;
+      align-content: start;
+    }
+    .kv div{
+      background:#fafafa;
+      border:1px solid var(--bd);
+      border-radius:8px;
+      padding:12px;
+      min-height: 65px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .kv div:hover { background: #f0f5ff; border-color: #c5d5ff; }
+    .kv b{
+      display:block; font-size:12px; color:var(--sub); font-weight:600; margin-bottom:8px;
+    }
+
+    /* 右列面板 */
+    .form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .pill{padding:4px 10px;border-radius:999px;border:1px solid var(--bd);font-size:12px;background:#fafbff}
+    .gbar{height:8px;background:#eef2ff;border-radius:999px;overflow:hidden}
+    .gbar > i{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#2563eb)}
+
+    /* 表格 */
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{border-top:1px solid var(--bd);padding:8px 6px;text-align:left;white-space:nowrap}
+    th{font-size:12px;color:var(--sub);font-weight:600;background:#fafbff}
+    tbody tr:hover{background:#fafafa}
+
+    /* === PATCH F: 表格增强（吸顶 + 窄屏横向滚动） === */
+    .table-wrap{
+      overflow:auto;
+      border:1px solid var(--bd);
+      border-radius:8px;
+      background:#fff;
+    }
+
+    /* 表头吸顶（需要 thead）*/
+    .table-wrap thead th{
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background:#fafbff; /* 与你现有 th 背景一致 */
+    }
+
+    /* 窄屏时允许横向滚动，避免内容被挤 */
+    @media (max-width: 720px){
+      .table-wrap{ -webkit-overflow-scrolling: touch; }
+      .table-wrap table{ min-width: 640px; }
+    }
+
+    /* 日志 */
+    .log{height:220px;overflow:auto;background:#0b1220;color:#d0d6e1;border-radius:8px;font-family:ui-monospace,Consolas,monospace;font-size:12px;padding:10px;line-height:1.5}
+
+    /* 小屏处理 */
+    @media (max-width:1100px){
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .grid{grid-template-columns:1fr}
+      .nodes{grid-template-columns:1fr}
+      .tile-body{ flex-direction: column; }
+      .thumb{ width: 100%; aspect-ratio: 16/9; }
+      .thumb-label { display: block; }
+      .kv{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (min-width: 1600px) {
+      .kv { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    }
+
+    .status-indicator { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+    .status-online { background-color: var(--ok); }
+    .status-offline { background-color: var(--bad); }
+    .status-warning { background-color: var(--warn); }
+
+    .control-buttons { display:flex; gap:8px; margin-top:12px; }
+    .btn { padding:6px 12px; border-radius:6px; font-size:12px; border:1px solid var(--bd); background:#f8fafc; cursor:pointer; transition:.2s; }
+    .btn:hover { background:#eef2ff; border-color:#c5d5ff; }
+    .btn-primary { background:var(--pri); color:#fff; border-color:var(--pri); }
+    .btn-primary:hover { background:#1e40af; }
+
+    /* === 简易画板样式 === */
+    .plot-controls{ display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; align-items:center; margin-bottom:10px; }
+    .plot-controls select, .plot-controls input{ width:100%; padding:6px 8px; border:1px solid var(--bd); border-radius:8px; font-size:12px; background:#fff; }
+    .plot-legend{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; font-size:12px; color:var(--sub); }
+    .legend-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; }
+    .plot-wrap{ border:1px solid var(--bd); border-radius:8px; background:#fff; }
+    canvas{ width:100%; height:260px; display:block; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>天语望远镜</h1>
+
+    <!-- 顶部 KPI -->
+    <section class="kpis">
+      <div class="card kpi">
+        <div class="lab">望远镜状态</div>
+        <div class="val"><span class="big" data-id="kpi_nodes_online">在线</span><span class="tag">运行中</span></div>
+      </div>
+      <div class="card kpi">
+        <div class="lab">曝光进度</div>
+        <div class="val"><span class="big" data-id="kpi_jobs">78%</span><span class="tag" style="color:#f59e0b;background:#fff7e6;border-color:#ffe8bd">进行中</span></div>
+      </div>
+      <div class="card kpi">
+        <div class="lab">数据流入速率</div>
+        <div class="val"><span class="big" data-id="kpi_ingest">12.4 MB/s</span><span class="tag">实时</span></div>
+      </div>
+      <div class="card kpi">
+        <div class="lab">存储占用</div>
+        <div class="val"><span class="big" data-id="kpi_storage">41%</span><span class="tag">健康</span></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <!-- 左列：节点总览 + 成像质量 + 今晚计划 + 画板 -->
+      <div class="col">
+        <div class="card panel">
+          <h2>望远镜跟踪状态 <span class="muted" data-id="clock">--:--:--</span></h2>
+          <div class="nodes">
+            <div class="tile" id="node1">
+              <div class="tile-hd">
+                <div><span class="status-indicator status-online"></span>主望远镜节点</div>
+                <div class="row">
+                  <span class="pill" data-id="node1_state">跟踪中</span>
+                  <span class="pill" data-id="node1_task">科学采集</span>
+                </div>
+              </div>
+              <div class="tile-body">
+                <div class="thumb" data-id="node1_thumb" style="background-image:url('/static/images/tianyu_scope.jpg')">
+                  <label class="thumb-label">实时图像</label>
+                </div>
+                <div class="kv">
+                  <div><b>目标(RA,Dec)</b><span data-id="node1_target">"12:34:51.54, -11:21:29.40"</span></div>
+                  <div><b>曝光 / 模式</b><span data-id="node1_expf">30s, Science</span></div>
+                  <div><b>导星RMS</b><span data-id="node1_guiding">0.45"</span></div>
+                  <div><b>CCD温度</b><span data-id="node1_ccdtemp">-25.2°C</span></div>
+                  <div><b>焦位/温度</b><span data-id="node1_focus">12456, 18.3°C</span></div>
+                  <div><b>Rotator角</b><span data-id="node1_rot">31.5°</span></div>
+                  <div><b>滤光片</b><span data-id="node1_filter">Optical</span></div>
+                  <div><b>高度角</b><span data-id="node1_alt">62.4°</span></div>
+                  <div><b>方位角</b><span data-id="node1_az">187.3°</span></div>
+                  <div><b>大气质量</b><span data-id="node1_airmass">1.12</span></div>
+                  <div><b>气温</b><span data-id="node1_temperature">18.3°C</span></div>
+                  <div><b>相对湿度</b><span data-id="node1_humidity">45%</span></div>
+                  <div><b>气压</b><span data-id="node1_pressure">680 hPa</span></div>
+                  <div><b>云量覆盖</b><span data-id="node1_cloud">8%</span></div>
+                  <div><b>露点温度</b><span data-id="node1_dewpoint">3.2°C</span></div>
+                  <div><b>风速</b><span data-id="node1_wind">12 km/h</span></div>
+                  <div><b>风向</b><span data-id="node1_wind_direction">278.0</span></div>
+		  <div><b>天空亮度</b><span data-id="node1_sky_brightness">278.0 lux</span></div>
+                  <div><b>SQM</b><span data-id="node1_SQM">5.1 mag/arcsec²</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 成像质量与上一帧 -->
+        <div class="card panel">
+          <h2>成像质量与上一帧</h2>
+          <div class="row" style="margin-top:4px">
+            <span class="pill">FWHM：<span data-id="img_fwhm">2.4 px</span></span>
+            <span class="pill">星数：<span data-id="img_stars">18624</span></span>
+            <span class="pill">本底：<span data-id="img_skybg">345 ADU</span></span>
+            <span class="pill">零点：<span data-id="img_zeropoint">20.8 mag</span></span>
+            <span class="pill">SNR：<span data-id="img_snr">42.6</span></span>
+          </div>
+          <div class="row" style="margin-top:6px">
+            <span class="pill">上一帧：<span data-id="img_name">TIC123456-20230506-0045</span></span>
+            <span class="pill">大小：<span data-id="img_size">45.6 MB</span></span>
+            <span class="pill">下载：<span data-id="img_dldr">12.4 MB/s</span></span>
+            <!-- 已按要求移除：Binning/ROI -->
+          </div>
+        </div>
+
+        <!-- 今晚观测计划（队列） -->
+        <div class="card panel">
+          <h2>今晚观测计划（UTC+8）<span class="muted">仅展示前10条</span></h2>
+          <table>
+            <thead>
+              <tr>
+                <th>起止</th>
+                <th>目标</th>
+                <th>曝光</th>
+                <th>Binning/Gain & ROI</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody id="plan">
+              <tr>
+                <td>20:10–21:00</td>
+                <td>TIC 123456</td>
+                <td>300s × 20</td>
+                <td>1×1 / 0 & Full</td>
+                <td>进行中</td>
+              </tr>
+              <tr>
+                <td>21:05–22:30</td>
+                <td>GRB follow-up</td>
+                <td>120s × 30</td>
+                <td>2×2 / 2 & 2048×2048</td>
+                <td>排队</td>
+              </tr>
+              <tr>
+                <td>22:40–00:10</td>
+                <td>KBO occult.</td>
+                <td>60s × 40</td>
+                <td>1×1 / 1 & 1024×1024</td>
+                <td>待机</td>
+              </tr>
+              <tr>
+                <td>00:20–01:50</td>
+                <td>M31 核区</td>
+                <td>180s × 15</td>
+                <td>4×4 / 1 & 3072×2048</td>
+                <td>待机</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 数据趋势画板（演示） -->
+        <div class="card panel">
+          <h2>数据趋势画板（演示） <span class="muted">先用常数模拟，后续对接真实数据</span></h2>
+          <div class="plot-controls">
+            <select id="seriesSelect" multiple size="4" title="选择最多 4 条曲线">
+              <option value="alt">高度角</option>
+              <option value="az">方位角</option>
+              <option value="airmass">大气质量</option>
+              <option value="temperature">气温</option>
+              <option value="humidity">相对湿度</option>
+              <option value="pressure">气压</option>
+              <option value="wind">风速</option>
+              <option value="guiding">导星RMS</option>
+              <option value="ccdtemp">CCD温度</option>
+              <option value="rotator">Rotator角</option>
+              <option value="sqm">SQM</option>
+            </select>
+            <input id="startTime" type="datetime-local" />
+            <input id="endTime" type="datetime-local" />
+            <button id="plotBtn" class="btn btn-primary">绘制</button>
+          </div>
+          <div class="plot-wrap">
+            <canvas id="trendCanvas" width="1200" height="260"></canvas>
+          </div>
+          <div id="legend" class="plot-legend"></div>
+        </div>
+        <!-- 左列至此结束（日志已移走） -->
+      </div>
+
+      <!-- 右列 -->
+      <div class="col">
+
+        <!-- 时间信息 -->
+        <div class="card panel">
+          <h2>时间信息 <span class="muted">实时更新</span></h2>
+          <div class="form-row">
+            <div class="pill" style="width:100%">世界时 (UTC)：<span data-id="time_utc">--:--:--</span></div>
+            <div class="pill" style="width:100%">北京时间 (CST)：<span data-id="time_cst">--:--:--</span></div>
+            <div class="pill" style="width:100%">恒星时 (LST)：<span data-id="time_lst">--:--:--</span></div>
+          </div>
+        </div>
+
+        <!-- 相机与光学系统 -->
+        <div class="card panel">
+          <h2>相机与光学系统 <span class="muted">当前状态</span></h2>
+          <div class="row">
+            <span class="pill">相机：<span data-id="cam_model">COSMOS66</span></span>
+            <span class="pill">Readout/ Gain：<span data-id="cam_readout">Fast/ 0</span></span>
+          </div>
+          <div class="form-row">
+            <div class="pill" style="width:100%">CCD 温度：<span data-id="cam_temp">-25.2 °C</span> / 设定 <span data-id="cam_set">-25.0 °C</span></div>
+            <div class="pill" style="width:100%">冷却占空：<span data-id="cam_cooler">75%</span></div>
+            <div class="pill" style="width:100%">Binning/ ROI：<span data-id="cam_binroi">1x1/ Full</span></div>
+            <div class="pill" style="width:100%">TEC 电流：<span data-id="cam_tec_i">2.4 A</span></div>
+            <div class="pill" style="width:100%">焦位：<span data-id="focus_pos">12456</span>（HFR <span data-id="focus_hfr">2.4</span>）</div>
+            <div class="pill" style="width:100%">光路状态：<span data-id="opt_state">正常</span></div>
+          </div>
+        </div>
+
+        <!-- 调焦系统与赤道仪/圆顶 -->
+        <div class="card panel">
+          <h2>调焦系统与赤道仪/圆顶</h2>
+          <div class="form-row">
+            <div class="pill" style="width:100%">Focuser 温度：<span data-id="focus_temp">18.3 °C</span></div>
+            <div class="pill" style="width:100%">温补：<span data-id="focus_comp">ON</span>（系数 <span data-id="focus_k">15 steps/°C</span>）</div>
+            <div class="pill" style="width:100%">运动：<span data-id="focus_moving">Idle</span> / 限位：<span data-id="focus_limit">Normal</span></div>
+            <div class="pill" style="width:100%">RA/Dec：<span data-id="ra_dec">12:34:56.7, +12°34'56"</span></div>
+            <div class="pill" style="width:100%">Az/Alt：<span data-id="az_alt">187.3°, 62.4°</span></div>
+            <div class="pill" style="width:100%">Hour Angle：<span data-id="ha">+01:23:45</span></div>
+            <div class="pill" style="width:100%">Tracking：<span data-id="trk">0.85"/s</span></div>
+            <div class="pill" style="width:100%">Pier Side：<span data-id="pier">East</span></div>
+            <div class="pill" style="width:100%">Rotator：<span data-id="rot_mode">Field Angle</span> / Homed：<span data-id="rot_homed">Yes</span> / 限位：<span data-id="rot_limit">Normal</span></div>
+            <div class="pill" style="width:100%">Dome Az：<span data-id="dome_az">188.1°</span> / Shutter：<span data-id="dome_shutter">Open</span></div>
+            <div class="pill" style="width:100%">Dome 跟随误差：<span data-id="dome_err">0.8 °</span></div>
+          </div>
+        </div>
+
+        <!-- 数据处理流水线（Pipeline） -->
+        <div class="card panel">
+          <h2>数据处理流水线（Pipeline）</h2>
+          <table>
+            <thead><tr><th>通道</th><th>状态</th><th>速率</th><th>队列</th><th>失败</th></tr></thead>
+            <tbody id="ingest">
+              <tr>
+                <td>Ingest → QC</td>
+                <td data-id="st_ingest">OK</td>
+                <td data-id="rate_ingest">12.4 MB/s</td>
+                <td data-id="q_ingest">0</td>
+                <td data-id="err_ingest">0</td>
+              </tr>
+              <tr>
+                <td>Cal/Flat/Bias</td>
+                <td data-id="st_cal">空闲</td>
+                <td data-id="rate_cal">—</td>
+                <td data-id="q_cal">0</td>
+                <td data-id="err_cal">0</td>
+              </tr>
+              <tr>
+                <td>Lightcurve Build</td>
+                <td data-id="st_lc">延迟</td>
+                <td data-id="rate_lc">—</td>
+                <td data-id="q_lc">124</td>
+                <td data-id="err_lc">2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 资源使用 -->
+        <div class="card panel">
+          <h2>资源使用</h2>
+          <div class="row" style="gap:14px">
+            <div style="flex:1">
+              <div class="muted">Storage</div>
+              <div class="gbar"><i style="width:41%" data-id="bar_storage"></i></div>
+            </div>
+            <div style="flex:1">
+              <div class="muted">Network</div>
+              <div class="gbar"><i style="width:66%" data-id="bar_net"></i></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="pill" style="width:100%">UPS 负载：<span data-id="ups_load">34%</span></div>
+            <div class="pill" style="width:100%">UPS 电量：<span data-id="ups_batt">98%</span></div>
+            <div class="pill" style="width:100%">CPU 使用率：<span data-id="cpu_usage">24%</span></div>
+            <div class="pill" style="width:100%">内存使用：<span data-id="mem_usage">62%</span></div>
+          </div>
+        </div>
+
+        <!-- 最近事件与系统日志（已移到右列底部） -->
+        <div class="card panel">
+          <h2>最近事件与系统日志 <span class="muted">仅显示最新 300 行</span></h2>
+          <div class="log" id="log">
+[19:02:11] Guiding RMS 0.48"
+[19:05:44] Pipeline: Lightcurve queue > 500
+[19:12:09] Focuser temp 18.3°C, drift +0.6
+[19:15:22] New image acquired: TIC123456-20230506-0045.fits
+[19:18:37] Auto focus routine started
+[19:20:05] Auto focus completed, new position: 12456
+[19:25:41] Dome following enabled, azimuth: 187.3
+[19:30:15] Meridian flip completed successfully
+[19:35:29] Cloud sensor detected 12% coverage
+[19:40:33] Filter wheel changed to Luminance
+[19:45:17] Guide star lost, reacquiring...
+[19:45:45] Guide star reacquired, RMS stabilized
+[19:50:30] Cooling system operating at 75% capacity
+[19:55:12] Humidity rising (45% → 48%)
+[20:00:03] Starting new exposure sequence
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+<script>
+// ==== PATCH B/C/E COMBINED ====
+
+// ---------- B：状态仓库 & 统一赋值器 ----------
+window.OS = window.OS || {};
+
+OS.STATE = {
+  node1_guiding: 0.45,   // 单位："
+  node1_ccdtemp: -25.2,  // 单位：°C
+};
+
+OS.$ = (sel, root=document)=>root.querySelector(sel);
+OS.setText = (dataId, value)=>{
+  try{
+    const el = document.querySelector(`[data-id="${dataId}"]`);
+    if (el) el.textContent = value;
+  }catch(_){}
+};
+
+OS.bootstrapStateToDom = ()=>{
+  const g = OS.STATE.node1_guiding;
+  const c = OS.STATE.node1_ccdtemp;
+  OS.setText('node1_guiding', (typeof g==='number'? g.toFixed(2):g) + '"');
+  OS.setText('node1_ccdtemp', (typeof c==='number'? c.toFixed(1):c) + '°C');
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', OS.bootstrapStateToDom);
+} else {
+  OS.bootstrapStateToDom();
+}
+
+// ---------- C：高分屏画布锐化 & 重绘防抖 ----------
+OS.setupCanvas = (canvas)=>{
+  if (!canvas) return null;
+  const dpr  = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  // 底层像素扩大，绘制仍按 CSS 像素
+  canvas.width  = Math.max(1, Math.round(rect.width  * dpr));
+  canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, width: rect.width, height: rect.height };
+};
+
+OS._resizeTimer = 0;
+OS.onResizeDebounced = (fn, delay=120)=>{
+  clearTimeout(OS._resizeTimer);
+  OS._resizeTimer = setTimeout(fn, delay);
+};
+
+// ---------- E：时间输入健壮性 ----------
+OS.safeDate = (v, fallbackTs)=>{
+  const d = new Date(v);
+  return isNaN(+d) ? new Date(fallbackTs) : d;
+};
+
+// ---------- 时钟 ----------
+const clk = document.querySelector('[data-id="clock"]');
+if (clk) setInterval(() => { clk.textContent = new Date().toLocaleTimeString(); }, 1000);
+
+// ---------- 示例数据填充 ----------
+function demoFill() {
+  const s = document.querySelector('[data-id="bar_storage"]');
+  const n = document.querySelector('[data-id="bar_net"]');
+  if (s) s.style.width = '41%';
+  if (n) n.style.width = '66%';
+
+  const tile = document.getElementById('node1');
+  if (tile) {
+    tile.addEventListener('click', () => {
+      tile.style.borderColor = tile.style.borderColor === 'rgb(30, 58, 138)' ? 'var(--bd)' : 'var(--pri)';
+    });
+  }
+  setInterval(() => {
+    const guiding = document.querySelector('[data-id="node1_guiding"]');
+    if (guiding) { const v=(0.3+Math.random()*0.3).toFixed(2); guiding.textContent = `${v}"`; }
+  }, 5000);
+}
+demoFill();
+
+/* ===== 时间模块（UTC / CST / LST） ===== */
+const SITE_LONGITUDE_DEG = 121.6;
+function pad2(n){ return String(n).padStart(2,'0'); }
+function updateTimes(){
+  const now = new Date();
+  const utc = now.toISOString().slice(11,19);
+  const utcSpan = document.querySelector('[data-id="time_utc"]'); if (utcSpan) utcSpan.textContent = utc;
+  const cst = now.toLocaleTimeString('zh-CN',{hour12:false,timeZone:'Asia/Shanghai'});
+  const cstSpan = document.querySelector('[data-id="time_cst"]'); if (cstSpan) cstSpan.textContent = cst;
+
+  const JD = now.getTime()/86400000 + 2440587.5;
+  const d  = JD - 2451545.0;
+  let GMST = 18.697374558 + 24.06570982441908*d;
+  GMST = ((GMST % 24) + 24) % 24;
+  let LST = GMST + SITE_LONGITUDE_DEG/15;
+  LST = ((LST % 24) + 24) % 24;
+  const H = Math.floor(LST), M = Math.floor((LST - H)*60), S = Math.floor(((LST - H)*60 - M)*60);
+  const lstSpan = document.querySelector('[data-id="time_lst"]');
+  if (lstSpan) lstSpan.textContent = `${pad2(H)}:${pad2(M)}:${pad2(S)}`;
+}
+updateTimes(); setInterval(updateTimes, 1000);
+/* ===== 时间模块结束 ===== */
+
+/* ===== 画板：简易折线图（常数模拟） ===== */
+const COLORS = ['#2563eb','#16a34a','#f59e0b','#ef4444','#8b5cf6','#0ea5e9'];
+const LABELS = {
+  alt:'高度角(°)', az:'方位角(°)', airmass:'大气质量',
+  temperature:'气温(°C)', humidity:'相对湿度(%)', pressure:'气压(hPa)',
+  wind:'风速(km/h)', guiding:'导星RMS(")', ccdtemp:'CCD温度(°C)',
+  rotator:'Rotator角(°)', sqm:'SQM(mag/arcsec²)'
+};
+function getSeriesValue(key){
+  const map = {
+    alt: 62.4, az: 187.3, airmass: 1.12,
+    temperature: 18.3, humidity: 45, pressure: 680,
+    wind: 12, guiding: 0.45, ccdtemp: -25.2,
+    rotator: 31.5, sqm: 5.1
+  };
+  return map[key] ?? 0;
+}
+function genTimeGrid(start, end, stepMin=2){
+  const t=[]; let cur = new Date(start);
+  while(cur<=end){ t.push(new Date(cur)); cur = new Date(cur.getTime()+stepMin*60000); }
+  return t.length? t : [start,end];
+}
+function drawChart(){
+  const sel = document.getElementById('seriesSelect');
+  const chosen = Array.from(sel.selectedOptions).map(o=>o.value).slice(0,4);
+
+  // —— E：时间健壮性 —— //
+  const sRaw = document.getElementById('startTime')?.value;
+  const eRaw = document.getElementById('endTime')?.value;
+  let start  = OS.safeDate(sRaw, Date.now() - 2*3600*1000); // 默认回溯2小时
+  let end    = OS.safeDate(eRaw, Date.now());
+  if (end <= start) end = new Date(start.getTime() + 60*60000); // 至少+60分钟
+
+  const times = genTimeGrid(start, end, 2);
+
+  // —— C：DPR 锐化 —— //
+  const canvas = document.getElementById('trendCanvas');
+  const setup  = OS.setupCanvas(canvas);
+  if (!setup) return;
+  const ctx = setup.ctx;
+  const W = setup.width, H = setup.height;
+
+  ctx.clearRect(0,0,W,H);
+  const padL=50, padR=10, padT=10, padB=24;
+
+  // 轴线
+  ctx.strokeStyle='#d1d5db'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT);   ctx.lineTo(padL,H-padB);   ctx.stroke();
+
+  // 时间刻度
+  ctx.fillStyle='#6b7280'; ctx.font='12px system-ui, -apple-system, Segoe UI, Roboto';
+  const ticks = 6;
+  for(let i=0;i<=ticks;i++){
+    const x = padL + (W-padL-padR)*i/ticks;
+    const t = new Date(start.getTime() + (end-start)*i/ticks);
+    const label = t.toTimeString().slice(0,5);
+    ctx.fillText(label, x-12, H-6);
+    ctx.beginPath(); ctx.moveTo(x,H-padB); ctx.lineTo(x,H-padB-4); ctx.stroke();
+  }
+
+  // 图例 + 占位线
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  chosen.forEach((key, idx)=>{
+    const color = COLORS[idx % COLORS.length];
+    const base = 0.2 + 0.6*(idx/(Math.max(1,chosen.length-1)||1));
+    const y = padT + (1-base)*(H-padT-padB);
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W-padR, y); ctx.stroke();
+
+    const span = document.createElement('span');
+    span.innerHTML = `<i class="legend-dot" style="background:${color}"></i>${LABELS[key]} = ${getSeriesValue(key)}`;
+    legend.appendChild(span);
+  });
+}
+
+(function initPlotControls(){
+  const startEl = document.getElementById('startTime');
+  const endEl   = document.getElementById('endTime');
+  const now = new Date();
+  const twoHoursAgo = new Date(now.getTime()-2*3600*1000);
+  const toLocalInput = d => new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+  if (startEl) startEl.value = toLocalInput(twoHoursAgo);
+  if (endEl)   endEl.value   = toLocalInput(now);
+
+  const sel = document.getElementById('seriesSelect');
+  if (sel) {
+    ['alt','airmass'].forEach(v=>{
+      const opt = Array.from(sel.options).find(o=>o.value===v);
+      if (opt) opt.selected = true;
+    });
+  }
+
+  const btn = document.getElementById('plotBtn');
+  if (btn) btn.addEventListener('click', drawChart);
+  drawChart();
+
+  // —— C：窗口尺寸变化时防抖重绘 —— //
+  window.addEventListener('resize', () => OS.onResizeDebounced(drawChart));
+})();
+</script>
+
+
+
+</body>
+</html>

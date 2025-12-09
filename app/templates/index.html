@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {% if session.get('lang') == 'zh' %}
+    天语计划
+  {% else %}
+    Tianyu Project
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>
+  {% if session.get('lang') == 'zh' %}
+    欢迎来到天语计划
+  {% else %}
+    Welcome to the Tianyu Project
+  {% endif %}
+</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 300px; gap: 40px; margin-top: 30px;">
+  <div>
+    {% if session.get('lang') == 'zh' %}
+      <p style="font-size: 1.1rem; color: #4b5563;">
+        天语计划（Tianyu Project, JUST-P）是面向时间域天文学和系外行星搜索的大视场高采样频率巡天项目。
+      </p>
+
+      <h2>项目概述</h2>
+      <p>
+        天语计划（Tianyu Project, JUST-P）是一个面向时间域天文学和系外行星搜索的大视场高采样频率巡天项目。
+        该计划名称来源于李政道先生提出的“以天为语，悟物之理”之哲学理念，旨在通过高时间分辨率的长时间基线观测，
+        发现类太阳系的长周期冷气体巨行星，以及多类快速光变的天体现象。
+      </p>
+
+      <h3>主要特色</h3>
+      <ul>
+        <li><strong>双望远镜系统</strong>：两台 1 米口径广角望远镜，每台约 10 平方度视场</li>
+        <li><strong>高采样频率</strong>：采样频率可达每小时一次，适用于长时间基线巡天</li>
+        <li><strong>多目标观测</strong>：目标恒星数量超过 1000 万，覆盖 TESS 连续观测区与 Kepler/K2 区域</li>
+        <li><strong>多样化科学目标</strong>：支持系外行星、短时变星、超新星等多领域研究</li>
+      </ul>
+
+      <h3>科学目标</h3>
+      <ul>
+        <li>发现类太阳系中冷巨行星的凌日信号</li>
+        <li>研究超新星、快蓝光瞬变（FBOT）、潮汐破坏事件等瞬变源</li>
+        <li>监测近地天体（NEO）、彗星与 TNO 掩星等小天体活动</li>
+        <li>寻找伽马暴（GRB）与快速射电暴（FRB）的光学对应体</li>
+      </ul>
+    {% else %}
+      <p style="font-size: 1.1rem; color: #4b5563;">
+        The Tianyu Project (JUST-P) is a wide-field, high-cadence photometric survey for time-domain
+        astronomy and exoplanet detection.
+      </p>
+
+      <h2>Project Overview</h2>
+      <p>
+        The Tianyu Project (JUST-P) is a wide-field, high-cadence photometric survey focused on
+        time-domain astronomy and exoplanet detection. Inspired by Nobel Laureate Tsung-Dao Lee's
+        philosophy “to comprehend physics through the language of the heavens,” it aims to detect
+        long-period, cold gas giants in solar-like systems, as well as various fast-evolving
+        astronomical phenomena.
+      </p>
+
+      <h3>Key Features</h3>
+      <ul>
+        <li><strong>Dual-telescope design</strong>: Two 1-meter telescopes, each covering ~10 deg²</li>
+        <li><strong>High cadence</strong>: Up to 1-hour sampling, enabling long-term monitoring</li>
+        <li><strong>Massive target coverage</strong>: Over 10 million stars in the TESS CVZ and Kepler/K2 regions</li>
+        <li><strong>Diverse science goals</strong>: From exoplanets to transients and NEOs</li>
+      </ul>
+
+      <h3>Science Objectives</h3>
+      <ul>
+        <li>Detect transits of long-period cold giants in solar analogs</li>
+        <li>Study transients like supernovae, FBOTs, and TDEs</li>
+        <li>Track small bodies such as NEOs, comets, and occultations</li>
+        <li>Search for optical counterparts of GRBs and FRBs</li>
+      </ul>
+    {% endif %}
+  </div>
+
+  <div style="text-align: center;">
+    <div class="image-container">
+      <img src="{{ url_for('static', filename='images/tianyu_scope.jpg') }}"
+           style="width: 100%; max-width: 280px; height: auto;"
+           alt="Tianyu Telescope">
+      <div class="image-caption">
+        {% if session.get('lang') == 'zh' %}
+          天语-I 望远镜渲染图
+        {% else %}
+          Tianyu-I Telescope Rendering
+        {% endif %}
+      </div>
+    </div>
+
+    <div style="background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+                padding: 20px; border-radius: 10px; margin-top: 30px;">
+      <h4 style="color: #0277bd; margin-bottom: 15px;">
+        {% if session.get('lang') == 'zh' %}快速链接{% else %}Quick Links{% endif %}
+      </h4>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a href="/project"
+           style="color: #0277bd; text-decoration: none; padding: 8px; border-radius: 5px;
+                  background: rgba(255,255,255,0.7); transition: background 0.3s;">
+          {% if session.get('lang') == 'zh' %}项目介绍{% else %}Project{% endif %}
+        </a>
+        <a href="/research"
+           style="color: #0277bd; text-decoration: none; padding: 8px; border-radius: 5px;
+                  background: rgba(255,255,255,0.7); transition: background 0.3s;">
+          {% if session.get('lang') == 'zh' %}科学研究{% else %}Research{% endif %}
+        </a>
+        <a href="/team"
+           style="color: #0277bd; text-decoration: none; padding: 8px; border-radius: 5px;
+                  background: rgba(255,255,255,0.7); transition: background 0.3s;">
+          {% if session.get('lang') == 'zh' %}项目团队{% else %}Team{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
