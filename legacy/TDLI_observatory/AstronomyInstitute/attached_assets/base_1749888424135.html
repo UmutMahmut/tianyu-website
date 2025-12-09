@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('lang', 'zh') }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}{{ strings.title }}{% endblock %}</title>
+  <style>
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 30px;
+      background-color: #f2f2f2;
+      border-bottom: 1px solid #ccc;
+    }
+    header img {
+      height: 50px;
+    }
+    nav ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+    nav ul li {
+      position: relative;
+    }
+    nav ul li ul {
+      display: none;
+      position: absolute;
+      top: 100%;
+      background: white;
+      list-style: none;
+      padding: 5px;
+      border: 1px solid #ccc;
+    }
+    nav ul li:hover ul {
+      display: block;
+    }
+    footer {
+      background-color: #f2f2f2;
+      padding: 20px;
+      border-top: 1px solid #ccc;
+    }
+    .footer-content {
+      display: flex;
+      justify-content: space-around;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-section {
+      flex: 1;
+      padding: 0 15px;
+    }
+    .footer-section h3 {
+      margin-top: 0;
+    }
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/"><img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo"></a>
+    <nav>
+      <ul>
+        <li><a href="/">{{ strings.home }}</a></li>
+        <li><a href="/project">{{ strings.project }}</a></li>
+        <li>
+          {{ strings.weather }}
+          <ul>
+            <li><a href="/weather/yuanqi">{{ strings.yuanqi }}</a></li>
+            <li><a href="/weather/lenghu">{{ strings.lenghu }}</a></li>
+          </ul>
+        </li>
+        <li>
+          {{ strings.team }}
+          <ul>
+            <li><a href="/team/just">JUST</a></li>
+            <li><a href="/team/justp">天语</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="/lang/zh">中文</a> | <a href="/lang/en">EN</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main style="padding: 20px;">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- 修正位置：footer移到body内部，main之后 -->
+  <footer>
+    <div class="footer-content">     
+      <div class="footer-section">
+        <h3>{{ strings.contact_us }}</h3>
+        <ul>
+          <li>{{ strings.email }}: tdli@sjtu.edu.cn</li>
+          <li>{{ strings.phone }}: +86-21-68693100</li>
+          <li>{{ strings.address }}: 上海市浦东新区李所路1号</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>{{ strings.follow_us }}</h3>
+        <ul>
+          <li><a href="#">{{ strings.wechat }}</a></li>
+          <li><a href="#">{{ strings.weibo }}</a></li>
+          <li><a href="#">{{ strings.linkedin }}</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

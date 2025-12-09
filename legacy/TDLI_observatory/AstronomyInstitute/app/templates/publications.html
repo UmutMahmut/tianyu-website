@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}{{ strings.publications }}{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+  <h1 class="text-2xl font-semibold mb-6">{{ strings.publications }}</h1>
+
+  <table id="pub-table" class="display w-full text-sm">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>{{ strings['title'] if 'title' in strings else 'Title' }}</th>
+        <th>{{ strings['team'] if 'team' in strings else 'Authors' }}</th>
+        <th>{{ strings['year'] if 'year' in strings else 'Year' }}</th>
+        <th>{{ strings['status'] }}</th>
+        <th>PDF</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for paper in entries %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ paper.title }}</td>
+        <td>
+          {% set authors = paper.authors.split(' and ') %}
+          {% if authors|length > 3 %}
+            {{ authors[0] }}, {{ authors[1] }}, {{ authors[2] }}{% if get_lang() == 'zh' %} 等人{% else %} et al.{% endif %}
+          {% else %}
+            {{ paper.authors }}
+          {% endif %}
+        </td>
+        <td>{{ paper.year }}</td>
+        <td>{{ strings[paper.status] if paper.status in strings else paper.status }}</td>
+        <td>
+          {% if paper.pdf and paper.pdf != '#' %}
+            <a href="{{ paper.pdf }}" target="_blank" rel="noopener noreferrer" class="text-purple-700 font-semibold">📄</a>
+          {% else %}-{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#pub-table').DataTable({
+        paging: false,
+        info: false,
+        ordering: true,
+        language: {
+          search: '{{ "搜索" if get_lang() == "zh" else "Search" }}:',
+          zeroRecords: '{{ "未找到匹配记录" if get_lang() == "zh" else "No matching records found" }}'
+        },
+        columnDefs: [
+          { width: "5%", targets: 0 },
+          { width: "35%", targets: 1 },
+          { width: "30%", targets: 2 },
+          { width: "10%", targets: 3 },
+          { width: "10%", targets: 4 },
+          { width: "10%", targets: 5 }
+        ]
+      });
+    });
+  </script>
+{% endblock %}

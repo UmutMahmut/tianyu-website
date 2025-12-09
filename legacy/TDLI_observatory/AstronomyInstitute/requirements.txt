@@ -1,0 +1,4 @@
+Flask
+jinja2
+pybtex
+setuptools>=65.0
