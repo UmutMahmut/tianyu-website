@@ -6,7 +6,7 @@
 - **线上站点：** https://tianyu.sjtu.edu.cn/  
 - **仓库：** `UmutMahmut/tianyu-website`
 
-> 说明：站点顶部提供“中文 / EN”切换入口，但目前页面内容以英文为主、部分栏目为中文（持续完善中）。
+> 说明：站点顶部提供“中文 / EN”切换入口，但目前页面内容以英文为主、部分栏目为中文
 
 ---
 
@@ -17,8 +17,8 @@
 ### 项目与设备
 - **项目简介**（`/about`）：项目总览与进展信息  
 - **冷湖台址**（`/about/lenghu`）：台址与环境介绍  
-- **光机系统**（`/about/optics`）：光学/机械系统页面（当前为占位/待补充）  
-- **观测控制**（`/about/control`）：包含内部控制面板入口；页面带有**访问口令**保护（用于嵌入/跳转内部 Dashboard）
+- **光机系统**（`/about/optics`）：光学/相机系统页面（当前为占位/待补充）  
+- **观测控制**（`/about/control`）：包含内部控制面板入口
 
 ### 实时气象
 - **李所天文台（Yuanqi / TDLI Observatory）**（`/weather/yuanqi`）  
@@ -26,7 +26,7 @@
   - 前端直接调用 **Open‑Meteo** 接口展示未来数小时预报（无需后端定时任务）
 - **冷湖天文站**（`/weather/lenghu`）：当前为 *Coming soon* 占位页面
 
-### 动态与传播
+### 天语动态
 - **天语大事记**（`/news/events`）
 - **画廊**（`/news/gallery`）
 - **科教活动**（`/news/outreach`）：当前为 *Coming soon* 占位页面
@@ -97,50 +97,6 @@ python wsgi.py
 - systemd：守护 WSGI 服务并支持平滑重启
 
 （具体配置以服务器实际为准。）
-
----
-
-## 安全与保密：建议的 Git 忽略规则
-
-即使当前 `.env` 未包含敏感信息，也建议**默认不追踪** `.env` 与运行时数据，避免未来误提交密钥/令牌。
-
-建议在 `.gitignore` 增补（示例）：
-
-```gitignore
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-
-# Env / secrets
-.env
-.env.*
-*.pem
-*.key
-
-# Logs & runtime
-*.log
-*.pid
-
-# OS / editor
-.DS_Store
-.idea/
-.vscode/
-
-# Runtime data (weather snapshots etc.)
-app/static/weather_data/*
-!app/static/weather_data/.gitkeep
-!app/static/weather_data/README.md
-```
-
-同时建议提供一个不含密钥的 `.env.example` 供部署参考。
-
----
-
-## 备案信息
-
-页面底部展示 ICP 备案号（以线上页面为准）：**沪ICP备2024070744号-1**。
 
 ---
 
