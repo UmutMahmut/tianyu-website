@@ -1,212 +1,150 @@
 # 天语计划官方网站（Tianyu Project Website）
 
-<p align="center">
-  <img src="app/static/images/logo.jpg" alt="Tianyu Project Logo" width="140" />
-</p>
+本仓库为“天语计划”（Tianyu Project, JUST-P）官方网站代码库。  
+天语计划是面向时间域天文学与系外行星搜索的大视场、高采样频率巡天项目，依托上海交通大学李政道研究所（TDLI）开展。
 
-<p align="center">
-  <strong>JUST-P（天语计划）官方网站代码库</strong><br/>
-  面向时间域天文学与系外行星搜索的大视场高采样频率巡天项目
-</p>
+- **线上站点：** https://tianyu.sjtu.edu.cn/  
+- **仓库：** `UmutMahmut/tianyu-website`
 
-<p align="center">
-  <a href="https://tianyu.sjtu.edu.cn/">线上站点</a> ·
-  <a href="#本地开发与运行">本地运行</a> ·
-  <a href="#生产部署概览">生产部署</a> ·
-  <a href="#目录结构">目录结构</a>
-</p>
-
-<p align="center">
-  <img alt="Python" src="https://img.shields.io/badge/python-3.12%2B-informational">
-  <img alt="Flask" src="https://img.shields.io/badge/flask-3.x-informational">
-  <img alt="License" src="https://img.shields.io/badge/license-TBD-lightgrey">
-</p>
+> 说明：站点顶部提供“中文 / EN”切换入口，但目前页面内容以英文为主、部分栏目为中文（持续完善中）。
 
 ---
 
-## 项目简介
+## 站点现状与主要栏目（以线上版本为准）
 
-本仓库为“天语计划”（Tianyu Project, JUST-P）官方网站的主代码库。  
-天语计划依托上海交通大学李政道研究所开展，聚焦**时间域天文学**与**系外行星搜索**等前沿方向。
+导航结构大致如下：
 
-- **线上访问**：https://tianyu.sjtu.edu.cn/
-- **仓库地址**：https://github.com/UmutMahmut/tianyu-website
+### 项目与设备
+- **项目简介**（`/about`）：项目总览与进展信息  
+- **冷湖台址**（`/about/lenghu`）：台址与环境介绍  
+- **光机系统**（`/about/optics`）：光学/机械系统页面（当前为占位/待补充）  
+- **观测控制**（`/about/control`）：包含内部控制面板入口；页面带有**访问口令**保护（用于嵌入/跳转内部 Dashboard）
 
----
+### 实时气象
+- **李所天文台（Yuanqi / TDLI Observatory）**（`/weather/yuanqi`）  
+  - 展示最新**全天空相机**图像与最新观测点数据（站点静态目录提供 `observatory_latest.jpg/json`）  
+  - 前端直接调用 **Open‑Meteo** 接口展示未来数小时预报（无需后端定时任务）
+- **冷湖天文站**（`/weather/lenghu`）：当前为 *Coming soon* 占位页面
 
-## 功能概览
+### 动态与传播
+- **天语大事记**（`/news/events`）
+- **画廊**（`/news/gallery`）
+- **科教活动**（`/news/outreach`）：当前为 *Coming soon* 占位页面
 
-网站主要面向两类受众：
-
-- **科研人员与合作方**：了解项目科学目标、观测系统与科研成果；
-- **公众与学生**：浏览项目简介、画廊与科教活动等内容。
-
-当前站点（中英文双语）包含：
-
-- 首页：项目简介、特色与快速链接；
-- 关于天语：项目概况、冷湖台址、光机系统、观测控制；
-- 实时气象：源启天文台、冷湖天文站观测点的环境数据展示；
-- 天语动态：重要事件、画廊、科教活动；
-- 科学研究：核心科学目标与相关研究方向；
-- 团队成员：项目团队与合作者介绍。
+### 科学与团队
+- **科学研究**（`/research`）
+- **出版物**（`/publications`）
+- **团队成员**（`/team`）
 
 ---
 
 ## 技术栈与架构
 
-- **后端**：Python + Flask（Jinja2 模板渲染）
-- **前端**：HTML / CSS / JavaScript（静态资源由 Flask + Nginx 托管）
-- **数据驱动内容**：
-  - `app/data/justp_team.json`：团队成员与机构信息
-  - `app/data/publications.bib`：BibTeX 格式论文列表
-  - `app/data/pub_meta.json`：论文与出版物元数据（分类、标签等）
-- **生产部署**：WSGI（Gunicorn / uWSGI）+ Nginx 反向代理（建议 systemd 守护）
+- **后端：** Python + Flask  
+- **模板：** Jinja2  
+- **前端：** 原生 HTML / CSS / JS（少量页面含前端数据请求与展示逻辑）
+- **生产部署：** Nginx 反向代理 + WSGI（Gunicorn / uWSGI）  
+- **运行目录约定：**
+  - 生产部署目录常见为：`/srv/tianyu-site`
+  - Git 工作区建议维护为：`/home/umut/tianyu_git/tianyu-website`（通过同步/发布流程更新线上）
 
 ---
 
-## 目录结构
+## 目录结构（示意）
 
 ```text
 tianyu-website/
   app/
-    __init__.py          # Flask 应用初始化
-    routes.py            # 各页面路由与视图函数
-    data/                # 团队、论文等结构化数据
-    static/              # 静态资源：CSS / JS / 图片
-    templates/           # Jinja2 模板（页面结构与内容）
-  config.py              # 站点配置（环境相关配置建议走 .env）
-  wsgi.py                # WSGI 入口文件（生产部署入口）
-  requirements.txt       # Python 依赖（建议保持最新）
-  .env.example           # 环境变量示例（请按需复制为 .env）
-  .gitignore             # Git 忽略规则
-  README.md              # 本说明文件
-  legacy/                # 历史/迁移过程中的归档（如保留）
+    __init__.py
+    routes.py
+    static/
+      weather_data/          # 运行时气象数据（建议不纳入 Git 跟踪）
+    templates/
+  wsgi.py
+  config.py
+  requirements.txt          # 如存在，以其为准
+  .env                      # 本地/服务器环境变量（建议仅本地存在）
+  .gitignore
+  README.md
 ```
-
-> **注意**：生产环境通常会有一个**部署目录**（例如 `/srv/tianyu-site`）。  
-> 推荐工作流是：**在 Git 仓库中开发与提交 → 再同步到部署目录 → 重启服务**，避免在部署目录直接“热改”。
 
 ---
 
-## 本地开发与运行
-
-### 1) 克隆仓库
+## 本地开发
 
 ```bash
 git clone git@github.com:UmutMahmut/tianyu-website.git
 cd tianyu-website
-```
 
-### 2) 创建虚拟环境并安装依赖
-
-建议 Python **3.12+**（与当前服务器环境保持一致更省事）。
-
-```bash
 python -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
+source venv/bin/activate
 
 pip install -r requirements.txt
-```
-
-### 3) 启动开发服务器
-
-**方式 A：Flask 命令（推荐）**
-
-```bash
-export FLASK_APP=wsgi.py          # Windows: set FLASK_APP=wsgi.py
-export FLASK_ENV=development
-flask run                         # http://127.0.0.1:5000
-```
-
-**方式 B：直接运行 WSGI 入口（兼容）**
-
-```bash
 python wsgi.py
+# 或：flask run
 ```
 
+开发完成后建议走“**Git 提交 → 拉取到服务器 → 重启服务**”的发布方式，尽量避免只在 `/srv/tianyu-site` 里做“不可追溯”的临时修改。
+
 ---
 
-## 生产部署概览
+## 生产部署（简要）
 
-> 下面给出可用的“参考模板”，实际参数请按服务器路径/端口/域名调整。
+典型结构：
 
-### Nginx（示意）
+- Nginx：负责 HTTPS、静态资源与反向代理
+- Gunicorn/uWSGI：加载 `wsgi.py` 暴露的 Flask app
+- systemd：守护 WSGI 服务并支持平滑重启
 
-- 静态资源：直接由 Nginx 托管（`/static/`）
-- 动态请求：反代到 Gunicorn / uWSGI 的监听端口或 Unix Socket
+（具体配置以服务器实际为准。）
 
-### Gunicorn + systemd（示意）
+---
 
-`/etc/systemd/system/tianyu-website.service`：
+## 安全与保密：建议的 Git 忽略规则
 
-```ini
-[Unit]
-Description=Tianyu Website (Gunicorn)
-After=network.target
+即使当前 `.env` 未包含敏感信息，也建议**默认不追踪** `.env` 与运行时数据，避免未来误提交密钥/令牌。
 
-[Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/srv/tianyu-site
-EnvironmentFile=/srv/tianyu-site/.env
-ExecStart=/srv/tianyu-site/venv/bin/gunicorn -w 4 -b 127.0.0.1:8001 wsgi:app
-Restart=always
-RestartSec=3
+建议在 `.gitignore` 增补（示例）：
 
-[Install]
-WantedBy=multi-user.target
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Env / secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Logs & runtime
+*.log
+*.pid
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Runtime data (weather snapshots etc.)
+app/static/weather_data/*
+!app/static/weather_data/.gitkeep
+!app/static/weather_data/README.md
 ```
 
-启用与重启：
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now tianyu-website
-sudo systemctl restart tianyu-website
-sudo systemctl status tianyu-website
-```
+同时建议提供一个不含密钥的 `.env.example` 供部署参考。
 
 ---
 
-## 配置与安全建议
+## 备案信息
 
-- **不要提交真实密钥/Token** 到仓库：
-  - 使用 `.env.example` 提供示例；
-  - 真实 `.env` 仅在服务器/本机保存，并加入 `.gitignore`。
-- 建议开启最小权限与常规安全措施（Nginx 仅暴露必要端口，Gunicorn 监听本地回环或 Unix Socket）。
+页面底部展示 ICP 备案号（以线上页面为准）：**沪ICP备2024070744号-1**。
 
 ---
 
-## 更新与发布流程（推荐）
+## 维护者
 
-> 典型流程：仓库提交 → 同步到部署目录 → 重启服务。
-
-```bash
-# 在仓库工作区
-git pull
-git add -A
-git commit -m "Update site"
-git push
-
-# 在服务器部署目录（或由 CI/CD / rsync 完成）
-rsync -a --delete /home/umut/tianyu_git/tianyu-website/ /srv/tianyu-site/
-
-# 重启服务
-sudo systemctl restart tianyu-website
-```
-
----
-
-## 历史版本说明
-
-- `legacy/`：用于保留迁移过程中的旧版本或历史结构（如需可继续精简）。
-- 早期原型项目（已弃用/不再维护）：`TDLI_observatory/AstronomyInstitute`（已在本机备份后可删除）。
-
----
-
-## 维护与联系
-
-- 官方网站：https://tianyu.sjtu.edu.cn/
-- 维护：天语项目组（Tianyu Team）
-
-欢迎科研合作、学生参与与公众科普交流。
+天语项目组（Tianyu Team）  
+如需协作开发与部署规范（发布流程、systemd/nginx 配置、数据同步脚本等），建议在本仓库补充 `docs/` 文档目录进行沉淀。
