@@ -1,0 +1,10 @@
+{# app/templates/_partials/home_metrics.html #}
+
+<section class="home-section" aria-label="Metrics">
+  <div class="home-metrics">
+    {{ ui.metric(is_zh and '1米' or '1 m', is_zh and '望远镜口径' or 'Aperture') }}
+    {{ ui.metric(is_zh and '10 平方度' or '10 deg²', is_zh and '视场范围' or 'Field of View') }}
+    {{ ui.metric(is_zh and '约1亿' or '~100M', is_zh and '目标天体' or 'Target Objects') }}
+    {{ ui.metric(is_zh and '0.3秒–1周' or '0.3 s–1 week', is_zh and '采样频率' or 'Cadence') }}
+  </div>
+</section>

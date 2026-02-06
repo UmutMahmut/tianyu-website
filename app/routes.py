@@ -28,14 +28,14 @@ lang_map = {
         'team_title': '天语望远镜团队',     # 团队页大标题
 
         'news': '天语动态',
-        'major_events': '重要事件',
+        'events': '重要事件',
         'education_outreach': '科教活动',
         'gallery': '画廊',
         'research': '科学研究',
         'news_placeholder': '项目最新进展、会议活动、建设动态等将发布于此。',
         'research_placeholder': '论文发表、数据发布、科学成果将在本页面集中展示。',
         'weather': '实时气象',
-        'yuanqi': '源启天文台',
+        'yuanqi': '李所天文台',
         'lenghu': '冷湖天文站',
         'welcome': '欢迎访问天语项目网站',
         'intro': '本网站展示与维护多个天文观测项目，包含实时气象、团队介绍和科研动态。',
@@ -81,14 +81,14 @@ lang_map = {
         'team_title': 'Tianyu Telescope Team',
 
         'news': 'Tianyu News',
-        'major_events': 'Major Events',
+        'events': 'Major Events',
         'education_outreach': 'Education Outreach',
         'gallery': 'Gallery',
         'research': 'Research',
         'news_placeholder': 'Latest updates, events, and construction progress will be published here.',
         'research_placeholder': 'Scientific publications and data releases will be featured here.',
         'weather': 'Weather',
-        'yuanqi': 'Yuanqi Observatory',
+        'yuanqi': 'TDLI Observatory',
         'lenghu': 'Lenghu Station',
         'welcome': 'Welcome to Tianyu Project Website',
         'intro': 'This site presents ongoing astronomical projects, weather data, and team updates.',
@@ -118,13 +118,16 @@ lang_map = {
 
 
 def get_lang():
-    if 'lang' not in session:
-        session['lang'] = 'zh'
-    return session['lang']
-
+    lang = session.get('lang', 'zh')
+    if lang not in lang_map:
+        lang = 'zh'
+        session['lang'] = lang
+    return lang
 
 @bp.route('/lang/<lang>')
 def set_lang(lang):
+    if lang not in lang_map:
+        lang = 'zh'
     session['lang'] = lang
     return redirect(request.referrer or '/')
 
@@ -177,12 +180,21 @@ def news_events():
 def news_gallery():
     strings = lang_map[get_lang()]
     images = [
-        {'filename': 'glry_1.jpg', 'caption': strings.get('gallery_caption_1', '')},
-        {'filename': 'glry_2.jpg', 'caption': strings.get('gallery_caption_2', '')},
-        {'filename': 'glry_3.jpg', 'caption': strings.get('gallery_caption_3', '')},
-        {'filename': 'glry_4.jpg', 'caption': strings.get('gallery_caption_4', '')},
-        {'filename': 'glry_5.jpg', 'caption': strings.get('gallery_caption_5', '')},
-        {'filename': 'glry_6.jpg', 'caption': strings.get('gallery_caption_6', '')},
+        {'filename': 'glry_1.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_2.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_3.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_4.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_5.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_6.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_7.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_8.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_9.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_10.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_11.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_12.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_13.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_14.jpg', 'caption': strings.get('', '')},
+        {'filename': 'glry_15.jpg', 'caption': strings.get('', '')},
     ]
     return render_template('news/gallery.html', strings=strings, images=images)
 
@@ -209,7 +221,7 @@ def research():
 @bp.route('/weather/yuanqi')
 def weather_yuanqi():
     strings = lang_map[get_lang()]
-    return render_template('weather/yuanqi.html', strings=strings)
+    return render_template('weather/TDLI.html', strings=strings)
 
 
 @bp.route('/weather/lenghu')

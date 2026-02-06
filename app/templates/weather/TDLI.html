@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+{% block title %}{{ strings.yuanqi }} - {{ strings.weather }} - {{ strings.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ strings.yuanqi }} {{ strings.weather }}</h1>
+
+{% if session.get('lang') == 'zh' %}
+<p>李所天文台位于上海交通大学李政道研究所（浦东新区）。本页面聚合楼顶全天相机图像与自动气象站数据，用于实时展示当地的观测环境。</p>
+{% else %}
+<p>TDLI Observatory is located at the Tsung-Dao Lee Institute (Pudong, Shanghai). This page aggregates the rooftop all-sky camera and automatic weather station to present local observing conditions in real time.</p>
+{% endif %}
+
+<div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 10px; margin: 24px 0;">
+  <h2 style="color: #1565c0; margin-bottom: 10px; text-align: center;">
+    {% if session.get('lang') == 'zh' %}实时气象信息{% else %}Real Time Weather Information{% endif %}
+  </h2>
+  <p style="text-align: center; margin: 0; color: #666;">
+    {% if session.get('lang') == 'zh' %}
+    含全天相机与自动气象站数据，便于快速评估观测条件
+    {% else %}
+    Includes all-sky cam and AWS metrics — a quick overview of observing conditions
+    {% endif %}
+  </p>
+</div>
+
+<style>
+  .yq-layout { display: flex; gap: 20px; align-items: stretch; }
+  .yq-left  { flex: 2; min-width: 0; }
+  .yq-right { flex: 1; display:flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .yq-card  { background:#fff; border-radius:12px; box-shadow:0 0 8px rgba(0,0,0,0.08); padding:16px; }
+  .yq-img   { width: 100%; height: 100%; max-height: 100%; object-fit: contain; border-radius:10px; background:#f6f7f9; }
+  .yq-row   { font-size: 15px; margin: 6px 0; color:#111; }
+  .yq-muted { color:#666; font-size: 13px; }
+
+  .yq-chartbox{ position: relative; height: 280px; width: 100%; overflow: hidden; border-radius: 10px; background:#fff; }
+  .yq-chartbox canvas{ width: 100% !important; height: 100% !important; display: block; }
+
+  .yq-titlebar{ display:flex; justify-content: space-between; align-items:center; gap:10px; margin:0 0 8px 0; }
+  .yq-actions{ display:flex; gap:8px; align-items:center; }
+  .yq-btn{
+    border: 1px solid #d0d7de;
+    background: #f6f8fa;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #24292f;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .yq-btn:hover { background:#eef1f4; }
+
+  .yq-modal{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 9999;
+  }
+  .yq-modal.open{ display:flex; }
+  .yq-modal-card{
+    width: min(1200px, 95vw);
+    height: min(80vh, 900px);
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    display:flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .yq-modal-head{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+  }
+  .yq-modal-title{ font-size: 16px; font-weight: 600; color:#111; }
+  .yq-modal-actions{ display:flex; gap:8px; }
+  .yq-modal-body{
+    flex: 1;
+    padding: 10px 14px 14px;
+    min-height: 0;
+    display:flex;
+  }
+  .yq-chartbox-big{ position: relative; width:100%; height:100%; min-height: 0; }
+  .yq-chartbox-big canvas{ width: 100% !important; height: 100% !important; display:block; }
+
+  .yq-right .yq-card {display: flex; flex-direction: column;  }
+  #yqWeather { flex: 0 0 auto; }
+  #yqForecastCard { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+  @media (max-width: 1100px) { .yq-layout { flex-direction: column; } }
+</style>
+
+<div class="yq-layout">
+  <div class="yq-left yq-card">
+    <h3 style="margin:0 0 10px 0;">
+      {% if session.get('lang') == 'zh' %}全天相机 / 最新图像{% else %}All-sky / Latest Image{% endif %}
+    </h3>
+    <img id="yqImg" class="yq-img" alt="All-sky latest image" src="/static/yuanqi/latest.jpg">
+    <div class="yq-muted" style="margin-top:8px;">
+      Data path: <code>/static/yuanqi/latest.jpg</code>
+    </div>
+  </div>
+
+  <div class="yq-right">
+    <div class="yq-card" id="yqWeather">
+      <h3 style="margin:0 0 10px 0;">
+        {% if session.get('lang') == 'zh' %}楼顶气象实况{% else %}Live Weather{% endif %}
+      </h3>
+      <div class="yq-row yq-muted">加载中...</div>
+      <div class="yq-muted" style="margin-top:10px;">
+        JSON path: <code>/static/yuanqi/latest_weather.json</code>
+      </div>
+    </div>
+
+    <div class="yq-card">
+      <div class="yq-titlebar">
+        <h3 style="margin:0;">
+          {% if session.get('lang') == 'zh' %}未来24小时天气趋势{% else %}Next 24h Forecast{% endif %}
+        </h3>
+        <div class="yq-actions">
+          <button id="yqZoom" class="yq-btn" type="button" title="放大查看">放大</button>
+          <button id="yqDownloadSmall" class="yq-btn" type="button" title="下载PNG">下载PNG</button>
+        </div>
+      </div>
+
+      <div id="yqForecastHint" class="yq-muted" style="margin-bottom:8px;">
+        {% if session.get('lang') == 'zh' %}
+        预报来自 Open-Meteo（浏览器端拉取）
+        {% else %}
+        Forecast from Open-Meteo (fetched in browser)
+        {% endif %}
+      </div>
+
+      <div class="yq-chartbox" id="yqChartWrap" title="点击放大">
+        <canvas id="yqChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="yqModal" class="yq-modal" aria-hidden="true">
+  <div class="yq-modal-card" role="dialog" aria-modal="true" aria-labelledby="yqModalTitle">
+    <div class="yq-modal-head">
+      <div id="yqModalTitle" class="yq-modal-title">
+        {% if session.get('lang') == 'zh' %}未来24小时天气趋势{% else %}Next 24h Forecast{% endif %}
+      </div>
+      <div class="yq-modal-actions">
+        <button id="yqDownloadBig" class="yq-btn" type="button">下载PNG</button>
+        <button id="yqClose" class="yq-btn" type="button">关闭</button>
+      </div>
+    </div>
+    <div class="yq-modal-body">
+      <div class="yq-chartbox-big">
+        <canvas id="yqChartBig"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 24px; padding: 14px; background: #f8f9fa; border-radius: 8px;">
+  <p style="color: #6c757d; font-style: italic; margin:0;">
+    {% if session.get('lang') == 'zh' %}数据自动更新 | 7×24 小时监测{% else %}Automatic updates | 24/7 monitoring{% endif %}
+  </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+(() => {
+  const BASE = "/static/yuanqi";
+  const imgEl = document.getElementById("yqImg");
+  const weatherEl = document.getElementById("yqWeather");
+  const hintEl = document.getElementById("yqForecastHint");
+
+  const wrapSmall = document.getElementById("yqChartWrap");
+  const btnZoom = document.getElementById("yqZoom");
+  const btnDownloadSmall = document.getElementById("yqDownloadSmall");
+  const modal = document.getElementById("yqModal");
+  const btnClose = document.getElementById("yqClose");
+  const btnDownloadBig = document.getElementById("yqDownloadBig");
+
+  let chartSmall = null;
+  let chartBig = null;
+  let lastForecast = null;
+
+  function bust(url) {
+    const sep = url.includes("?") ? "&" : "?";
+    return url + sep + "t=" + Date.now();
+  }
+
+  function updateImage() { imgEl.src = bust(BASE + "/latest.jpg"); }
+
+  async function updateWeather() {
+    try {
+      const r = await fetch(bust(BASE + "/latest_weather.json"), { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const data = await r.json();
+
+      const mapping = {
+        temperature: "气温（℃）",
+        humidity: "湿度（%）",
+        pressure: "气压（hPa）",
+        cloud: "云量指数（%）",
+        rainfall: "雨量（mm/h）",
+        wind_speed: "风速（m/s）",
+        gust_speed: "阵风风速（m/s）",
+        wind_direction: "风向（°）",
+        dew_point: "露点（℃）",
+        sky_brightness: "天空亮度（lux）",
+        SQM: "SQM（mag/arcsec²）",
+        seeing: "视宁度（arcsec）",
+        time: "更新时间"
+      };
+      const order = [
+        "temperature","humidity","pressure","cloud","rainfall",
+        "wind_speed","gust_speed","wind_direction","dew_point",
+        "sky_brightness","SQM","seeing","time"
+      ];
+
+      weatherEl.innerHTML = weatherEl.querySelector("h3").outerHTML;
+      for (const k of order) {
+        if (data[k] === undefined) continue;
+        const div = document.createElement("div");
+        div.className = "yq-row";
+        div.textContent = `${mapping[k] || k}：${data[k]}`;
+        weatherEl.appendChild(div);
+      }
+    } catch (e) {
+      weatherEl.innerHTML = weatherEl.querySelector("h3").outerHTML +
+        "<div class='yq-row yq-muted'>无法获取气象数据</div>";
+    }
+  }
+
+  function buildChart(ctx, rows, isBig) {
+    const t = rows.map(x => x.time);
+    const temps = rows.map(x => x.temp);
+    const hums = rows.map(x => x.humidity);
+    const clouds = rows.map(x => x.cloud);
+
+    const labels = t.map(iso => {
+      const d = new Date(iso);
+      const h = String(d.getHours()).padStart(2, "0");
+      return isBig ? `${d.getMonth()+1}/${d.getDate()} ${h}:00` : `${h}:00`;
+    });
+
+    const tMin = Math.min(...temps) - 1;
+    const tMax = Math.max(...temps) + 1;
+
+    return new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: "气温（℃）", data: temps, yAxisID: "y", fill: true, tension: 0.28 },
+          { label: "湿度（%）", data: hums,  yAxisID: "y1", fill: true, tension: 0.28 },
+          { label: "云量（%）", data: clouds, yAxisID: "y1", fill: true, tension: 0.28 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        resizeDelay: 200,
+        interaction: { mode: "index", intersect: false },
+        scales: {
+          x: { ticks: { maxTicksLimit: isBig ? 24 : 12 } },
+          y:  { type:"linear", position:"left", title:{ display:true, text:"气温（℃）" }, min: tMin, max: tMax },
+          y1: { type:"linear", position:"right", title:{ display:true, text:"湿度/云量（%）" },
+                grid:{ drawOnChartArea:false }, min:0, max:100 }
+        },
+        plugins: { legend: { position: "bottom" } }
+      }
+    });
+  }
+
+  async function loadForecast() {
+    try {
+      if (!window.Chart) { hintEl.textContent = "Chart.js 未加载（可能被浏览器策略限制）。"; return; }
+
+      const lat = 31.17, lon = 121.61;
+      const url =
+        "https://api.open-meteo.com/v1/forecast" +
+        `?latitude=${lat}&longitude=${lon}` +
+        "&hourly=temperature_2m,relative_humidity_2m,cloud_cover" +
+        "&forecast_hours=24" +
+        "&timezone=Asia%2FShanghai";
+
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const j = await r.json();
+      const hourly = j.hourly || {};
+
+      const time = hourly.time || [];
+      const temps = hourly.temperature_2m || [];
+      const hums = hourly.relative_humidity_2m || [];
+      const clouds = hourly.cloud_cover || [];
+
+      const n = Math.min(time.length, temps.length, hums.length, clouds.length);
+      const rows = [];
+      for (let i = 0; i < n; i++) rows.push({ time: time[i], temp: temps[i], humidity: hums[i], cloud: clouds[i] });
+
+      lastForecast = rows;
+      hintEl.textContent = "";
+
+      const ctx = document.getElementById("yqChart").getContext("2d");
+      if (chartSmall) chartSmall.destroy();
+      chartSmall = buildChart(ctx, rows, false);
+
+      if (modal.classList.contains("open")) setTimeout(buildBig, 60);
+    } catch (e) {
+      hintEl.textContent = "预报加载失败（网络或策略限制）。";
+    }
+  }
+
+  function downloadChartPNG(chart, filename) {
+    if (!chart) return;
+    const a = document.createElement("a");
+    a.href = chart.toBase64Image("image/png", 1.0);
+    a.download = filename || ("forecast_" + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + ".png");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function buildBig() {
+    if (!lastForecast) return;
+    const ctx = document.getElementById("yqChartBig").getContext("2d");
+    if (chartBig) chartBig.destroy();
+    chartBig = buildChart(ctx, lastForecast, true);
+  }
+
+  function openModal() { modal.classList.add("open"); setTimeout(buildBig, 60); }
+  function closeModal() { modal.classList.remove("open"); }
+
+  wrapSmall.addEventListener("click", openModal);
+  btnZoom.addEventListener("click", openModal);
+  btnClose.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+  btnDownloadSmall.addEventListener("click", () => downloadChartPNG(chartSmall, "forecast_small.png"));
+  btnDownloadBig.addEventListener("click", () => downloadChartPNG(chartBig, "forecast_large.png"));
+
+  updateImage();
+  updateWeather();
+  loadForecast();
+
+  setInterval(updateImage, 60 * 1000);
+  setInterval(updateWeather, 60 * 1000);
+  setInterval(loadForecast, 30 * 60 * 1000);
+})();
+</script>
+{% endblock %}

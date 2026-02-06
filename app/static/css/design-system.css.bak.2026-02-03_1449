@@ -1,0 +1,121 @@
+/* /static/css/design-system.css */
+/* ========== 0) Design Tokens ========== */
+:root {
+  /* Brand colors (先给一套可用的，后续再按你们视觉稿校准) */
+  --ty-brand: #0B3A66;
+  --ty-brand-2: #0F5AA6;
+  --ty-text: #111827;
+  --ty-text-muted: #4B5563;
+  --ty-bg: #FFFFFF;
+  --ty-bg-soft: #F6F8FB;
+  --ty-border: #E5E7EB;
+
+  /* Typography */
+  --ty-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                  "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+                  "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --ty-font-serif: ui-serif, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+
+  /* Type scale */
+  --ty-text-sm: 0.875rem;
+  --ty-text-base: 1rem;
+  --ty-text-lg: 1.125rem;
+  --ty-h1: 2rem;
+  --ty-h2: 1.5rem;
+  --ty-h3: 1.25rem;
+
+  /* Spacing */
+  --ty-1: 4px;
+  --ty-2: 8px;
+  --ty-3: 12px;
+  --ty-4: 16px;
+  --ty-5: 20px;
+  --ty-6: 24px;
+  --ty-8: 32px;
+  --ty-10: 40px;
+
+  /* Radius & shadow */
+  --ty-radius: 14px;
+  --ty-radius-sm: 10px;
+  --ty-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --ty-shadow-sm: 0 6px 18px rgba(0,0,0,0.08);
+
+  /* Layout */
+  --ty-container: 1100px;
+}
+
+/* ========== 1) Base styles ========== */
+html, body { height: 100%; }
+body {
+  margin: 0;
+  max-width: none; /* 保险：即便未来误引入 site.css 一类限宽规则，也不至于“悄悄变窄” */
+  font-family: var(--ty-font-sans);
+  color: var(--ty-text);
+  background: var(--ty-bg);
+  line-height: 1.65;
+}
+
+main {
+  background: var(--ty-bg);
+}
+
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 标题统一一点（先不追求“最好看”，追求“统一”） */
+h1 { font-size: var(--ty-h1); margin: var(--ty-8) 0 var(--ty-4); letter-spacing: -0.02em; }
+h2 { font-size: var(--ty-h2); margin: var(--ty-6) 0 var(--ty-3); letter-spacing: -0.01em; }
+h3 { font-size: var(--ty-h3); margin: var(--ty-5) 0 var(--ty-2); }
+
+.container {
+  max-width: var(--ty-container);
+  margin: 0 auto;
+  padding: 0 var(--ty-4);
+}
+
+/* ========== 2) Header brand area (给 TDLI logo 准备) ========== */
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ty-3);
+}
+
+.site-brand__divider {
+  width: 1px;
+  height: 28px;
+  background: var(--ty-border);
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ty-2);
+}
+
+.site-logo img {
+  display: block;
+  height: 28px;
+  width: auto;
+}
+
+.site-logo__title {
+  font-weight: 600;
+  color: var(--ty-text);
+  white-space: nowrap;
+}
+
+/* ========== 3) Dropdown 去掉“小圆圈”/列表 marker（关键） ========== */
+/* 下拉菜单出现小圆圈，绝大多数是 <ul><li> 的默认 marker 导致；用 list-style-type:none + 清 margin/padding */
+header nav ul,
+header nav ol,
+header nav li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 更保险：如果浏览器仍绘制 marker（某些情况下），直接清 marker */
+header nav li::marker { content: ""; }
+
+/* 如果你们 dropdown 是 nav 内的二级 ul，额外保证 */
+header nav ul ul { list-style: none; margin: 0; padding: 0; }

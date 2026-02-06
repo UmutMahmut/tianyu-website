@@ -1,0 +1,525 @@
+/* /static/css/design-system.css */
+/* Tianyu Design System — Kimi-inspired dark glass + tokenized chrome */
+
+/* ========== 0) Design Tokens ========== */
+:root {
+  color-scheme: dark light;
+
+  /* --- Accent / Brand --- */
+  --ty-accent: #8b5cf6;     /* purple */
+  --ty-accent-2: #38bdf8;   /* sky */
+  --ty-accent-3: #2563eb;   /* blue */
+
+  /* --- Default: DARK scheme (align with Kimi) --- */
+  --ty-bg: #050814;
+  --ty-bg-soft: rgba(255, 255, 255, 0.04);
+  --ty-surface: rgba(255, 255, 255, 0.06);     /* glass surface */
+  --ty-surface-2: rgba(255, 255, 255, 0.09);   /* hover surface */
+  --ty-border: rgba(255, 255, 255, 0.10);
+
+  --ty-text: rgba(255, 255, 255, 0.92);
+  --ty-text-muted: rgba(255, 255, 255, 0.68);
+  --ty-link: rgba(255, 255, 255, 0.92);
+
+  /* --- Tokenized "chrome" backgrounds (header/footer) --- */
+  --ty-chrome-bg: rgba(8, 10, 22, 0.65);
+  --ty-chrome-bg-blur: rgba(8, 10, 22, 0.45);
+
+  /* --- Dropdown menu background --- */
+  --ty-menu-bg: rgba(12, 14, 28, 0.72);
+  --ty-menu-bg-blur: rgba(12, 14, 28, 0.52);
+
+  /* Typography */
+  --ty-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                  "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+                  "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --ty-font-serif: ui-serif, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+
+  /* Type scale */
+  --ty-text-sm: 0.875rem;
+  --ty-text-base: 1rem;
+  --ty-text-lg: 1.125rem;
+  --ty-h1: 2.1rem;
+  --ty-h2: 1.6rem;
+  --ty-h3: 1.25rem;
+
+  /* Spacing */
+  --ty-1: 4px;
+  --ty-2: 8px;
+  --ty-3: 12px;
+  --ty-4: 16px;
+  --ty-5: 20px;
+  --ty-6: 24px;
+  --ty-8: 32px;
+  --ty-10: 40px;
+  --ty-12: 48px;
+
+  /* Radius & shadow */
+  --ty-radius: 16px;
+  --ty-radius-sm: 12px;
+  --ty-shadow: 0 18px 60px rgba(0,0,0,0.45);
+  --ty-shadow-sm: 0 10px 30px rgba(0,0,0,0.35);
+
+  /* Layout */
+  --ty-container: 1200px;
+  --ty-container-wide: 1600px;
+}
+
+/* Light preference: override tokens (including header/footer/menu backgrounds!) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --ty-bg: #f7f9ff;
+    --ty-bg-soft: rgba(15, 23, 42, 0.03);
+    --ty-surface: rgba(255, 255, 255, 0.78);
+    --ty-surface-2: rgba(255, 255, 255, 0.92);
+    --ty-border: rgba(15, 23, 42, 0.10);
+
+    --ty-text: rgba(15, 23, 42, 0.92);
+    --ty-text-muted: rgba(15, 23, 42, 0.65);
+    --ty-link: rgba(15, 23, 42, 0.92);
+
+    --ty-shadow: 0 18px 60px rgba(2,6,23,0.12);
+    --ty-shadow-sm: 0 10px 30px rgba(2,6,23,0.10);
+
+    /* ✅ Fix: chrome/menu backgrounds must also become light */
+    --ty-chrome-bg: rgba(255, 255, 255, 0.78);
+    --ty-chrome-bg-blur: rgba(255, 255, 255, 0.62);
+
+    --ty-menu-bg: rgba(255, 255, 255, 0.92);
+    --ty-menu-bg-blur: rgba(255, 255, 255, 0.82);
+  }
+}
+
+/* ========== 1) Base styles ========== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--ty-font-sans);
+  color: var(--ty-text);
+  line-height: 1.65;
+  display: flex;
+  flex-direction: column;
+
+  /* Kimi-like "space" background */
+  background:
+    radial-gradient(1200px 650px at 18% 18%, rgba(139,92,246,0.32), transparent 60%),
+    radial-gradient(900px 520px at 82% 12%, rgba(56,189,248,0.22), transparent 55%),
+    radial-gradient(720px 420px at 72% 82%, rgba(37,99,235,0.18), transparent 60%),
+    linear-gradient(180deg, var(--ty-bg) 0%, rgba(5, 8, 20, 0.98) 55%, var(--ty-bg) 100%);
+}
+
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.75) 1px, transparent 1.6px),
+    radial-gradient(rgba(255,255,255,0.55) 1px, transparent 1.6px),
+    radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1.6px);
+  background-size: 110px 110px, 160px 160px, 220px 220px;
+  background-position: 0 0, 40px 70px, 90px 30px;
+}
+
+main { flex: 1 0 auto; padding: var(--ty-10) 0; }
+
+a { color: var(--ty-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible{
+  outline: 2px solid rgba(56,189,248,0.75);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Headings */
+h1 { font-size: var(--ty-h1); margin: var(--ty-8) 0 var(--ty-4); letter-spacing: -0.02em; }
+h2 { font-size: var(--ty-h2); margin: var(--ty-6) 0 var(--ty-3); letter-spacing: -0.01em; }
+h3 { font-size: var(--ty-h3); margin: var(--ty-5) 0 var(--ty-2); }
+
+.container {
+  max-width: var(--ty-container);
+  margin: 0 auto;
+  padding: 0 var(--ty-4);
+}
+
+/* ========== 2) Header / Nav ========== */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ty-4);
+
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--ty-border);
+
+  /* ✅ tokenized */
+  background: var(--ty-chrome-bg);
+}
+
+@supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+  header {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    background: var(--ty-chrome-bg-blur);
+  }
+}
+
+.header-left { display: flex; align-items: center; gap: 14px; }
+
+header img {
+  height: 44px;
+  width: auto;
+  border-radius: 12px;
+  box-shadow: var(--ty-shadow-sm);
+}
+
+.site-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  user-select: none;
+  margin: 0;
+  line-height: 1;
+
+  background: linear-gradient(90deg, var(--ty-accent) 0%, var(--ty-accent-2) 55%, rgba(255,255,255,0.90) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-color-scheme: light) {
+  .site-title{
+    background: linear-gradient(90deg, #06B6D4 0%, #3B82F6 60%, #8B5CF6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 1px 1px rgba(2,6,23,0.18));
+  }
+}
+nav > ul {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+/* ========== 3) Dropdown: remove markers + glass menu ========== */
+header nav ul,
+header nav ol,
+header nav li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+header nav li::marker { content: ""; }
+header nav ul ul { list-style: none; margin: 0; padding: 0; }
+
+nav > ul > li { position: relative; font-size: 1rem; font-weight: 500; }
+
+nav ul li > a,
+nav ul li > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  color: var(--ty-text);
+  background: transparent;
+  transition: background .16s ease, transform .16s ease, color .16s ease;
+}
+
+nav ul li > a:hover,
+nav ul li > span:hover {
+  background: var(--ty-bg-soft);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+nav ul li.has-sub > ul {
+  display: block;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+
+  min-width: 220px;
+  z-index: 1200;
+
+  padding: 10px 0;
+  border-radius: 14px;
+  border: 1px solid var(--ty-border);
+  box-shadow: var(--ty-shadow);
+
+  background: var(--ty-menu-bg);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity .15s ease, transform .15s ease, visibility 0s linear .15s;
+}
+
+@supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+  nav ul li.has-sub > ul {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    background: var(--ty-menu-bg-blur);
+  }
+}
+
+nav ul li.has-sub:hover > ul,
+nav ul li.has-sub:focus-within > ul,
+nav ul li.has-sub.open > ul {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition: opacity .15s ease, transform .15s ease, visibility 0s;
+}
+
+nav ul li ul li { padding: 0 14px; }
+
+nav ul li ul li a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--ty-text);
+  text-decoration: none;
+  transition: background .16s ease, transform .16s ease;
+}
+
+nav ul li ul li a:hover {
+  background: var(--ty-surface-2);
+  transform: translateX(2px);
+}
+
+/* ========== 4) Main content shell ========== */
+.main-content {
+  width: 100%;
+  max-width: var(--ty-container-wide);
+  margin: 0 auto;
+
+  padding: var(--ty-10) var(--ty-10);
+  border-radius: 22px;
+  border: 1px solid var(--ty-border);
+  background: var(--ty-surface);
+  box-shadow: var(--ty-shadow);
+
+  min-height: 60vh;
+}
+
+@supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+  .main-content {
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+}
+
+/* ========== 5) Footer ========== */
+footer {
+  border-top: 1px solid var(--ty-border);
+  background: var(--ty-chrome-bg);
+
+  padding: 26px 0 16px 0;
+  margin-top: 22px;
+
+  color: var(--ty-text);
+}
+
+@supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+  footer {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    background: var(--ty-chrome-bg-blur);
+  }
+}
+
+.footer-content {
+  width: 100%;
+  max-width: var(--ty-container-wide);
+  margin: 0 auto;
+  padding: 0 var(--ty-10);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 220px 1.2fr 1fr;
+  gap: 26px;
+  align-items: start;
+}
+
+.footer-logo { padding-top: 4px; min-width: 160px; }
+.footer-logo a { display: inline-block; text-decoration: none; }
+
+.tdli-logo {
+  display: block;
+  height: 44px;
+  width: auto;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.footer-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.05rem;
+  color: rgba(56,189,248,0.90);
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--ty-text-muted);
+}
+.footer-section ul li { margin: 0 0 8px 0; }
+
+.footer-links a { color: var(--ty-text); }
+.footer-links a:hover { text-decoration: underline; }
+
+.footer-bottom {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ty-border);
+  text-align: center;
+}
+
+.icp-info {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ty-text-muted);
+}
+
+/* ========== 6) UI components (shared across pages) ========== */
+.ty-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--ty-border);
+
+  color: var(--ty-text);
+  background: transparent;
+
+  text-decoration:none;
+  user-select:none;
+
+  transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.ty-btn:hover{ transform: translateY(-1px); text-decoration:none; }
+
+.ty-btn__icon{ line-height: 1; }
+
+.ty-btn--primary{
+  background: linear-gradient(90deg, rgba(139,92,246,0.95), rgba(56,189,248,0.85));
+  color: rgba(255,255,255,0.95);
+  border-color: rgba(255,255,255,0.18);
+}
+.ty-btn--primary:hover{
+  box-shadow: var(--ty-shadow-sm);
+}
+
+.ty-btn--secondary{
+  background: var(--ty-bg-soft);
+  color: var(--ty-text);
+}
+.ty-btn--secondary:hover{
+  background: var(--ty-surface-2);
+}
+
+.ty-btn--ghost{
+  width: 100%;
+  background: transparent;
+  color: var(--ty-text);
+}
+
+.ty-card{
+  border-radius: 16px;
+  border: 1px solid var(--ty-border);
+  background: var(--ty-surface);
+  padding: 16px;
+}
+
+.ty-card--hover{
+  transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.ty-card--hover:hover{
+  transform: translateY(-2px);
+  background: var(--ty-surface-2);
+  box-shadow: var(--ty-shadow-sm);
+}
+
+.ty-metric__value{
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.ty-metric__label{
+  margin-top: 6px;
+  color: var(--ty-text-muted);
+  font-size: 0.92rem;
+}
+
+/* ========== 7) Legacy / compatibility helpers (optional, harmless) ========== */
+.site-brand { display: flex; align-items: center; gap: var(--ty-3); }
+.site-brand__divider { width: 1px; height: 28px; background: var(--ty-border); }
+.site-logo { display: inline-flex; align-items: center; gap: var(--ty-2); }
+.site-logo img { display: block; height: 28px; width: auto; }
+.site-logo__title { font-weight: 600; color: var(--ty-text); white-space: nowrap; }
+
+/* ========== 8) Reduced motion (accessibility) ========== */
+@media (prefers-reduced-motion: reduce) {
+  /* Minimize non-essential motion */
+  .ty-btn,
+  .ty-card--hover,
+  nav ul li > a,
+  nav ul li > span,
+  nav ul li.has-sub > ul {
+    transition: none !important;
+  }
+
+  .ty-btn:hover,
+  .ty-card--hover:hover,
+  nav ul li > a:hover,
+  nav ul li > span:hover,
+  nav ul li ul li a:hover {
+    transform: none !important;
+  }
+
+  nav ul li.has-sub > ul {
+    transform: none !important;
+  }
+}
+
+/* ========== 9) Responsive ========== */
+@media (max-width: 900px) {
+  header { padding: 12px 12px; }
+  .main-content { padding: 18px 12px; border-radius: 18px; }
+  .footer-content { padding: 0 12px; }
+
+  .footer-grid { grid-template-columns: 1fr; gap: 14px; }
+  .tdli-logo { height: 42px; }
+}
+
+@media (max-width: 600px) {
+  header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  nav > ul { gap: 10px; flex-wrap: wrap; }
+  header img { height: 42px; }
+  .site-title { font-size: 1.2rem; }
+}

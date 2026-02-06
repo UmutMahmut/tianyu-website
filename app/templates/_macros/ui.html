@@ -1,0 +1,25 @@
+{# app/templates/_macros/ui.html #}
+
+{% macro btn(href, text, variant='primary', icon='') -%}
+  <a class="ty-btn ty-btn--{{ variant }}" href="{{ href }}">
+    {% if icon %}<span class="ty-btn__icon" aria-hidden="true">{{ icon }}</span>{% endif %}
+    <span class="ty-btn__text">{{ text }}</span>
+  </a>
+{%- endmacro %}
+
+{% macro card(title, body, icon='') -%}
+  <div class="ty-card ty-card--hover">
+    <div class="ty-card__head">
+      {% if icon %}<div class="ty-card__icon" aria-hidden="true">{{ icon }}</div>{% endif %}
+      <h3 class="ty-card__title">{{ title }}</h3>
+    </div>
+    <div class="ty-card__body">{{ body }}</div>
+  </div>
+{%- endmacro %}
+
+{% macro metric(value, label) -%}
+  <div class="ty-metric ty-card ty-card--hover">
+    <div class="ty-metric__value">{{ value }}</div>
+    <div class="ty-metric__label">{{ label }}</div>
+  </div>
+{%- endmacro %}

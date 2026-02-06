@@ -1,0 +1,42 @@
+{# app/templates/_partials/home_hero.html #}
+
+<section class="home-hero" aria-label="Hero">
+  <div class="home-hero__grid">
+    <div class="home-hero__text">
+      <div class="home-badge">
+        {% if is_zh %}JUST-P 巡天项目{% else %}JUST-P Survey Project{% endif %}
+      </div>
+
+      <h1 class="home-hero__title">
+        {% if is_zh %}以天之语<br>解物之道{% else %}From the Language of Heaven<br>to the Rationale of Matter{% endif %}
+      </h1>
+
+      <p class="home-hero__lead">
+        {% if is_zh %}
+          天语计划（Tianyu Project, JUST-P）是面向时间域天文学和系外行星搜索的大视场巡天项目，采样频率可配置覆盖 0.3 秒至 1 周。
+        {% else %}
+          The Tianyu Project (JUST-P) is a wide-field photometric survey for time-domain astronomy and exoplanet detection, with configurable cadence from 0.3 s to 1 week.
+        {% endif %}
+      </p>
+
+      <div class="home-hero__cta">
+        {{ ui.btn('/about', (is_zh and '探索项目' or 'Explore'), 'primary', '→') }}
+        {{ ui.btn('/research', (is_zh and '了解更多' or 'Learn more'), 'secondary') }}
+      </div>
+    </div>
+
+    <div class="home-hero__media">
+      <figure class="home-figure">
+        <img
+          src="{{ url_for('static', filename='images/tianyu_scope.jpg') }}"
+          alt="{% if is_zh %}天语望远镜渲染图{% else %}Tianyu Telescope rendering{% endif %}"
+          decoding="async"
+          fetchpriority="high"
+        >
+        <figcaption class="home-figure__cap">
+          {% if is_zh %}天语望远镜渲染图{% else %}Tianyu Telescope Rendering{% endif %}
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>

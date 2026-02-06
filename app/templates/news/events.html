@@ -1,56 +1,71 @@
 {% extends 'base.html' %}
-{% block title %}{{ strings.news }}{% endblock %}
+{% set is_zh = (session.get('lang', 'zh') == 'zh') %}
+
+{% block title %}
+  {{ strings.events if strings is defined else ( '重大事件' if is_zh else 'Major Events' ) }}
+{% endblock %}
 
 {% block content %}
-<h1>{{ strings.news }}</h1>
-<p>{{ strings.news_placeholder }}</p>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px;">
+<div class="container mx-auto px-4 py-6">
+  <h1 class="text-2xl font-semibold mb-12 text-center" style="color: #1e3a8a;">
+    {{ strings.events if strings is defined else ( '重大事件' if is_zh else 'Major Events' ) }}
+  </h1>
 
-  <!-- 第二届天语研讨会 -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+
+  <!-- Tianyu Workshop II -->
   <div style="background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
-    <img src="{{ url_for('static', filename='images/news/tianyu_meeting_2.jpg') }}" alt="Tianyu Workshop II" style="width: 100%; height: 200px; object-fit: cover;">
+    <img src="{{ url_for('static', filename='images/news/tianyu_meeting_2.jpg') }}"
+         alt="Tianyu Workshop II"
+         style="width: 100%; height: 200px; object-fit: cover;">
     <div style="padding: 20px;">
-      <h2 style="color: #1e3a8a;">第二届天语研讨会（Tianyu Workshop II）</h2>
-      {% if get_lang() == 'zh' %}
-        <p>研讨会聚焦天语计划的时域巡天策略、数据处理方法及科研合作机会，吸引多方参与。</p>
+      <h2 style="color: #1e3a8a; margin: 0 0 10px 0;">
+        {% if is_zh %}第二届天语研讨会（Tianyu Workshop II）{% else %}The 2nd Tianyu Workshop{% endif %}
+      </h2>
+      {% if is_zh %}
+        <p style="margin: 0 0 10px 0;">研讨会聚焦天语计划的时域巡天策略、数据处理方法及科研合作机会，吸引多方参与。</p>
         <a href="https://mp.weixin.qq.com/s/K-YA_scIKhBttWQbJm0aYQ" target="_blank" style="color: #2563eb;">阅读全文 →</a>
       {% else %}
-        <p>The second Tianyu Workshop focused on survey design, photometric pipelines, and international collaborations in time-domain astronomy.</p>
+        <p style="margin: 0 0 10px 0;">The workshop focused on survey design, photometric pipelines, and collaboration opportunities in time-domain astronomy.</p>
         <a href="https://tdli.sjtu.edu.cn/en/post/15366" target="_blank" style="color: #2563eb;">Read more →</a>
       {% endif %}
     </div>
   </div>
 
-  <!-- 第一届天语研讨会 -->
+  <!-- Tianyu Workshop I -->
   <div style="background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
-    <img src="{{ url_for('static', filename='images/news/tianyu_meeting_1.jpg') }}" alt="Tianyu Workshop I" style="width: 100%; height: 200px; object-fit: cover;">
+    <img src="{{ url_for('static', filename='images/news/tianyu_meeting_1.jpg') }}"
+         alt="Tianyu Workshop I"
+         style="width: 100%; height: 200px; object-fit: cover;">
     <div style="padding: 20px;">
-      <h2 style="color: #1e3a8a;">第一届天语研讨会（Tianyu Workshop I）</h2>
-      {% if get_lang() == 'zh' %}
-        <p>会议介绍了天语计划的初步科学目标与巡天模式，促进学术交流与合作意向达成。</p>
+      <h2 style="color: #1e3a8a; margin: 0 0 10px 0;">
+        {% if is_zh %}第一届天语研讨会（Tianyu Workshop I）{% else %}The 1st Tianyu Workshop{% endif %}
+      </h2>
+      {% if is_zh %}
+        <p style="margin: 0 0 10px 0;">会议介绍了天语计划的初步科学目标与巡天模式，促进学术交流与合作意向达成。</p>
         <a href="https://tdli.sjtu.edu.cn/event/1996" target="_blank" style="color: #2563eb;">阅读全文 →</a>
       {% else %}
-        <p>The first Tianyu Workshop presented its scientific blueprint and observation strategy, fostering early collaboration in exoplanet and time-domain studies.</p>
+        <p style="margin: 0 0 10px 0;">The first workshop presented the scientific blueprint and observing strategy, fostering early collaboration.</p>
         <a href="https://tdli.sjtu.edu.cn/en/event/3214" target="_blank" style="color: #2563eb;">Read more →</a>
       {% endif %}
     </div>
   </div>
 
-  <!-- 项目立项新闻 -->
+  <!-- Project approval / launch news -->
   <div style="background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
-    <img 
-  	src="{{ url_for('static', filename='images/news/project_approval.jpg') }}" 
-  	alt="Tianyu Launch" 
-  	style="width: 100%; height: 200px; object-fit: cover; object-position: top;"
-	>
+    <img src="{{ url_for('static', filename='images/news/project_approval.jpg') }}"
+         alt="Tianyu Project Announcement"
+         style="width: 100%; height: 200px; object-fit: cover; object-position: top;">
     <div style="padding: 20px;">
-      <h2 style="color: #1e3a8a;">天语项目正式立项新闻报道</h2>
-      {% if get_lang() == 'zh' %}
-        <p>天语项目由青年科学家冯发波博士牵头，聚焦高精度测光与类地行星搜寻，已在李政道研究所正式公布并筹备启动。</p>
+      <h2 style="color: #1e3a8a; margin: 0 0 10px 0;">
+        {% if is_zh %}天语项目正式立项新闻报道{% else %}Official Announcement of the Tianyu Project{% endif %}
+      </h2>
+      {% if is_zh %}
+        <p style="margin: 0 0 10px 0;">天语项目由青年科学家冯发波博士牵头，聚焦高精度测光与类地行星搜寻，已在李政道研究所正式公布并筹备启动。</p>
         <a href="https://info.whb.cn/mobile/2022-12-02/16618/detail-71360.html?timeTemp=16699385610194175" target="_blank" style="color: #2563eb;">阅读全文 →</a>
       {% else %}
-        <p>The Tianyu Project, led by Dr. Fabo Feng, was officially announced at the Tsung-Dao Lee Institute, aiming to detect Earth-like planets via precision photometry.</p>
+        <p style="margin: 0 0 10px 0;">The Tianyu Project was announced at the Tsung-Dao Lee Institute, aiming for precision photometry and exoplanet discovery.</p>
         <a href="https://info.whb.cn/mobile/2022-12-02/16618/detail-71360.html?timeTemp=16699385610194175" target="_blank" style="color: #2563eb;">Read more →</a>
       {% endif %}
     </div>

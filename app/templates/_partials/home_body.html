@@ -1,0 +1,61 @@
+{# app/templates/_partials/home_body.html #}
+
+<section class="home-section" aria-label="Overview">
+  <div class="home-two-col">
+    <div>
+      <h2 class="home-h2">{% if is_zh %}项目概述{% else %}Project Overview{% endif %}</h2>
+      <p class="home-paragraph">
+        {% if is_zh %}
+          天语计划（Tianyu Project, JUST-P）是一个面向时间域天文学和系外行星搜索的大视场巡天项目，采样频率可配置覆盖 0.3 秒至 1 周。
+          该计划名称来源于李政道先生提出的“以天之语，解物之道”之哲学理念，旨在通过高时间分辨率的长时间基线观测，
+          发现类太阳系的长周期冷气体巨行星，并开展覆盖多时标的光变与瞬变天体研究。
+        {% else %}
+          The Tianyu Project (JUST-P) is a wide-field photometric survey for time-domain astronomy and exoplanet detection, with configurable cadence from 0.3 s to 1 week.
+          Inspired by Tsung-Dao Lee’s philosophy “From the Language of Heaven to the Rationale of Matter,” it aims to detect long-period, cold gas giants
+          in solar-like systems, and to study variability and transients across a broad range of timescales.
+        {% endif %}
+      </p>
+
+      <h3 class="home-h3">{% if is_zh %}主要特色{% else %}Key Features{% endif %}</h3>
+      <ul class="home-list">
+        {% if is_zh %}
+          <li><strong>望远镜系统</strong>：1 米口径广角望远镜，约 10 平方度视场</li>
+          <li><strong>采样频率</strong>：0.3 秒–1 周（可配置），支持长时间基线监测</li>
+          <li><strong>多目标覆盖</strong>：目标天体数量约 1 亿，覆盖 TESS 连续观测区与 Kepler/K2 区域</li>
+          <li><strong>多时标科学</strong>：从系外行星到变星与瞬变源，覆盖多时标光变研究</li>
+        {% else %}
+          <li><strong>Telescope system</strong>: 1-m wide-field telescope, ~10 deg² FoV</li>
+          <li><strong>Cadence</strong>: 0.3 s–1 week (configurable), enabling long-term monitoring</li>
+          <li><strong>Massive target coverage</strong>: ~100M targets in the TESS CVZ and Kepler/K2 regions</li>
+          <li><strong>Broad science</strong>: From exoplanets to variability and transients across timescales</li>
+        {% endif %}
+      </ul>
+
+      <h3 class="home-h3">{% if is_zh %}科学目标{% else %}Science Objectives{% endif %}</h3>
+      <ul class="home-list">
+        {% if is_zh %}
+          <li>发现类太阳系中冷巨行星的凌日信号</li>
+          <li>研究超新星、快蓝光瞬变（FBOT）、潮汐破坏事件等瞬变源</li>
+          <li>监测近地天体（NEO）、彗星与 TNO 掩星等小天体活动</li>
+          <li>寻找伽马暴（GRB）与快速射电暴（FRB）的光学对应体</li>
+        {% else %}
+          <li>Detect transits of long-period cold giants in solar analogs</li>
+          <li>Study transients like supernovae, FBOTs, and TDEs</li>
+          <li>Track small bodies such as NEOs, comets, and occultations</li>
+          <li>Search for optical counterparts of GRBs and FRBs</li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <aside class="home-side">
+      <div class="ty-card">
+        <h3 class="home-h3">{% if is_zh %}快速链接{% else %}Quick Links{% endif %}</h3>
+        <div class="home-quicklinks">
+          {{ ui.btn('/project', (is_zh and '项目介绍' or 'Project'), 'ghost') }}
+          {{ ui.btn('/research', (is_zh and '科学研究' or 'Research'), 'ghost') }}
+          {{ ui.btn('/team', (is_zh and '项目团队' or 'Team'), 'ghost') }}
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
