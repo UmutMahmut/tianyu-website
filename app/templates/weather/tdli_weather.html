@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
-{% block title %}{{ strings.yuanqi }} - {{ strings.weather }} - {{ strings.title }}{% endblock %}
+{% block title %}{{ strings.tdli_weather }} - {{ strings.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ strings.yuanqi }} {{ strings.weather }}</h1>
+<h1>{{ strings.tdli_weather }}</h1>
 
-{% if session.get('lang') == 'zh' %}
-<p>李所天文台位于上海交通大学李政道研究所（浦东新区）。本页面聚合楼顶全天相机图像与自动气象站数据，用于实时展示当地的观测环境。</p>
+{% if session.get('lang', 'zh') == 'zh' %}
+<p>本页面聚合李政道研究所楼顶全天相机图像与自动气象站数据，用于实时展示当地观测环境，便于快速评估天气与观测条件。</p>
 {% else %}
-<p>TDLI Observatory is located at the Tsung-Dao Lee Institute (Pudong, Shanghai). This page aggregates the rooftop all-sky camera and automatic weather station to present local observing conditions in real time.</p>
+<p>This page aggregates rooftop all-sky camera images and automatic weather station data at the Tsung-Dao Lee Institute, providing a real-time view of local observing conditions.</p>
 {% endif %}
 
 <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 10px; margin: 24px 0;">
   <h2 style="color: #1565c0; margin-bottom: 10px; text-align: center;">
-    {% if session.get('lang') == 'zh' %}实时气象信息{% else %}Real Time Weather Information{% endif %}
+    {% if session.get('lang', 'zh') == 'zh' %}实时气象信息{% else %}Real-Time Weather Information{% endif %}
   </h2>
   <p style="text-align: center; margin: 0; color: #666;">
-    {% if session.get('lang') == 'zh' %}
+    {% if session.get('lang', 'zh') == 'zh' %}
     含全天相机与自动气象站数据，便于快速评估观测条件
     {% else %}
-    Includes all-sky cam and AWS metrics — a quick overview of observing conditions
+    Includes all-sky camera images and AWS metrics for quick assessment of observing conditions
     {% endif %}
   </p>
 </div>
@@ -89,7 +89,7 @@
   .yq-chartbox-big{ position: relative; width:100%; height:100%; min-height: 0; }
   .yq-chartbox-big canvas{ width: 100% !important; height: 100% !important; display:block; }
 
-  .yq-right .yq-card {display: flex; flex-direction: column;  }
+  .yq-right .yq-card { display: flex; flex-direction: column; }
   #yqWeather { flex: 0 0 auto; }
   #yqForecastCard { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
@@ -99,45 +99,57 @@
 <div class="yq-layout">
   <div class="yq-left yq-card">
     <h3 style="margin:0 0 10px 0;">
-      {% if session.get('lang') == 'zh' %}全天相机 / 最新图像{% else %}All-sky / Latest Image{% endif %}
+      {% if session.get('lang', 'zh') == 'zh' %}全天相机 / 最新图像{% else %}All-sky / Latest Image{% endif %}
     </h3>
     <img id="yqImg" class="yq-img" alt="All-sky latest image" src="/static/yuanqi/latest.jpg">
     <div class="yq-muted" style="margin-top:8px;">
+      {% if session.get('lang', 'zh') == 'zh' %}
+      数据路径：<code>/static/yuanqi/latest.jpg</code>
+      {% else %}
       Data path: <code>/static/yuanqi/latest.jpg</code>
+      {% endif %}
     </div>
   </div>
 
   <div class="yq-right">
     <div class="yq-card" id="yqWeather">
       <h3 style="margin:0 0 10px 0;">
-        {% if session.get('lang') == 'zh' %}楼顶气象实况{% else %}Live Weather{% endif %}
+        {% if session.get('lang', 'zh') == 'zh' %}楼顶气象实况{% else %}Live Weather{% endif %}
       </h3>
-      <div class="yq-row yq-muted">加载中...</div>
+      <div class="yq-row yq-muted">{% if session.get('lang', 'zh') == 'zh' %}加载中...{% else %}Loading...{% endif %}</div>
       <div class="yq-muted" style="margin-top:10px;">
+        {% if session.get('lang', 'zh') == 'zh' %}
+        数据路径：<code>/static/yuanqi/latest_weather.json</code>
+        {% else %}
         JSON path: <code>/static/yuanqi/latest_weather.json</code>
+        {% endif %}
       </div>
     </div>
 
-    <div class="yq-card">
+    <div class="yq-card" id="yqForecastCard">
       <div class="yq-titlebar">
         <h3 style="margin:0;">
-          {% if session.get('lang') == 'zh' %}未来24小时天气趋势{% else %}Next 24h Forecast{% endif %}
+          {% if session.get('lang', 'zh') == 'zh' %}未来24小时天气趋势{% else %}Next 24h Forecast{% endif %}
         </h3>
         <div class="yq-actions">
-          <button id="yqZoom" class="yq-btn" type="button" title="放大查看">放大</button>
-          <button id="yqDownloadSmall" class="yq-btn" type="button" title="下载PNG">下载PNG</button>
+          <button id="yqZoom" class="yq-btn" type="button" title="{% if session.get('lang', 'zh') == 'zh' %}放大查看{% else %}Zoom{% endif %}">
+            {% if session.get('lang', 'zh') == 'zh' %}放大{% else %}Zoom{% endif %}
+          </button>
+          <button id="yqDownloadSmall" class="yq-btn" type="button" title="{% if session.get('lang', 'zh') == 'zh' %}下载PNG{% else %}Download PNG{% endif %}">
+            {% if session.get('lang', 'zh') == 'zh' %}下载PNG{% else %}Download PNG{% endif %}
+          </button>
         </div>
       </div>
 
       <div id="yqForecastHint" class="yq-muted" style="margin-bottom:8px;">
-        {% if session.get('lang') == 'zh' %}
+        {% if session.get('lang', 'zh') == 'zh' %}
         预报来自 Open-Meteo（浏览器端拉取）
         {% else %}
         Forecast from Open-Meteo (fetched in browser)
         {% endif %}
       </div>
 
-      <div class="yq-chartbox" id="yqChartWrap" title="点击放大">
+      <div class="yq-chartbox" id="yqChartWrap" title="{% if session.get('lang', 'zh') == 'zh' %}点击放大{% else %}Click to enlarge{% endif %}">
         <canvas id="yqChart"></canvas>
       </div>
     </div>
@@ -148,11 +160,15 @@
   <div class="yq-modal-card" role="dialog" aria-modal="true" aria-labelledby="yqModalTitle">
     <div class="yq-modal-head">
       <div id="yqModalTitle" class="yq-modal-title">
-        {% if session.get('lang') == 'zh' %}未来24小时天气趋势{% else %}Next 24h Forecast{% endif %}
+        {% if session.get('lang', 'zh') == 'zh' %}未来24小时天气趋势{% else %}Next 24h Forecast{% endif %}
       </div>
       <div class="yq-modal-actions">
-        <button id="yqDownloadBig" class="yq-btn" type="button">下载PNG</button>
-        <button id="yqClose" class="yq-btn" type="button">关闭</button>
+        <button id="yqDownloadBig" class="yq-btn" type="button">
+          {% if session.get('lang', 'zh') == 'zh' %}下载PNG{% else %}Download PNG{% endif %}
+        </button>
+        <button id="yqClose" class="yq-btn" type="button">
+          {% if session.get('lang', 'zh') == 'zh' %}关闭{% else %}Close{% endif %}
+        </button>
       </div>
     </div>
     <div class="yq-modal-body">
@@ -165,7 +181,7 @@
 
 <div style="text-align: center; margin-top: 24px; padding: 14px; background: #f8f9fa; border-radius: 8px;">
   <p style="color: #6c757d; font-style: italic; margin:0;">
-    {% if session.get('lang') == 'zh' %}数据自动更新 | 7×24 小时监测{% else %}Automatic updates | 24/7 monitoring{% endif %}
+    {% if session.get('lang', 'zh') == 'zh' %}数据自动更新 | 7×24 小时监测{% else %}Automatic updates | 24/7 monitoring{% endif %}
   </p>
 </div>
 
@@ -202,21 +218,39 @@
       if (!r.ok) throw new Error("HTTP " + r.status);
       const data = await r.json();
 
-      const mapping = {
-        temperature: "气温（℃）",
-        humidity: "湿度（%）",
-        pressure: "气压（hPa）",
-        cloud: "云量指数（%）",
-        rainfall: "雨量（mm/h）",
-        wind_speed: "风速（m/s）",
-        gust_speed: "阵风风速（m/s）",
-        wind_direction: "风向（°）",
-        dew_point: "露点（℃）",
-        sky_brightness: "天空亮度（lux）",
-        SQM: "SQM（mag/arcsec²）",
-        seeing: "视宁度（arcsec）",
-        time: "更新时间"
-      };
+      const mapping = {{ {
+        "zh": {
+          "temperature": "气温（℃）",
+          "humidity": "湿度（%）",
+          "pressure": "气压（hPa）",
+          "cloud": "云量指数（%）",
+          "rainfall": "雨量（mm/h）",
+          "wind_speed": "风速（m/s）",
+          "gust_speed": "阵风风速（m/s）",
+          "wind_direction": "风向（°）",
+          "dew_point": "露点（℃）",
+          "sky_brightness": "天空亮度（lux）",
+          "SQM": "SQM（mag/arcsec²）",
+          "seeing": "视宁度（arcsec）",
+          "time": "更新时间"
+        },
+        "en": {
+          "temperature": "Temperature (°C)",
+          "humidity": "Humidity (%)",
+          "pressure": "Pressure (hPa)",
+          "cloud": "Cloud Index (%)",
+          "rainfall": "Rainfall (mm/h)",
+          "wind_speed": "Wind Speed (m/s)",
+          "gust_speed": "Gust Speed (m/s)",
+          "wind_direction": "Wind Direction (°)",
+          "dew_point": "Dew Point (°C)",
+          "sky_brightness": "Sky Brightness (lux)",
+          "SQM": "SQM (mag/arcsec²)",
+          "seeing": "Seeing (arcsec)",
+          "time": "Updated At"
+        }
+      }[session.get('lang', 'zh')] | tojson }};
+
       const order = [
         "temperature","humidity","pressure","cloud","rainfall",
         "wind_speed","gust_speed","wind_direction","dew_point",
@@ -228,12 +262,12 @@
         if (data[k] === undefined) continue;
         const div = document.createElement("div");
         div.className = "yq-row";
-        div.textContent = `${mapping[k] || k}：${data[k]}`;
+        div.textContent = `${mapping[k] || k}: ${data[k]}`;
         weatherEl.appendChild(div);
       }
     } catch (e) {
       weatherEl.innerHTML = weatherEl.querySelector("h3").outerHTML +
-        "<div class='yq-row yq-muted'>无法获取气象数据</div>";
+        "<div class='yq-row yq-muted'>{% if session.get('lang', 'zh') == 'zh' %}无法获取气象数据{% else %}Unable to load weather data{% endif %}</div>";
     }
   }
 
@@ -257,9 +291,9 @@
       data: {
         labels,
         datasets: [
-          { label: "气温（℃）", data: temps, yAxisID: "y", fill: true, tension: 0.28 },
-          { label: "湿度（%）", data: hums,  yAxisID: "y1", fill: true, tension: 0.28 },
-          { label: "云量（%）", data: clouds, yAxisID: "y1", fill: true, tension: 0.28 }
+          { label: "{% if session.get('lang', 'zh') == 'zh' %}气温（℃）{% else %}Temperature (°C){% endif %}", data: temps, yAxisID: "y", fill: true, tension: 0.28 },
+          { label: "{% if session.get('lang', 'zh') == 'zh' %}湿度（%）{% else %}Humidity (%) {% endif %}", data: hums, yAxisID: "y1", fill: true, tension: 0.28 },
+          { label: "{% if session.get('lang', 'zh') == 'zh' %}云量（%）{% else %}Cloud Cover (%) {% endif %}", data: clouds, yAxisID: "y1", fill: true, tension: 0.28 }
         ]
       },
       options: {
@@ -269,8 +303,8 @@
         interaction: { mode: "index", intersect: false },
         scales: {
           x: { ticks: { maxTicksLimit: isBig ? 24 : 12 } },
-          y:  { type:"linear", position:"left", title:{ display:true, text:"气温（℃）" }, min: tMin, max: tMax },
-          y1: { type:"linear", position:"right", title:{ display:true, text:"湿度/云量（%）" },
+          y:  { type:"linear", position:"left", title:{ display:true, text: "{% if session.get('lang', 'zh') == 'zh' %}气温（℃）{% else %}Temperature (°C){% endif %}" }, min: tMin, max: tMax },
+          y1: { type:"linear", position:"right", title:{ display:true, text: "{% if session.get('lang', 'zh') == 'zh' %}湿度/云量（%）{% else %}Humidity / Cloud Cover (%) {% endif %}" },
                 grid:{ drawOnChartArea:false }, min:0, max:100 }
         },
         plugins: { legend: { position: "bottom" } }
@@ -280,7 +314,10 @@
 
   async function loadForecast() {
     try {
-      if (!window.Chart) { hintEl.textContent = "Chart.js 未加载（可能被浏览器策略限制）。"; return; }
+      if (!window.Chart) {
+        hintEl.textContent = "{% if session.get('lang', 'zh') == 'zh' %}Chart.js 未加载（可能被浏览器策略限制）。{% else %}Chart.js failed to load (possibly blocked by browser policy).{% endif %}";
+        return;
+      }
 
       const lat = 31.17, lon = 121.61;
       const url =
@@ -313,7 +350,7 @@
 
       if (modal.classList.contains("open")) setTimeout(buildBig, 60);
     } catch (e) {
-      hintEl.textContent = "预报加载失败（网络或策略限制）。";
+      hintEl.textContent = "{% if session.get('lang', 'zh') == 'zh' %}预报加载失败（网络或策略限制）。{% else %}Forecast failed to load (network or policy restriction).{% endif %}";
     }
   }
 

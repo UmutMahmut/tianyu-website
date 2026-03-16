@@ -68,13 +68,30 @@
           </ul>
         </li>
 
+        <!-- 李所天文台 -->
+        <li class="has-sub">
+          <span>{{ strings.tdli_observatories if strings is defined else '李所天文台' }}</span>
+          <ul>
+            <li>
+              <a href="/tdli_observatories/yuanqi">
+                {{ strings.yuanqi_observatory if strings is defined else '源启天文台' }}
+              </a>
+            </li>
+            <li>
+              <a href="/tdli_observatories/muguang">
+                {{ strings.muguang_observatory if strings is defined else '慕光天文台' }}
+              </a>
+            </li>
+          </ul>
+        </li>
+
         <!-- 实时气象 -->
         <li class="has-sub">
           <span>{{ strings.weather if strings is defined else '实时气象' }}</span>
           <ul>
             <li>
               <a href="/weather/yuanqi">
-                {{ strings.yuanqi if strings is defined else '李所天文台' }}
+                {{ strings.tdli_weather if strings is defined else '源启实时气象' }}
               </a>
             </li>
             <li>

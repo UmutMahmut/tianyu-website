@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ (strings.yuanqi_observatory if strings is defined else '源启天文台') }} - {{ strings.title if strings is defined else '天语计划' }}
+{% endblock %}
+
+{% block head_extra %}
+<style>
+  .tdli-observatory-page {
+    width: 100%;
+  }
+
+  .tdli-observatory-page .lead {
+    font-size: 1.08rem;
+    line-height: 1.9;
+    color: #334155;
+    margin-bottom: 1.5rem;
+  }
+
+  .tdli-observatory-page .image-container img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    max-height: 520px;
+    object-fit: contain;
+  }
+
+  .tdli-name-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    line-height: 1.9;
+  }
+
+  .tdli-name-list li {
+    margin-bottom: 0.5rem;
+  }
+
+  .tdli-note {
+    margin-top: 1rem;
+    color: #475569;
+    line-height: 1.9;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tdli-observatory-page">
+{% if session.get('lang', 'zh') == 'zh' %}
+
+<h1>源启天文台</h1>
+
+<div class="image-container">
+  <img src="{{ url_for('static', filename='images/tdli/yuanqi.png') }}"
+       alt="源启天文台"
+       onerror="this.style.display='none'; this.parentElement.querySelector('.image-caption-normal').style.display='none';">
+  <div class="image-caption image-caption-normal">图：源启天文台</div>
+</div>
+
+<p class="lead">
+  源启天文台于 2024 年 12 月在李政道研究所正式启用，
+  是研究所楼顶观测平台的重要组成部分。
+  该平台兼具教学、科研与科普功能，
+  为本地观测实践、天文教育与公众展示提供了新的平台支撑。
+</p>
+
+<h2>平台概况</h2>
+<p>
+  依托李政道研究所楼顶平台，源启天文台面向观测实践、教学展示和科普活动等场景。
+  它既是研究所天文相关工作在本地的重要延伸，
+  也是连接科研实践与公众认知的一处窗口。
+</p>
+
+<h2>名称寓意</h2>
+<ul class="tdli-name-list">
+  <li><strong>“源”</strong> 出自校训“饮水思源”，并有“源初”之意。</li>
+  <li><strong>“启”</strong> 出自“云启”，兼有“启程”之意。</li>
+</ul>
+
+<h2>当前页面</h2>
+<p>
+  当前页面以源启天文台外观与命名说明为主。
+  后续将根据资料整理进展，逐步补充台站背景、活动记录与相关图像资料。
+</p>
+
+<p class="tdli-note">
+  后续将继续补充源启天文台的建设背景、运行记录与相关图像资料。
+</p>
+
+{% else %}
+
+<h1>Yuanqi Observatory</h1>
+
+<div class="image-container">
+  <img src="{{ url_for('static', filename='images/tdli/yuanqi.png') }}"
+       alt="Yuanqi Observatory"
+       onerror="this.style.display='none'; this.parentElement.querySelector('.image-caption-normal').style.display='none';">
+  <div class="image-caption image-caption-normal">Fig. Yuanqi Observatory</div>
+</div>
+
+<p class="lead">
+  Yuanqi Observatory was formally launched at the Tsung-Dao Lee Institute in December 2024.
+  It is an important part of the rooftop observing platform at TDLI.
+  With functions in teaching, research, and public outreach,
+  it provides local support for observational practice, astronomy education, and public engagement.
+</p>
+
+<h2>Overview</h2>
+<p>
+  Built on the rooftop platform of TDLI, Yuanqi Observatory is intended for observational practice,
+  teaching display, and outreach activities.
+  It serves both as a local extension of the institute’s astronomy-related work
+  and as a window connecting scientific practice with public understanding.
+</p>
+
+<h2>Name and Meaning</h2>
+<ul class="tdli-name-list">
+  <li><strong>“Yuan”</strong> echoes the university motto “Gratitude and Responsibility” and also carries the sense of origin.</li>
+  <li><strong>“Qi”</strong> refers to “Yunqi” and also conveys the meaning of setting out on a journey.</li>
+</ul>
+
+<h2>Current Page</h2>
+<p>
+  The current page mainly presents the exterior view of Yuanqi Observatory together with a brief explanation of its name.
+  Additional materials on its background, activities, and related images will be added as the page develops.
+</p>
+
+<p class="tdli-note">
+  Additional materials on the development, operation, and image records of Yuanqi Observatory will be added in future updates.
+</p>
+
+{% endif %}
+</div>
+{% endblock %}

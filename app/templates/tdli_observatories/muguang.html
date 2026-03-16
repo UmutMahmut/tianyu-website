@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ (strings.muguang_observatory if strings is defined else '慕光天文台') }} - {{ strings.title if strings is defined else '天语计划' }}
+{% endblock %}
+
+{% block head_extra %}
+<style>
+  .tdli-observatory-page {
+    width: 100%;
+  }
+
+  .tdli-observatory-page .lead {
+    font-size: 1.08rem;
+    line-height: 1.9;
+    color: #334155;
+    margin-bottom: 1.5rem;
+  }
+
+  .tdli-observatory-page .image-container img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    max-height: 460px;
+    object-fit: contain;
+  }
+
+  .tdli-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tdli-photo-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .tdli-photo-card img {
+    display: block;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: #f8fafc;
+  }
+
+  .tdli-photo-card figcaption {
+    padding: 10px 12px;
+    font-size: 0.92rem;
+    color: #64748b;
+    line-height: 1.6;
+  }
+
+  .tdli-spec-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    line-height: 1.9;
+  }
+
+  .tdli-note {
+    margin-top: 1rem;
+    color: #475569;
+    line-height: 1.9;
+  }
+
+  @media (max-width: 768px) {
+    .tdli-photo-card img {
+      height: 200px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tdli-observatory-page">
+{% if session.get('lang', 'zh') == 'zh' %}
+
+<h1>慕光天文台</h1>
+
+<div class="image-container">
+  <img src="{{ url_for('static', filename='images/tdli/muguang.jpg') }}"
+       alt="慕光天文台"
+       onerror="this.style.display='none'; this.parentElement.querySelector('.image-caption-normal').style.display='none';">
+  <div class="image-caption image-caption-normal">图：慕光天文台</div>
+</div>
+
+<p class="lead">
+  慕光天文台由李政道研究所青年学者冯发波负责建设，于 2022 年启动、2023 年建成，
+  主要服务于教学实践、学生科研训练和科普展示。作为李政道研究所楼顶观测平台的重要组成部分，
+  慕光天文台为本地观测、设备教学和天文教育活动提供平台支撑。
+</p>
+
+<h2>平台概况</h2>
+<p>
+  慕光天文台兼具教学、实践与展示功能。依托李政道研究所楼顶平台，它既可支持学生开展基础观测训练、
+  仪器使用学习和初步科研实践，也可用于天文科普与参观展示，是研究所本地天文观测与教育展示的重要载体。
+</p>
+
+<h2>主要设备</h2>
+<ul class="tdli-spec-list">
+  <li>35 cm 口径 Planewave CDK14 望远镜</li>
+  <li>QHY600PH 等天文相机设备</li>
+  <li>若干小型望远镜，用于教学与科普展示</li>
+</ul>
+
+<h2>使用场景</h2>
+<p>
+  慕光天文台适用于教学演示、学生科研训练、设备操作实践和天文科普等场景。
+  对于学生，它是进入观测学习与科研实践的重要本地平台；对于公众与来访者，
+  它也是展示研究所天文工作的窗口之一。
+</p>
+
+<h2>图片记录</h2>
+<p>
+  本页收录慕光天文台相关图片，展示台站外观、观测设备、教学活动与环境细节。
+</p>
+
+<div class="tdli-photo-grid">
+  <figure class="tdli-photo-card" id="muguang-photo-1">
+    <img src="{{ url_for('static', filename='images/tdli/muguang_1.jpg') }}"
+         alt="高中生使用 HD8 望远镜观星"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>高中生使用 HD8 望远镜观星</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="muguang-photo-2">
+    <img src="{{ url_for('static', filename='images/tdli/muguang_2.jpg') }}"
+         alt="CDK14、HD8 与 Solarmax 设备组合"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>CDK14、HD8 与 Solarmax 设备组合</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="muguang-photo-3">
+    <img src="{{ url_for('static', filename='images/tdli/muguang_3.jpg') }}"
+         alt="光纤与 LED 灯光照明的金色崖壁"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>光纤与 LED 灯光照明的金色崖壁</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="muguang-photo-4">
+    <img src="{{ url_for('static', filename='images/tdli/muguang_4.jpg') }}"
+         alt="夕照中的 CDK14 望远镜"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>夕照中的 CDK14 望远镜</figcaption>
+  </figure>
+</div>
+
+<p class="tdli-note">
+  后续将继续补充慕光天文台的运行记录、设备细节与相关活动图像资料。
+</p>
+
+{% else %}
+
+<h1>Muguang Observatory</h1>
+
+<div class="image-container">
+  <img src="{{ url_for('static', filename='images/tdli/muguang.jpg') }}"
+       alt="Muguang Observatory"
+       onerror="this.style.display='none'; this.parentElement.querySelector('.image-caption-normal').style.display='none';">
+  <div class="image-caption image-caption-normal">Fig. Muguang Observatory</div>
+</div>
+
+<p class="lead">
+  Muguang Observatory was established under the direction of Dr. Feng Fabao at the Tsung-Dao Lee Institute.
+  Construction began in 2022 and was completed in 2023. It primarily serves teaching practice,
+  student research training, and public outreach. As an important part of the TDLI rooftop observing platform,
+  it supports local observing, instrument training, and astronomy education.
+</p>
+
+<h2>Overview</h2>
+<p>
+  Muguang Observatory integrates teaching, hands-on practice, and public display.
+  Based on the rooftop platform at TDLI, it supports students in observational training,
+  instrument familiarization, and early-stage research practice, while also serving outreach
+  and visiting activities. It is an important local facility for astronomy observation and education at the institute.
+</p>
+
+<h2>Main Instrumentation</h2>
+<ul class="tdli-spec-list">
+  <li>35 cm Planewave CDK14 telescope</li>
+  <li>QHY600PH and other astronomical imaging devices</li>
+  <li>Several small telescopes for teaching and outreach</li>
+</ul>
+
+<h2>Use Scenarios</h2>
+<p>
+  Muguang Observatory is suited for teaching demonstrations, student research training,
+  hands-on instrument practice, and astronomy outreach. For students, it provides a local entry point
+  to observational learning and research practice; for visitors and public-facing events,
+  it serves as one of the institute’s windows for presenting its astronomy-related work.
+</p>
+
+<h2>Photo Archive</h2>
+<p>
+  This section presents selected images of Muguang Observatory, showing the observatory itself,
+  observing instruments, educational activities, and environmental details.
+</p>
+
+<div class="tdli-photo-grid">
+  <figure class="tdli-photo-card" id="muguang-photo-1">
+    <img src="{{ url_for('static', filename='images/tdli/muguang_1.jpg') }}"
+         alt="High school students viewing stars with the HD8 telescope"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>High school students viewing stars with the HD8 telescope</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="muguang-photo-2">
+    <img src="{{ url_for('static', filename='images/tdli/muguang_2.jpg') }}"
+         alt="CDK14, HD8, and Solarmax setup"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>CDK14, HD8, and Solarmax setup</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="muguang-photo-3">
+    <img src="{{ url_for('static', filename='images/tdli/muguang_3.jpg') }}"
+         alt="Golden cliff illuminated with fibre optics and LED lighting"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>Golden cliff illuminated with fibre optics and LED lighting</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="muguang-photo-4">
+    <img src="{{ url_for('static', filename='images/tdli/muguang_4.jpg') }}"
+         alt="CDK14 telescope at sunset"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>CDK14 telescope at sunset</figcaption>
+  </figure>
+</div>
+
+<p class="tdli-note">
+  Additional records on operation, instrumentation, and related activities of Muguang Observatory will be added in future updates.
+</p>
+
+{% endif %}
+</div>
+{% endblock %}

@@ -21,11 +21,16 @@ lang_map = {
         'about': '关于天语',
         'about_overview': '项目简介',
         'about_lenghu': '冷湖台址',
-        'about_optics': '光机系统',          # 导航上的中文标签
+        'about_optics': '光机系统',
         'about_control': '观测控制',
 
+        # 李所天文台栏目
+        'tdli_observatories': '李所天文台',
+        'yuanqi_observatory': '源启天文台',
+        'muguang_observatory': '慕光天文台',
+
         'team': '团队成员',
-        'team_title': '天语望远镜团队',     # 团队页大标题
+        'team_title': '天语望远镜团队',
 
         'news': '天语动态',
         'events': '重要事件',
@@ -34,9 +39,15 @@ lang_map = {
         'research': '科学研究',
         'news_placeholder': '项目最新进展、会议活动、建设动态等将发布于此。',
         'research_placeholder': '论文发表、数据发布、科学成果将在本页面集中展示。',
+
+        # 实时气象
         'weather': '实时气象',
-        'yuanqi': '李所天文台',
+        'tdli_weather': '源启实时气象',
         'lenghu': '冷湖天文站',
+
+        # 兼容旧 key，避免其他模板仍有引用
+        'yuanqi': '李所天文台',
+
         'welcome': '欢迎访问天语项目网站',
         'intro': '本网站展示与维护多个天文观测项目，包含实时气象、团队介绍和科研动态。',
         'contact_us': '联系我们',
@@ -77,6 +88,11 @@ lang_map = {
         'about_optics': 'Telescope Optics & Camera',
         'about_control': 'Observation Control',
 
+        # TDLI observatories
+        'tdli_observatories': 'TDLI Observatories',
+        'yuanqi_observatory': 'Yuanqi Observatory',
+        'muguang_observatory': 'Muguang Observatory',
+
         'team': 'Team',
         'team_title': 'Tianyu Telescope Team',
 
@@ -87,9 +103,15 @@ lang_map = {
         'research': 'Research',
         'news_placeholder': 'Latest updates, events, and construction progress will be published here.',
         'research_placeholder': 'Scientific publications and data releases will be featured here.',
+
+        # Weather
         'weather': 'Weather',
-        'yuanqi': 'TDLI Observatory',
+        'tdli_weather': 'Yuanqi Real-time Weather',
         'lenghu': 'Lenghu Station',
+
+        # Legacy key kept for backward compatibility
+        'yuanqi': 'TDLI Observatory',
+
         'welcome': 'Welcome to Tianyu Project Website',
         'intro': 'This site presents ongoing astronomical projects, weather data, and team updates.',
         'contact_us': 'Contact Us',
@@ -123,6 +145,7 @@ def get_lang():
         lang = 'zh'
         session['lang'] = lang
     return lang
+
 
 @bp.route('/lang/<lang>')
 def set_lang(lang):
@@ -161,6 +184,19 @@ def about_optics():
 def about_control():
     strings = lang_map[get_lang()]
     return render_template('about/control.html', strings=strings, get_lang=get_lang)
+
+
+# === 李所天文台 / TDLI Observatories ===
+@bp.route('/tdli_observatories/yuanqi')
+def tdli_observatories_yuanqi():
+    strings = lang_map[get_lang()]
+    return render_template('tdli_observatories/yuanqi.html', strings=strings, get_lang=get_lang)
+
+
+@bp.route('/tdli_observatories/muguang')
+def tdli_observatories_muguang():
+    strings = lang_map[get_lang()]
+    return render_template('tdli_observatories/muguang.html', strings=strings, get_lang=get_lang)
 
 
 # 旧 /project URL：做兼容，重定向到新的关于天语首页
@@ -221,7 +257,7 @@ def research():
 @bp.route('/weather/yuanqi')
 def weather_yuanqi():
     strings = lang_map[get_lang()]
-    return render_template('weather/TDLI.html', strings=strings)
+    return render_template('weather/tdli_weather.html', strings=strings)
 
 
 @bp.route('/weather/lenghu')
@@ -251,7 +287,7 @@ def team():
 
 
 # Publications
-@bp.route("/publications")
+@bp.route('/publications')
 def publications():
     lang = get_lang()
     strings = lang_map[lang]
@@ -268,18 +304,18 @@ def publications():
     for key, entry in bib_data.entries.items():
         meta = meta_data.get(key, {})
         fields = entry.fields
-        authors = " and ".join(str(person) for person in entry.persons.get("author", []))
+        authors = ' and '.join(str(person) for person in entry.persons.get('author', []))
 
         entries.append({
-            "title": fields.get("title", ""),
-            "authors": authors,
-            "journal": fields.get("journal", ""),
-            "year": fields.get("year", ""),
-            "status": meta.get("status", ""),
-            "pdf": meta.get("pdf", "#")
+            'title': fields.get('title', ''),
+            'authors': authors,
+            'journal': fields.get('journal', ''),
+            'year': fields.get('year', ''),
+            'status': meta.get('status', ''),
+            'pdf': meta.get('pdf', '#')
         })
 
     # 年份倒序
-    entries.sort(key=lambda e: e.get("year", ""), reverse=True)
+    entries.sort(key=lambda e: e.get('year', ''), reverse=True)
 
-    return render_template("publications.html", entries=entries, strings=strings, get_lang=get_lang)
+    return render_template('publications.html', entries=entries, strings=strings, get_lang=get_lang)

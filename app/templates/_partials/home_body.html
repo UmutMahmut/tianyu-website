@@ -1,5 +1,3 @@
-{# app/templates/_partials/home_body.html #}
-
 <section class="home-section" aria-label="Overview">
   <div class="home-two-col">
     <div>
@@ -51,9 +49,9 @@
       <div class="ty-card">
         <h3 class="home-h3">{% if is_zh %}快速链接{% else %}Quick Links{% endif %}</h3>
         <div class="home-quicklinks">
-          {{ ui.btn('/project', (is_zh and '项目介绍' or 'Project'), 'ghost') }}
+          {{ ui.btn('/about', (is_zh and '项目简介' or 'Overview'), 'ghost') }}
           {{ ui.btn('/research', (is_zh and '科学研究' or 'Research'), 'ghost') }}
-          {{ ui.btn('/team', (is_zh and '项目团队' or 'Team'), 'ghost') }}
+          {{ ui.btn('/team', (is_zh and '团队成员' or 'Team Members'), 'ghost') }}
         </div>
       </div>
     </aside>
