@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Env
+.env
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Runtime data
+app/static/weather_data/
+app/static/yuanqi/
+*.log
+
+# Temp / backup
+*.bak
+*.bak.*
