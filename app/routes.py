@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, session, redirect, request, url_for
+from flask import Blueprint, render_template, session, redirect, request, url_for, send_from_directory, abort
+from werkzeug.security import check_password_hash
 import json
 import os
 from pybtex.database import parse_file
@@ -7,24 +8,35 @@ bp = Blueprint('main', __name__)
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 
+INTERNAL_DOCS_DIR = "/srv/tianyu-site-docs"
+CONTROL_PASSWORD_HASH = os.getenv("CONTROL_PASSWORD_HASH")
+CONTROL_SESSION_KEY = "control_authed"
+
+INTERNAL_DOCS = [
+    {
+        "filename": "LCO现状.docx",
+        "title_zh": "LCO 现状",
+        "title_en": "Current Status of LCO",
+        "description_zh": "项目内部参考资料，供组内成员下载查阅。",
+        "description_en": "Internal reference material for project members.",
+        "updated": "2026-04-21"
+    }
+]
+
 # 多语言文案
 lang_map = {
     'zh': {
-        # 站点名字（用在 LOGO 旁边和 <title>）
         'title': '天语计划',
         'home': '首页',
 
-        # 旧的“项目介绍”文本先保留，避免模板里还有引用
         'project': '项目介绍',
 
-        # 新的“关于天语”主栏目及子栏目
         'about': '关于天语',
         'about_overview': '项目简介',
         'about_lenghu': '冷湖台址',
         'about_optics': '光机系统',
         'about_control': '观测控制',
 
-        # 李所天文台栏目
         'tdli_observatories': '李所天文台',
         'yuanqi_observatory': '源启天文台',
         'muguang_observatory': '慕光天文台',
@@ -40,12 +52,10 @@ lang_map = {
         'news_placeholder': '项目最新进展、会议活动、建设动态等将发布于此。',
         'research_placeholder': '论文发表、数据发布、科学成果将在本页面集中展示。',
 
-        # 实时气象
         'weather': '实时气象',
         'tdli_weather': '源启实时气象',
         'lenghu': '冷湖天文站',
 
-        # 兼容旧 key，避免其他模板仍有引用
         'yuanqi': '李所天文台',
 
         'welcome': '欢迎访问天语项目网站',
@@ -55,7 +65,6 @@ lang_map = {
         'phone': '电话',
         'address': '上海市浦东新区李所路1号李政道研究所（201210）',
 
-        # 列表用的“标题”列名
         'title_col': '标题',
 
         'authors': '作者',
@@ -74,21 +83,17 @@ lang_map = {
         'outreach_placeholder': '该部分内容尚在开发中，敬请期待！'
     },
     'en': {
-        # Site title
         'title': 'Tianyu Project',
         'home': 'Home',
 
-        # Legacy key
         'project': 'Projects',
 
-        # “About Tianyu” menu and submenus
         'about': 'About Tianyu',
         'about_overview': 'Overview',
         'about_lenghu': 'Lenghu Site',
         'about_optics': 'Telescope Optics & Camera',
         'about_control': 'Observation Control',
 
-        # TDLI observatories
         'tdli_observatories': 'TDLI Observatories',
         'yuanqi_observatory': 'Yuanqi Observatory',
         'muguang_observatory': 'Muguang Observatory',
@@ -104,12 +109,10 @@ lang_map = {
         'news_placeholder': 'Latest updates, events, and construction progress will be published here.',
         'research_placeholder': 'Scientific publications and data releases will be featured here.',
 
-        # Weather
         'weather': 'Weather',
         'tdli_weather': 'Yuanqi Real-time Weather',
         'lenghu': 'Lenghu Station',
 
-        # Legacy key kept for backward compatibility
         'yuanqi': 'TDLI Observatory',
 
         'welcome': 'Welcome to Tianyu Project Website',
@@ -145,6 +148,46 @@ def get_lang():
         lang = 'zh'
         session['lang'] = lang
     return lang
+
+
+def is_control_authed():
+    return session.get(CONTROL_SESSION_KEY, False) is True
+
+
+def control_message(key):
+    lang = get_lang()
+    messages = {
+        'zh': {
+            'missing_config': '服务器未配置访问口令。',
+            'empty_password': '请输入口令。',
+            'wrong_password': '口令错误。'
+        },
+        'en': {
+            'missing_config': 'The server access passphrase is not configured.',
+            'empty_password': 'Please enter the passphrase.',
+            'wrong_password': 'Incorrect passphrase.'
+        }
+    }
+    return messages.get(lang, messages['zh'])[key]
+
+
+def get_internal_docs():
+    lang = get_lang()
+    docs = []
+
+    for item in INTERNAL_DOCS:
+        path = os.path.join(INTERNAL_DOCS_DIR, item["filename"])
+        if not os.path.isfile(path):
+            continue
+
+        docs.append({
+            "filename": item["filename"],
+            "title": item["title_zh"] if lang == "zh" else item["title_en"],
+            "description": item["description_zh"] if lang == "zh" else item["description_en"],
+            "updated": item["updated"]
+        })
+
+    return docs
 
 
 @bp.route('/lang/<lang>')
@@ -183,8 +226,53 @@ def about_optics():
 @bp.route('/about/control')
 def about_control():
     strings = lang_map[get_lang()]
-    return render_template('about/control.html', strings=strings, get_lang=get_lang)
+    return render_template(
+        'about/control.html',
+        strings=strings,
+        get_lang=get_lang,
+        control_authed=is_control_authed()
+    )
 
+@bp.route('/internal/login', methods=['GET', 'POST'])
+def internal_login():
+    if is_control_authed():
+        return redirect(url_for('main.observe_system'))
+
+    strings = lang_map[get_lang()]
+    error_message = None
+
+    if request.method == 'POST':
+        password = (request.form.get('password') or '').strip()
+
+        if not CONTROL_PASSWORD_HASH:
+            error_message = control_message('missing_config')
+            session.pop(CONTROL_SESSION_KEY, None)
+        elif not password:
+            error_message = control_message('empty_password')
+            session.pop(CONTROL_SESSION_KEY, None)
+        elif check_password_hash(CONTROL_PASSWORD_HASH, password):
+            session[CONTROL_SESSION_KEY] = True
+            return redirect(url_for('main.observe_system'))
+        else:
+            error_message = control_message('wrong_password')
+            session.pop(CONTROL_SESSION_KEY, None)
+
+    return render_template(
+        'internal/login.html',
+        strings=strings,
+        get_lang=get_lang,
+        control_error=error_message
+    )
+
+@bp.route('/internal/logout', methods=['POST'])
+def internal_logout():
+    session.pop(CONTROL_SESSION_KEY, None)
+    return redirect(url_for('main.internal_login'))
+
+@bp.route('/about/control/logout', methods=['POST'])
+def about_control_logout():
+    session.pop(CONTROL_SESSION_KEY, None)
+    return redirect(url_for('main.internal_login'))
 
 # === 李所天文台 / TDLI Observatories ===
 @bp.route('/tdli_observatories/yuanqi')
@@ -241,10 +329,34 @@ def news_outreach():
     return render_template('news/outreach.html', strings=strings, get_lang=get_lang)
 
 
-# 暂时保留内部观测控制入口（/about/control 里 iframe 还在用）
 @bp.route('/internal/observe')
 def observe_system():
-    return render_template('observe_system.html', strings=lang_map[get_lang()])
+    if not is_control_authed():
+       return redirect(url_for('main.internal_login'))
+
+    strings = lang_map[get_lang()]
+    internal_docs = get_internal_docs()
+    return render_template(
+        'observe_system.html',
+        strings=strings,
+        internal_docs=internal_docs
+    )
+
+
+@bp.route('/internal/docs/<path:filename>')
+def download_internal_doc(filename):
+    if not is_control_authed():
+        return redirect(url_for('main.internal_login'))
+
+    allowed_files = {item["filename"] for item in INTERNAL_DOCS}
+    if filename not in allowed_files:
+        abort(404)
+
+    file_path = os.path.join(INTERNAL_DOCS_DIR, filename)
+    if not os.path.isfile(file_path):
+        abort(404)
+
+    return send_from_directory(INTERNAL_DOCS_DIR, filename, as_attachment=True)
 
 
 @bp.route('/research')
@@ -315,7 +427,6 @@ def publications():
             'pdf': meta.get('pdf', '#')
         })
 
-    # 年份倒序
     entries.sort(key=lambda e: e.get('year', ''), reverse=True)
 
     return render_template('publications.html', entries=entries, strings=strings, get_lang=get_lang)

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {% if session.get('lang') == 'en' %}
+    Internal Login - {{ strings.title if strings is defined else 'Tianyu Project' }}
+  {% else %}
+    内部网站登录 - {{ strings.title if strings is defined else '天语计划' }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+{% if session.get('lang') == 'zh' %}
+
+<h1>内部网站登录</h1>
+
+<p>
+  请输入项目组内部约定的访问口令。验证通过后，将进入独立的内部网站页面。
+</p>
+
+<div style="margin-top: 1rem; max-width: 720px; padding: 18px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb;">
+  <h3 style="margin-top: 0;">访问内部网站</h3>
+  <p style="font-size: 0.95rem; color: #4b5563;">
+    内部网站包含实时观测控制界面、内部文档资料和其他仅限项目成员访问的信息。
+  </p>
+
+  <form method="post" action="{{ url_for('main.internal_login') }}" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px;">
+    <input
+      id="control-password"
+      name="password"
+      type="password"
+      placeholder="请输入访问口令"
+      autocomplete="off"
+      style="flex: 1 1 240px; min-width: 200px; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5f5; font-size: 0.95rem;"
+      required
+    />
+    <button
+      type="submit"
+      style="padding: 8px 16px; border-radius: 8px; border: 1px solid #1e3a8a; background: #1e3a8a; color: #fff; font-size: 0.95rem; cursor: pointer;"
+    >
+      登录并进入
+    </button>
+  </form>
+
+  {% if control_error %}
+  <p style="font-size: 0.92rem; color: #b91c1c; margin-top: 10px;">
+    {{ control_error }}
+  </p>
+  {% endif %}
+
+  <p style="font-size: 0.85rem; color: #6b7280; margin-top: 12px;">
+    提示：登录状态由服务端会话控制，关闭浏览器或退出访问后需重新验证。
+  </p>
+</div>
+
+<p style="margin-top: 18px;">
+  <a href="{{ url_for('main.about_control') }}" style="color: #1e3a8a; text-decoration: none;">
+    ← 返回公开页面
+  </a>
+</p>
+
+{% else %}
+
+<h1>Internal Site Login</h1>
+
+<p>
+  Please enter the internal passphrase. After successful verification, you will be redirected
+  to the dedicated internal site.
+</p>
+
+<div style="margin-top: 1rem; max-width: 720px; padding: 18px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb;">
+  <h3 style="margin-top: 0;">Access Internal Site</h3>
+  <p style="font-size: 0.95rem; color: #4b5563;">
+    The internal site contains the real-time observing dashboard, internal documents, and other
+    project information restricted to team members.
+  </p>
+
+  <form method="post" action="{{ url_for('main.internal_login') }}" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px;">
+    <input
+      id="control-password"
+      name="password"
+      type="password"
+      placeholder="Enter passphrase"
+      autocomplete="off"
+      style="flex: 1 1 240px; min-width: 200px; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5f5; font-size: 0.95rem;"
+      required
+    />
+    <button
+      type="submit"
+      style="padding: 8px 16px; border-radius: 8px; border: 1px solid #1e3a8a; background: #1e3a8a; color: #fff; font-size: 0.95rem; cursor: pointer;"
+    >
+      Log In
+    </button>
+  </form>
+
+  {% if control_error %}
+  <p style="font-size: 0.92rem; color: #b91c1c; margin-top: 10px;">
+    {{ control_error }}
+  </p>
+  {% endif %}
+
+  <p style="font-size: 0.85rem; color: #6b7280; margin-top: 12px;">
+    Note: access is controlled by a server-side session. You will need to authenticate again after logging out.
+  </p>
+</div>
+
+<p style="margin-top: 18px;">
+  <a href="{{ url_for('main.about_control') }}" style="color: #1e3a8a; text-decoration: none;">
+    ← Back to public page
+  </a>
+</p>
+
+{% endif %}
+{% endblock %}

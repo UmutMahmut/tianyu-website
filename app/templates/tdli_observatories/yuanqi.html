@@ -21,17 +21,51 @@
     max-width: 100%;
     width: auto;
     height: auto;
-    max-height: 520px;
+    max-height: 460px;
     object-fit: contain;
   }
 
-  .tdli-name-list {
+  .tdli-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tdli-photo-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .tdli-photo-card img {
+    display: block;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: #f8fafc;
+  }
+
+  .tdli-photo-card figcaption {
+    padding: 10px 12px;
+    font-size: 0.92rem;
+    color: #64748b;
+    line-height: 1.6;
+  }
+
+  .tdli-name-list,
+  .tdli-timeline-list,
+  .tdli-spec-list {
     margin: 0;
     padding-left: 1.2rem;
     line-height: 1.9;
   }
 
-  .tdli-name-list li {
+  .tdli-name-list li,
+  .tdli-timeline-list li,
+  .tdli-spec-list li {
     margin-bottom: 0.5rem;
   }
 
@@ -39,6 +73,22 @@
     margin-top: 1rem;
     color: #475569;
     line-height: 1.9;
+  }
+
+  @media (max-width: 1100px) {
+    .tdli-photo-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tdli-photo-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tdli-photo-card img {
+      height: 200px;
+    }
   }
 </style>
 {% endblock %}
@@ -59,15 +109,16 @@
 <p class="lead">
   源启天文台于 2024 年 12 月在李政道研究所正式启用，
   是研究所楼顶观测平台的重要组成部分。
-  该平台兼具教学、科研与科普功能，
-  为本地观测实践、天文教育与公众展示提供了新的平台支撑。
+  平台面向教学、科研与科普活动，
+  为本地观测实践、天文教育和公众展示提供了新的空间与支撑。
 </p>
 
 <h2>平台概况</h2>
 <p>
-  依托李政道研究所楼顶平台，源启天文台面向观测实践、教学展示和科普活动等场景。
-  它既是研究所天文相关工作在本地的重要延伸，
-  也是连接科研实践与公众认知的一处窗口。
+  源启天文台依托李政道研究所楼顶平台建设，结合屋顶周边空间改造，
+  旨在建设成为集教学、科研、科普于一体的平台。天文台的建设得到了上海交通大学1989级校友、
+  云启资本创始合伙人毛丞宇先生的支持。当前天文台已具备开展初步观测和科普活动的条件，
+  并将随着设备安装和平台完善，进一步拓展其观测与展示能力。
 </p>
 
 <h2>名称寓意</h2>
@@ -76,14 +127,94 @@
   <li><strong>“启”</strong> 出自“云启”，兼有“启程”之意。</li>
 </ul>
 
-<h2>当前页面</h2>
+<h2>建设进展</h2>
+<ul class="tdli-timeline-list">
+  <li>2023 年 1 月：捐建“源启天文台”项目启动。</li>
+  <li>2023 年 6 月—9 月：方案沟通、审议与公开招投标工作推进。</li>
+  <li>2023 年 11 月：屋顶改造竣工，天文台开始施工。</li>
+  <li>2024 年 4 月：项目基建工作完成。</li>
+  <li>2024 年 12 月：30 cm 口径望远镜完成安装调试，天文台正式启用。</li>
+</ul>
+
+<h2>设备与建设规划</h2>
+<ul class="tdli-spec-list">
+  <li>已先行安装 30 cm 口径望远镜，用于初步观测与科普活动。</li>
+  <li>50 cm 大口径望远镜安装工作已进入收尾阶段，预计将很快正式投入使用。</li>
+  <li>平台后续规划包括望远镜阵列建设，以及与冷湖 JUST-P 的远程联动与合作展示。</li>
+</ul>
+
+<h2>与 JUST 的联系</h2>
 <p>
-  当前页面以源启天文台外观与命名说明为主。
-  后续将根据资料整理进展，逐步补充台站背景、活动记录与相关图像资料。
+  源启天文台与 JUST 系列望远镜在定位上具有互补性。
+  一方面，源启天文台可承担本地教学、科普和公众活动的展示功能；
+  另一方面，也可结合观测条件与项目安排，在联合观测、数据共享和公众传播等方面发挥作用。
 </p>
 
+<h2>图片记录</h2>
+<p>
+  本页收录源启天文台相关图片，展示台站外观、建设过程、设备情况与相关活动记录。
+</p>
+
+<div class="tdli-photo-grid">
+  <figure class="tdli-photo-card" id="yuanqi-photo-1">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_1.jpg') }}"
+         alt="李政道研究所与源启天文台所在楼顶"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>李政道研究所与源启天文台所在楼顶</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-2">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_2.jpg') }}"
+         alt="冯发波教授和两位博士生"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>冯发波教授和两位博士生</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-3">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_3.jpg') }}"
+         alt="Solarmax望远镜展示"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>Solarmax望远镜展示</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-4">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_4.jpg') }}"
+         alt="日落时分的源启"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>日落时分的源启</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-5">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_5.jpg') }}"
+         alt="观日活动中的公众体验"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>观日活动中的公众体验</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-6">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_6.jpg') }}"
+         alt="源启平台上的HD8望远镜"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>源启平台上的HD8望远镜</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-7">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_7.jpg') }}"
+         alt="圆顶开启"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>圆顶开启</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-8">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_8.jpg') }}"
+         alt="50cm望远镜夜间运行中"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>50cm望远镜夜间运行中</figcaption>
+  </figure>
+</div>
+
 <p class="tdli-note">
-  后续将继续补充源启天文台的建设背景、运行记录与相关图像资料。
+  后续将继续补充源启天文台的建设资料、运行记录与相关活动图像。
 </p>
 
 {% else %}
@@ -100,32 +231,112 @@
 <p class="lead">
   Yuanqi Observatory was formally launched at the Tsung-Dao Lee Institute in December 2024.
   It is an important part of the rooftop observing platform at TDLI.
-  With functions in teaching, research, and public outreach,
-  it provides local support for observational practice, astronomy education, and public engagement.
+  The platform supports teaching, research, and public outreach,
+  providing a new local space for observational practice, astronomy education, and public engagement.
 </p>
 
 <h2>Overview</h2>
 <p>
-  Built on the rooftop platform of TDLI, Yuanqi Observatory is intended for observational practice,
-  teaching display, and outreach activities.
-  It serves both as a local extension of the institute’s astronomy-related work
-  and as a window connecting scientific practice with public understanding.
+  Yuanqi Observatory is built on the rooftop platform of TDLI and was developed together with the improvement of the surrounding rooftop space.
+  It is intended to serve as a platform integrating teaching, research, and outreach. The development of Yuanqi Observatory was supported by Mao Chengyu,
+  an alumnus of Shanghai Jiao Tong University and a founding partner of Yunqi Capital. The observatory has already begun to support initial observing
+  and public education activities, and its capabilities will continue to expand as further instrumentation and supporting facilities are added.
 </p>
 
 <h2>Name and Meaning</h2>
 <ul class="tdli-name-list">
-  <li><strong>“Yuan”</strong> echoes the university motto “Gratitude and Responsibility” and also carries the sense of origin.</li>
+  <li><strong>“Yuan”</strong> comes from the university motto and also carries the sense of origin.</li>
   <li><strong>“Qi”</strong> refers to “Yunqi” and also conveys the meaning of setting out on a journey.</li>
 </ul>
 
-<h2>Current Page</h2>
+<h2>Development Timeline</h2>
+<ul class="tdli-timeline-list">
+  <li>January 2023: the donation-supported Yuanqi Observatory project was initiated.</li>
+  <li>June–September 2023: design consultation, review, and public tendering were carried out.</li>
+  <li>November 2023: rooftop renovation was completed and observatory construction began.</li>
+  <li>April 2024: the main infrastructure work was completed.</li>
+  <li>December 2024: the 30 cm telescope completed installation and commissioning, and the observatory was formally launched.</li>
+</ul>
+
+<h2>Instrumentation and Planning</h2>
+<ul class="tdli-spec-list">
+  <li>A 30 cm telescope has already been installed for initial observing and outreach activities.</li>
+  <li>The installation of the 50 cm telescope is nearing completion, and it is expected to enter formal operation soon.</li>
+  <li>Future planning also includes a telescope array and remote linkage with JUST-P in Lenghu.</li>
+</ul>
+
+<h2>Connection with JUST</h2>
 <p>
-  The current page mainly presents the exterior view of Yuanqi Observatory together with a brief explanation of its name.
-  Additional materials on its background, activities, and related images will be added as the page develops.
+  Yuanqi Observatory and the JUST telescope program are designed to be complementary.
+  Yuanqi can support local teaching, outreach, and public-facing activities,
+  while also contributing to joint observation, data sharing, and science communication when appropriate.
 </p>
 
+<h2>Photo Archive</h2>
+<p>
+  This page collects selected images related to Yuanqi Observatory, including its exterior, development, instrumentation, and activity records.
+</p>
+
+<div class="tdli-photo-grid">
+  <figure class="tdli-photo-card" id="yuanqi-photo-1">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_1.jpg') }}"
+         alt="The Tsung-Dao Lee Institute and the rooftop where Yuanqi Observatory is located"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>TDLI rooftop where Yuanqi Observatory is located</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-2">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_2.jpg') }}"
+         alt="Professor Feng Fabao and two PhD students"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>Professor Fabao Feng with two PhD students</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-3">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_3.jpg') }}"
+         alt="Solarmax telescope on display"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>Solarmax telescope on display</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-4">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_4.jpg') }}"
+         alt="Yuanqi at sunset"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>Yuanqi at sunset</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-5">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_5.jpg') }}"
+         alt="Public participation in a solar observation activity"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>Public participation in a solar observation activity</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-6">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_6.jpg') }}"
+         alt="The HD8 telescope on the Yuanqi platform"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>The HD8 telescope on the Yuanqi platform</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-7">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_7.jpg') }}"
+         alt="The dome opened"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>The dome opened</figcaption>
+  </figure>
+
+  <figure class="tdli-photo-card" id="yuanqi-photo-8">
+    <img src="{{ url_for('static', filename='images/tdli/yuanqi_8.jpg') }}"
+         alt="The 50 cm telescope in night-time operation"
+         onerror="this.closest('figure').style.display='none';">
+    <figcaption>The 50 cm telescope in night-time operation</figcaption>
+  </figure>
+</div>
+
 <p class="tdli-note">
-  Additional materials on the development, operation, and image records of Yuanqi Observatory will be added in future updates.
+  More materials on the development, operation, and activities of Yuanqi Observatory will be added in future updates.
 </p>
 
 {% endif %}

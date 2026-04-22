@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  :contentReference[oaicite:8]{index=8}trol if strings is defined else '观测控制') }} - {{ strings.title if strings is defined else '天语计划' }}
+  {{ strings.about_control if strings is defined else '观测控制' }} - {{ strings.title if strings is defined else '天语计划' }}
 {% endblock %}
 
 {% block content %}
@@ -39,82 +39,31 @@
 
 <hr>
 
-<h2>内部控制界面（需口令）</h2>
+<h2>内部网站入口</h2>
 <p>
-  下方内嵌的是项目组内部使用的实时观测控制界面，
-  展示望远镜状态、观测队列、环境与数据流水线等信息。
-  为避免对外公开完整控制面板，本页面通过简单口令方式进行访问限制。
+  项目组内部使用的实时观测控制界面、内部文档资料与相关信息，
+  现已独立部署在内部网站中。公开页面不再直接嵌入内部内容。
 </p>
 
-<div id="internal-access-box" style="margin-top: 1rem; padding: 16px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb;">
-  <h3 style="margin-top: 0;">访问内部观测控制界面</h3>
-  <p style="font-size: 0.95rem; color: #4b5563;">
-    如需查看实时控制面板，请输入项目组内部约定的口令。
-  </p>
-  <form id="control-login-form" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px;">
-    <input
-      id="control-password"
-      type="password"
-      placeholder="请输入访问口令"
-      autocomplete="off"
-      style="flex: 1 1 220px; min-width: 180px; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5f5; font-size: 0.95rem;"
-    />
-    <button
-      type="submit"
-      style="padding: 6px 14px; border-radius: 8px; border: 1px solid #1e3a8a; background: #1e3a8a; color: #fff; font-size: 0.95rem; cursor: pointer;"
-    >
-      解锁界面
-    </button>
-    <span id="control-login-msg" style="font-size: 0.9rem; color: #b91c1c; margin-left: 4px;"></span>
-  </form>
-
-  <p style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
-    （提示：口令仅用于界面访问控制，请不要在公共场合展示。）
+<div style="margin-top: 1rem; padding: 18px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb;">
+  <h3 style="margin-top: 0;">进入内部网站</h3>
+  <p style="font-size: 0.95rem; color: #4b5563; margin-bottom: 12px;">
+    点击下方按钮后，将跳转至独立的内部登录页面。输入正确口令后，方可进入内部系统。
   </p>
 
-  <div id="control-iframe-wrap" style="display: none; margin-top: 16px;">
-    <iframe
-      src="/internal/observe"
-      width="100%"
-      height="720"
-      style="border: 1px solid #d1d5db; border-radius: 12px; background: #ffffff;"
-    ></iframe>
-  </div>
+  <a
+    href="{{ url_for('main.observe_system') if control_authed else url_for('main.internal_login') }}"
+    style="display: inline-block; padding: 8px 16px; border-radius: 8px; border: 1px solid #1e3a8a; background: #1e3a8a; color: #fff; text-decoration: none; font-size: 0.95rem;"
+  >
+    {{ '进入内部网站' }}
+  </a>
+
+  {% if control_authed %}
+  <p style="font-size: 0.9rem; color: #15803d; margin-top: 10px;">
+    当前会话已通过验证，可直接进入内部网站。
+  </p>
+  {% endif %}
 </div>
-
-<script>
-  (function () {
-    // TODO: 你可以在这里改成你自己内部约定的口令
-    const CONTROL_PASSWORD = "tianyu";
-
-    const form = document.getElementById("control-login-form");
-    const input = document.getElementById("control-password");
-    const msg = document.getElementById("control-login-msg");
-    const wrap = document.getElementById("control-iframe-wrap");
-
-    if (!form || !input || !wrap) return;
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const pwd = (input.value || "").trim();
-      if (!pwd) {
-        msg.textContent = "请输入口令。";
-        msg.style.color = "#b91c1c";
-        wrap.style.display = "none";
-        return;
-      }
-      if (pwd === CONTROL_PASSWORD) {
-        msg.textContent = "已解锁，正在加载内部界面…";
-        msg.style.color = "#15803d";
-        wrap.style.display = "block";
-      } else {
-        msg.textContent = "口令错误。";
-        msg.style.color = "#b91c1c";
-        wrap.style.display = "none";
-      }
-    });
-  })();
-</script>
 
 {% else %}
 
@@ -150,80 +99,32 @@
 
 <hr>
 
-<h2>Internal Control Panel (Password Required)</h2>
+<h2>Internal Site Entry</h2>
 <p>
-  The embedded panel below is the internal real-time control interface used by the Tianyu team.
-  To avoid exposing the full control dashboard publicly, a simple password gate is used here.
+  The internal dashboard, internal documents, and related project information are now served through
+  a separate internal site. This public page no longer embeds the internal system directly.
 </p>
 
-<div id="internal-access-box" style="margin-top: 1rem; padding: 16px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb;">
-  <h3 style="margin-top: 0;">Access Internal Dashboard</h3>
-  <p style="font-size: 0.95rem; color: #4b5563;">
-    Please enter the internal passphrase to load the real-time control dashboard.
-  </p>
-  <form id="control-login-form" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px;">
-    <input
-      id="control-password"
-      type="password"
-      placeholder="Enter passphrase"
-      autocomplete="off"
-      style="flex: 1 1 220px; min-width: 180px; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5f5; font-size: 0.95rem;"
-    />
-    <button
-      type="submit"
-      style="padding: 6px 14px; border-radius: 8px; border: 1px solid #1e3a8a; background: #1e3a8a; color: #fff; font-size: 0.95rem; cursor: pointer;"
-    >
-      Unlock
-    </button>
-    <span id="control-login-msg" style="font-size: 0.9rem; color: #b91c1c; margin-left: 4px;"></span>
-  </form>
-
-  <p style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
-    (Note: this is a UI-level gate only. For stricter protection, please combine with network / server-side access control.)
+<div style="margin-top: 1rem; padding: 18px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb;">
+  <h3 style="margin-top: 0;">Enter Internal Site</h3>
+  <p style="font-size: 0.95rem; color: #4b5563; margin-bottom: 12px;">
+    Click the button below to go to the dedicated internal login page. After entering the correct passphrase,
+    you will be redirected to the internal system.
   </p>
 
-  <div id="control-iframe-wrap" style="display: none; margin-top: 16px;">
-    <iframe
-      src="/internal/observe"
-      width="100%"
-      height="720"
-      style="border: 1px solid #d1d5db; border-radius: 12px; background: #ffffff;"
-    ></iframe>
-  </div>
+  <a
+    href="{{ url_for('main.observe_system') if control_authed else url_for('main.internal_login') }}"
+    style="display: inline-block; padding: 8px 16px; border-radius: 8px; border: 1px solid #1e3a8a; background: #1e3a8a; color: #fff; text-decoration: none; font-size: 0.95rem;"
+  >
+    Enter Internal Site
+  </a>
+
+  {% if control_authed %}
+  <p style="font-size: 0.9rem; color: #15803d; margin-top: 10px;">
+    Your current session is already authorized. You can enter the internal site directly.
+  </p>
+  {% endif %}
 </div>
-
-<script>
-  (function () {
-    const CONTROL_PASSWORD = "tianyu2024";
-
-    const form = document.getElementById("control-login-form");
-    const input = document.getElementById("control-password");
-    const msg = document.getElementById("control-login-msg");
-    const wrap = document.getElementById("control-iframe-wrap");
-
-    if (!form || !input || !wrap) return;
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const pwd = (input.value || "").trim();
-      if (!pwd) {
-        msg.textContent = "Please enter the passphrase.";
-        msg.style.color = "#b91c1c";
-        wrap.style.display = "none";
-        return;
-      }
-      if (pwd === CONTROL_PASSWORD) {
-        msg.textContent = "Unlocked. Loading dashboard…";
-        msg.style.color = "#15803d";
-        wrap.style.display = "block";
-      } else {
-        msg.textContent = "Incorrect passphrase.";
-        msg.style.color = "#b91c1c";
-        wrap.style.display = "none";
-      }
-    });
-  })();
-</script>
 
 {% endif %}
 {% endblock %}
