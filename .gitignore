@@ -14,10 +14,20 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Runtime data
+# Logs / runtime
+*.log
 app/static/weather_data/
 app/static/yuanqi/
-*.log
+
+# Presentation assets: keep out of repo
+app/static/images/
+
+# If you really want all common display images out of the repo
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif
 
 # Temp / backup
 *.bak
