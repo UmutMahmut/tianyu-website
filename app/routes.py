@@ -28,22 +28,17 @@ lang_map = {
     'zh': {
         'title': '天语计划',
         'home': '首页',
-
         'project': '项目介绍',
-
         'about': '关于天语',
         'about_overview': '项目简介',
         'about_lenghu': '冷湖台址',
         'about_optics': '光机系统',
         'about_control': '观测控制',
-
         'tdli_observatories': '李所天文台',
         'yuanqi_observatory': '源启天文台',
         'muguang_observatory': '慕光天文台',
-
         'team': '团队成员',
         'team_title': '天语望远镜团队',
-
         'news': '天语动态',
         'events': '重要事件',
         'education_outreach': '科教活动',
@@ -51,22 +46,17 @@ lang_map = {
         'research': '科学研究',
         'news_placeholder': '项目最新进展、会议活动、建设动态等将发布于此。',
         'research_placeholder': '论文发表、数据发布、科学成果将在本页面集中展示。',
-
         'weather': '实时气象',
         'tdli_weather': '源启实时气象',
         'lenghu': '冷湖天文站',
-
         'yuanqi': '李所天文台',
-
         'welcome': '欢迎访问天语项目网站',
         'intro': '本网站展示与维护多个天文观测项目，包含实时气象、团队介绍和科研动态。',
         'contact_us': '联系我们',
         'email': '邮箱',
         'phone': '电话',
         'address': '上海市浦东新区李所路1号李政道研究所（201210）',
-
         'title_col': '标题',
-
         'authors': '作者',
         'year': '年份',
         'whitepaper': '白皮书',
@@ -87,20 +77,16 @@ lang_map = {
         'home': 'Home',
 
         'project': 'Projects',
-
         'about': 'About Tianyu',
         'about_overview': 'Overview',
         'about_lenghu': 'Lenghu Site',
         'about_optics': 'Telescope Optics & Camera',
         'about_control': 'Observation Control',
-
         'tdli_observatories': 'TDLI Observatories',
         'yuanqi_observatory': 'Yuanqi Observatory',
         'muguang_observatory': 'Muguang Observatory',
-
         'team': 'Team',
         'team_title': 'Tianyu Telescope Team',
-
         'news': 'Tianyu News',
         'events': 'Major Events',
         'education_outreach': 'Education Outreach',
@@ -108,22 +94,17 @@ lang_map = {
         'research': 'Research',
         'news_placeholder': 'Latest updates, events, and construction progress will be published here.',
         'research_placeholder': 'Scientific publications and data releases will be featured here.',
-
         'weather': 'Weather',
         'tdli_weather': 'Yuanqi Real-time Weather',
         'lenghu': 'Lenghu Station',
-
         'yuanqi': 'TDLI Observatory',
-
         'welcome': 'Welcome to Tianyu Project Website',
         'intro': 'This site presents ongoing astronomical projects, weather data, and team updates.',
         'contact_us': 'Contact Us',
         'email': 'Email',
         'phone': 'Phone',
         'address': 'Tsung-Dao Lee Institute, 1 Lisuo Road, Pudong New Area, Shanghai, 201210',
-
         'title_col': 'Title',
-
         'authors': 'Authors',
         'year': 'Year',
         'whitepaper': 'Whitepaper',

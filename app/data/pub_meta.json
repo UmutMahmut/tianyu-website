@@ -14,5 +14,14 @@
   "du2025": {
     "status": "published",
     "pdf": "https://arxiv.org/pdf/2508.03400"
+  },
+  "rui2026": {
+    "status": "published",
+    "pdf": "https://arxiv.org/abs/2603.16429"
+  },
+  "li2026": {
+    "status": "accepted",
+    "pdf": "https://arxiv.org/abs/2606.02140v1"
   }
 }
+

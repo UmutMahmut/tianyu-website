@@ -2,74 +2,159 @@
 {% block title %}{{ strings.publications }}{% endblock %}
 
 {% block head_extra %}
+  <!-- 使用与 DataTables JS 匹配的 CSS 版本 -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <style>
-    /* 让表格按固定布局分列，避免被某一列长文本拖垮 */
-    #pub-table {
-      table-layout: fixed;
-      width: 100%;
+    /* 表格容器：支持横向滚动，避免窄屏挤压 */
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
+      /* 可选：加一个极浅的阴影增加层次感 */
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
 
-    /* 第 2 列（标题）允许换行，必要时单词中间断行 */
+    #pub-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;        /* 稍微加大字体，舒适阅读 */
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    /* 统一单元格内边距 & 行高 */
+    #pub-table th,
+    #pub-table td {
+      padding: 12px 16px;        /* 上下12px，左右16px — 更宽松 */
+      vertical-align: top;
+      line-height: 1.5;          /* 增加行内间距，多行文字不再挤在一起 */
+      border-bottom: 1px solid #e9eef3;  /* 极浅灰分隔线，柔和 */
+    }
+
+    /* 表头样式：加背景，突出层次 */
+    #pub-table th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      border-bottom: 2px solid #cbd5e1;
+      color: #0f172a;
+      letter-spacing: 0.3px;
+    }
+
+    /* 行悬停效果 — 提升可读性 */
+    #pub-table tbody tr:hover {
+      background-color: #fefce8;  /* 非常浅的暖色，不刺眼且区分行 */
+      transition: background-color 0.2s ease;
+    }
+
+    /* 标题列：允许自然换行，适当加一点字重 */
     #pub-table th:nth-child(2),
     #pub-table td:nth-child(2) {
-      white-space: normal !important;
+      white-space: normal;
       word-break: break-word;
+      font-weight: 500;
     }
 
-    /* 第 3 列（作者）也允许正常换行，避免被 nowrap 锁死 */
+    /* 作者列：允许换行，保持干净 */
     #pub-table th:nth-child(3),
     #pub-table td:nth-child(3) {
-      white-space: normal !important;
+      white-space: normal;
+      line-height: 1.5;
+    }
+
+    /* 年份 / 状态 / PDF 列保持内容紧凑（但 padding 已足够宽松）*/
+    #pub-table th:nth-child(4),
+    #pub-table td:nth-child(4),
+    #pub-table th:nth-child(5),
+    #pub-table td:nth-child(5),
+    #pub-table th:nth-child(6),
+    #pub-table td:nth-child(6) {
+      white-space: nowrap;
+    }
+
+    /* PDF 列居中，图标稍微放大并增加悬停反馈 */
+    #pub-table th:nth-child(6),
+    #pub-table td:nth-child(6) {
+      text-align: center;
+    }
+
+    #pub-table td:nth-child(6) a {
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    #pub-table td:nth-child(6) a:hover {
+      opacity: 0.7;
+    }
+
+    /* 针对 DataTables 搜索框样式微调，使其更融合 */
+    .dataTables_wrapper .dataTables_filter {
+      margin-bottom: 1rem;
+    }
+    .dataTables_wrapper .dataTables_filter input {
+      border: 1px solid #cbd5e1;
+      border-radius: 0.375rem;
+      padding: 0.4rem 0.8rem;
+      margin-left: 0.5rem;
+    }
+
+    /* 可选的响应式处理：如果屏幕宽度较小，稍微压缩单元格左右边距 */
+    @media (max-width: 640px) {
+      #pub-table th,
+      #pub-table td {
+        padding: 10px 12px;
+      }
     }
   </style>
 {% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-6">
-  <h1 class="text-2xl font-semibold mb-6">{{ strings.publications }}</h1>
+  <h1 class="text-2xl font-semibold mb-5">{{ strings.publications }}</h1>
 
-  <table id="pub-table" class="display w-full text-sm">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>{{ strings['title_col'] if 'title_col' in strings else 'Title' }}</th>
-        <th>{{ strings['authors'] if 'authors' in strings else 'Authors' }}</th>
-        <th>{{ strings['year'] if 'year' in strings else 'Year' }}</th>
-        <th>{{ strings['status'] }}</th>
-        <th>PDF</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for paper in entries %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ paper.title }}</td>
-        <td>
-          {% set authors = paper.authors.split(' and ') %}
-          {% if authors|length > 3 %}
-            {{ authors[0] }}, {{ authors[1] }}, {{ authors[2] }}{% if get_lang() == 'zh' %} 等人{% else %} et al.{% endif %}
-          {% else %}
-            {{ paper.authors }}
-          {% endif %}
-        </td>
-        <td>{{ paper.year }}</td>
-        <td>{{ strings[paper.status] if paper.status in strings else paper.status }}</td>
-        <td>
-          {% if paper.pdf and paper.pdf != '#' %}
-            <a href="{{ paper.pdf }}" target="_blank" rel="noopener noreferrer" title="PDF">📄</a>
-          {% else %}-{% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- 增加表格包装器，支持横向滚动 + 更舒适的视觉 -->
+  <div class="table-wrapper">
+    <table id="pub-table" class="display w-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>{{ strings['title_col'] if 'title_col' in strings else 'Title' }}</th>
+          <th>{{ strings['authors'] if 'authors' in strings else 'Authors' }}</th>
+          <th>{{ strings['year'] if 'year' in strings else 'Year' }}</th>
+          <th>{{ strings['status'] }}</th>
+          <th>PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for paper in entries %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ paper.title }}</td>
+          <td>
+            {% set authors = paper.authors.split(' and ') %}
+            {% if authors|length > 3 %}
+              {{ authors[0] }}, {{ authors[1] }}, {{ authors[2] }}{% if get_lang() == 'zh' %} 等人{% else %} et al.{% endif %}
+            {% else %}
+              {{ paper.authors }}
+            {% endif %}
+          </td>
+          <td>{{ paper.year }}</td>
+          <td>{{ strings[paper.status] if paper.status in strings else paper.status }}</td>
+          <td>
+            {% if paper.pdf and paper.pdf != '#' %}
+              <a href="{{ paper.pdf }}" target="_blank" rel="noopener noreferrer" title="PDF">📄</a>
+            {% else %}-{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- 统一 DataTables 版本为 1.13.6（与 CSS 一致） -->
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script>
     $(function() {
@@ -77,18 +162,19 @@
         paging: false,
         info: false,
         ordering: true,
-        order: [[3, 'desc']], // 默认按年份降序
+        autoWidth: true,
+        order: [[3, 'desc']],
         language: {
           search: '{{ "搜索" if get_lang() == "zh" else "Search" }}:',
           zeroRecords: '{{ "未找到匹配记录" if get_lang() == "zh" else "No matching records found" }}'
         },
         columnDefs: [
-          { width: "6%",  targets: 0 },
-          { width: "38%", targets: 1 },  // 标题
-          { width: "30%", targets: 2 },  // 作者
-          { width: "10%", targets: 3 },
-          { width: "10%", targets: 4 },
-          { width: "6%",  targets: 5, orderable: false }
+          { width: "50px",  targets: 0 },
+          { width: "auto",  targets: 1 },   // 标题自适应，不再固定死56%
+          { width: "28%",   targets: 2 },   // 作者
+          { width: "70px",  targets: 3 },   // 年份
+          { width: "85px",  targets: 4 },   // 状态
+          { width: "55px",  targets: 5, orderable: false } // PDF
         ]
       });
     });
