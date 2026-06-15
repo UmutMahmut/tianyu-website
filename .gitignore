@@ -32,3 +32,39 @@ app/static/images/
 # Temp / backup
 *.bak
 *.bak.*
+
+# Tianyu server snapshot excludes
+.env
+.env.*
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.bak
+*.bak.*
+.DS_Store
+
+# Binary/static assets not tracked in this repository snapshot
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.svg
+*.ico
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+
+# Runtime weather outputs
+app/static/yuanqi/
