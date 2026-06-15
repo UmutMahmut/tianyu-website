@@ -38,7 +38,7 @@
 - **生产部署：** Nginx 反向代理 + WSGI（Gunicorn / uWSGI）  
 - **运行目录约定：**
   - 生产部署目录常见为：`/srv/tianyu-site`
-  - Git 工作区建议维护为：`/home/umut/tianyu_git/tianyu-website`（通过同步/发布流程更新线上）
+  - Git 工作区建议维护为：`/home/umut/tianyu_git/tianyu-website`（通过安全同步脚本生成筛选快照并推送到 GitHub）
 
 ---
 
@@ -87,7 +87,7 @@ python wsgi.py
 # 或：flask run
 ```
 
-开发完成后建议走“**Git 提交 → 同步到服务器 → 重启服务**”的发布方式，尽量避免只在 `/srv/tianyu-site` 中做不可追溯的临时修改。
+当前维护方式中，`/srv/tianyu-site/` 是实际运行和日常微调目录；Git 工作区用于生成筛选后的备份快照和对外展示。
 
 ---
 
@@ -95,27 +95,62 @@ python wsgi.py
 
 当前维护中，通常区分两个目录：
 
-- **线上运行目录：** `/srv/tianyu-site/`
-- **Git 工作区：** `/home/umut/tianyu_git/tianyu-website/`
+- **线上运行目录 / 日常编辑目录：** `/srv/tianyu-site/`
+- **Git 工作区 / GitHub 快照仓库：** `/home/umut/tianyu_git/tianyu-website/`
 
-建议流程：
+两者职责不同：
+
+| 目录 | 作用 | 说明 |
+|---|---|---|
+| `/srv/tianyu-site/` | 实际运行网站服务 | 生产环境目录；日常页面微调、内容更新、线上验证主要在这里完成 |
+| `/home/umut/tianyu_git/tianyu-website/` | GitHub 备份与对外展示 | 只保存筛选后的项目代码、模板、结构化数据与维护文档，不作为完整生产目录镜像 |
+
+本仓库不是 `/srv/tianyu-site/` 的完整镜像；它是经过过滤的代码快照仓库。
+
+### 推荐流程
 
 1. 在 `/srv/tianyu-site/` 完成页面修改与线上验证；
-2. 将当前可运行版本同步到 Git 工作区；
-3. 在 Git 工作区执行 `git status`、`git add`、`git commit`；
-4. 推送到 GitHub 仓库。
+2. 在 `/home/umut/tianyu_git/` 运行安全同步脚本；
+3. 脚本将允许进入仓库的内容同步到 Git 工作区；
+4. 人工确认 staged diff；
+5. 提交并推送到 GitHub 仓库。
 
-同步示例：
+推荐命令：
 
 ```bash
-rsync -av \
-  --delete \
-  --exclude='.git' \
-  --exclude='__pycache__' \
-  --exclude='*.pyc' \
-  --exclude='*.bak.*' \
-  /srv/tianyu-site/ /home/umut/tianyu_git/tianyu-website/
+cd /home/umut/tianyu_git
+./sync_tianyu.sh
 ```
+
+安全同步脚本应遵循以下原则：
+
+- 不使用 `rsync --delete` 将 `/srv/tianyu-site/` 镜像覆盖 Git 工作区；
+- 不删除仓库维护文件，例如 `README.md`、`.gitignore`、`requirements.txt`；
+- 不提交 `.env`、`__pycache__/`、`*.pyc`、日志、备份文件；
+- 不提交图片、PDF、Word、PPT、Excel、压缩包等二进制资源；
+- 默认只同步网站代码、模板、样式脚本与结构化数据。
+
+
+## Git 快照内容策略
+
+本仓库建议纳入：
+
+- Flask 应用代码：`app/__init__.py`、`app/routes.py`
+- Jinja2 模板：`app/templates/`
+- 样式与脚本：`app/static/css/`、`app/static/js/`
+- 结构化数据：`app/data/*.json`、`app/data/*.bib`
+- 项目入口与配置模板：`config.py`、`wsgi.py`、`requirements.txt`
+- 维护文档：`README.md`、`.gitignore`
+
+仓库不纳入：
+
+- `.env`、密钥、服务器私有配置；
+- `__pycache__/`、`*.pyc`、运行缓存；
+- 日志文件、临时备份文件；
+- 图片与媒体文件：`*.jpg`、`*.jpeg`、`*.png`、`*.gif`、`*.webp`、`*.svg`、`*.ico`；
+- 文档与附件：`*.pdf`、`*.doc`、`*.docx`、`*.ppt`、`*.pptx`、`*.xls`、`*.xlsx`；
+- 压缩包：`*.zip`、`*.tar`、`*.tar.gz`、`*.tgz`、`*.7z`、`*.rar`；
+- 运行时气象输出：`app/static/yuanqi/`。
 
 ---
 
@@ -140,7 +175,7 @@ sudo journalctl -u tianyu -n 100 --no-pager
 
 - 页面结构和栏目设置仍在持续完善中；
 - 李所天文台相关页面当前已完成首轮上线，后续将继续补充资料与图片；
-- 实时气象页面依赖 `/static/yuanqi/` 下的运行时图像与 JSON 数据；
+- 实时气象页面依赖生产目录中的运行时图像与 JSON 数据；相关输出通常不进入 GitHub 快照仓库；
 - `.env`、运行时缓存、备份文件与 `__pycache__` 不建议纳入 Git 跟踪；
 - 如后续继续扩展内容，建议逐步补充英文页面与维护文档。
 
