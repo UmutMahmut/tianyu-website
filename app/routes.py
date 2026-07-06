@@ -20,8 +20,17 @@ INTERNAL_DOCS = [
         "description_zh": "项目内部参考资料，供组内成员下载查阅。",
         "description_en": "Internal reference material for project members.",
         "updated": "2026-04-21"
+    },
+    {
+        "filename": "圆顶通信协议（交大8米随动）.doc",
+        "title_zh": "圆顶通信协议（交大8米随动）",
+        "title_en": "Dome Communication Protocol (SJTU 8m Servo)",
+        "description_zh": "项目内部参考资料，供组内成员下载查阅。",
+        "description_en": "Internal reference material for project members.",
+        "updated": "2026-07-06"
     }
 ]
+
 
 # 多语言文案
 lang_map = {
