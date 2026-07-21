@@ -2,9 +2,9 @@
 
 <section class="home-section" aria-label="Metrics">
   <div class="home-metrics">
-    {{ ui.metric(is_zh and '1米' or '1 m', is_zh and '望远镜口径' or 'Aperture') }}
-    {{ ui.metric(is_zh and '10 平方度' or '10 deg²', is_zh and '视场范围' or 'Field of View') }}
-    {{ ui.metric(is_zh and '约1亿' or '~100M', is_zh and '目标天体' or 'Target Objects') }}
-    {{ ui.metric(is_zh and '0.3秒–1周' or '0.3 s–1 week', is_zh and '采样频率' or 'Cadence') }}
+    {{ ui.metric(is_zh and '1 米' or '1 m', is_zh and '望远镜口径' or 'Aperture') }}
+    {{ ui.metric(is_zh and '8.5 平方度' or '8.5 deg²', is_zh and '单次观测天区' or 'Sky Coverage per Exposure') }}
+    {{ ui.metric('f/1.57', is_zh and '系统焦比' or 'Focal Ratio') }}
+    {{ ui.metric('8K × 8K', is_zh and '科学 CMOS 相机' or 'Scientific CMOS Camera') }}
   </div>
 </section>

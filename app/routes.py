@@ -85,7 +85,7 @@ lang_map = {
         'title': 'Tianyu Project',
         'home': 'Home',
 
-        'project': 'Projects',
+        'project': 'Project Overview',
         'about': 'About Tianyu',
         'about_overview': 'Overview',
         'about_lenghu': 'Lenghu Site',
@@ -133,7 +133,7 @@ lang_map = {
 
 
 def get_lang():
-    lang = session.get('lang', 'zh')
+    lang = session.get('lang')
     if lang not in lang_map:
         lang = 'zh'
         session['lang'] = lang

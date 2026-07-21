@@ -4,43 +4,39 @@
       <h2 class="home-h2">{% if is_zh %}项目概述{% else %}Project Overview{% endif %}</h2>
       <p class="home-paragraph">
         {% if is_zh %}
-          天语计划（Tianyu Project, JUST-P）是一个面向时间域天文学和系外行星搜索的大视场巡天项目，采样频率可配置覆盖 0.3 秒至 1 周。
-          该计划名称来源于李政道先生提出的“以天之语，解物之道”之哲学理念，旨在通过高时间分辨率的长时间基线观测，
-          发现类太阳系的长周期冷气体巨行星，并开展覆盖多时标的光变与瞬变天体研究。
+          天语望远镜是上海交通大学李政道研究所与中国科学院上海天文台联合研制的时域巡天专用 1 米光学望远镜，部署于青海冷湖赛什腾山观测站。项目围绕类木冷巨行星搜寻，以及超新星、近地天体等瞬变天象的捕捉，利用大视场、高通光效率和高精度跟踪能力开展时间域光学观测。项目名称源于李政道先生提出的“以天之语，解物之道”。
         {% else %}
-          The Tianyu Project (JUST-P) is a wide-field photometric survey for time-domain astronomy and exoplanet detection, with configurable cadence from 0.3 s to 1 week.
-          Inspired by Tsung-Dao Lee’s philosophy “From the Language of Heaven to the Rationale of Matter,” it aims to detect long-period, cold gas giants
-          in solar-like systems, and to study variability and transients across a broad range of timescales.
+          The Tianyu Telescope is a 1-m optical telescope dedicated to time-domain surveys, jointly developed by the Tsung-Dao Lee Institute at Shanghai Jiao Tong University and the Shanghai Astronomical Observatory, Chinese Academy of Sciences. Deployed at the Saishiteng Mountain Observatory in Lenghu, Qinghai, its science program centers on searches for cold Jupiters and the capture of transient celestial phenomena, including supernovae and near-Earth object passages, using wide-field, high-optical-throughput observations with high-precision tracking. Its name is inspired by Tsung-Dao Lee's idea, “From the Language of Heaven to the Rationale of Matter.”
         {% endif %}
       </p>
 
       <h3 class="home-h3">{% if is_zh %}主要特色{% else %}Key Features{% endif %}</h3>
       <ul class="home-list">
         {% if is_zh %}
-          <li><strong>望远镜系统</strong>：1 米口径广角望远镜，约 10 平方度视场</li>
-          <li><strong>采样频率</strong>：0.3 秒–1 周（可配置），支持长时间基线监测</li>
-          <li><strong>多目标覆盖</strong>：目标天体数量约 1 亿，覆盖 TESS 连续观测区与 Kepler/K2 区域</li>
-          <li><strong>多时标科学</strong>：从系外行星到变星与瞬变源，覆盖多时标光变研究</li>
+          <li><strong>快速大视场光学系统</strong>：采用主焦点结构，系统焦比 f/1.57，匹配 COSMOS-66 相机后单次覆盖约 8.5 平方度天区</li>
+          <li><strong>高性能主镜</strong>：1 米口径微晶玻璃主镜在 400–1000 nm 波段的反射率高于 95%</li>
+          <li><strong>高精度机械系统</strong>：采用地平式机架和力矩电机直接驱动，指向精度 RMS ≤ 5″，5 分钟跟踪精度 ≤ 0.3″ RMS</li>
+          <li><strong>科学级 CMOS 相机</strong>：8K × 8K 背照式探测器，像元尺寸 10 μm，最小读出噪声 0.7 e⁻</li>
         {% else %}
-          <li><strong>Telescope system</strong>: 1-m wide-field telescope, ~10 deg² FoV</li>
-          <li><strong>Cadence</strong>: 0.3 s–1 week (configurable), enabling long-term monitoring</li>
-          <li><strong>Massive target coverage</strong>: ~100M targets in the TESS CVZ and Kepler/K2 regions</li>
-          <li><strong>Broad science</strong>: From exoplanets to variability and transients across timescales</li>
+          <li><strong>Fast wide-field optics</strong>: a prime-focus system with an f/1.57 focal ratio and approximately 8.5 deg² sky coverage with the COSMOS-66 camera</li>
+          <li><strong>High-performance primary mirror</strong>: a 1-m glass-ceramic mirror with reflectivity above 95% from 400 to 1000 nm</li>
+          <li><strong>High-precision mechanics</strong>: an altitude-azimuth mount with direct-drive torque motors, RMS pointing accuracy of 5 arcsec or better, and tracking accuracy of 0.3 arcsec RMS or better over five minutes</li>
+          <li><strong>Scientific CMOS detector</strong>: an 8K × 8K backside-illuminated sensor with 10 μm pixels and a minimum read noise of 0.7 e⁻</li>
         {% endif %}
       </ul>
 
       <h3 class="home-h3">{% if is_zh %}科学目标{% else %}Science Objectives{% endif %}</h3>
       <ul class="home-list">
         {% if is_zh %}
-          <li>发现类太阳系中冷巨行星的凌日信号</li>
-          <li>研究超新星、快蓝光瞬变（FBOT）、潮汐破坏事件等瞬变源</li>
-          <li>监测近地天体（NEO）、彗星与 TNO 掩星等小天体活动</li>
-          <li>寻找伽马暴（GRB）与快速射电暴（FRB）的光学对应体</li>
+          <li>搜寻类木冷巨行星及其凌星信号</li>
+          <li>捕捉超新星及其他快速光学瞬变事件</li>
+          <li>监测近地天体及其他太阳系小天体</li>
+          <li>开展大视场、高时间分辨率的长期光变监测</li>
         {% else %}
-          <li>Detect transits of long-period cold giants in solar analogs</li>
-          <li>Study transients like supernovae, FBOTs, and TDEs</li>
-          <li>Track small bodies such as NEOs, comets, and occultations</li>
-          <li>Search for optical counterparts of GRBs and FRBs</li>
+          <li>Search for cold Jupiters and their transit signals</li>
+          <li>Detect supernovae and other rapidly evolving optical transients</li>
+          <li>Observe near-Earth objects and other small Solar System bodies</li>
+          <li>Conduct long-term, wide-field, high-cadence photometric monitoring</li>
         {% endif %}
       </ul>
     </div>

@@ -5,37 +5,43 @@
 {% endblock %}
 
 {% block content %}
-{% if session.get('lang') == 'zh' %}
+{% if session.get('lang', 'zh') == 'zh' %}
 
-<h1>观测控制系统</h1>
+<h1>观测控制与电控系统</h1>
 
 <p>
-  天语望远镜配备了一套一体化的观测控制与监控系统，用于协调望远镜本体、相机、
-  调焦机构、圆顶以及数据处理流水线。系统支持远程控制与高度自动化的夜间值守，
-  以保障长期稳定的时间域观测。
+  天语望远镜电控系统采用分布式控制架构，负责望远镜方位轴、高度轴以及调焦机构的高精度运动控制。
+  系统由直驱力矩电机、伺服驱动器、绝对式光栅码盘和高性能运动控制器等组成。
 </p>
 
 <hr>
 
-<h2>整体架构（简介）</h2>
+<h2>分布式控制架构</h2>
 <p>
-  整个控制系统大致可以分为以下几个层次：
+  方位轴与高度轴均采用力矩电机直接驱动，减少机械传动环节，提高系统响应速度和跟踪稳定性。
+  各轴控制单元通过分布式架构协同工作，为望远镜指向、跟踪和调焦提供底层控制基础。
 </p>
+
+<h2>位置反馈与闭环控制</h2>
+<p>
+  望远镜采用雷尼绍绝对式光栅码盘提供高精度位置反馈。高性能运动控制器根据编码器数据执行 PID 闭环控制，
+  实时修正方位轴和高度轴的位置及速度误差。
+</p>
+
+<h2>主要控制性能</h2>
 <ul>
-  <li><strong>设备层：</strong>望远镜本体、赤道仪/支撑结构、焦面机构、相机与滤轮、圆顶与环境监控设备等；</li>
-  <li><strong>控制层：</strong>各设备驱动与控制服务，统一接入调度与状态监控总线；</li>
-  <li><strong>调度层：</strong>根据巡天策略与目标优先级生成观测队列，自动处理天气变化、子夜翻转等情形；</li>
-  <li><strong>数据层：</strong>数据接收、快速质控（QC）、标定与光变曲线构建等流水线；</li>
-  <li><strong>界面层：</strong>通过 Web 前端展示状态总览、观测计划、日志与告警等信息。</li>
+  <li><strong>机架形式：</strong>高精度地平式机架</li>
+  <li><strong>驱动方式：</strong>力矩电机直接驱动</li>
+  <li><strong>方位转动范围：</strong>±360°</li>
+  <li><strong>高度转动范围：</strong>0–90°</li>
+  <li><strong>电动调焦精度：</strong>≤ 0.01 mm</li>
+  <li><strong>指向精度：</strong>RMS ≤ 5″</li>
+  <li><strong>跟踪精度：</strong>5 分钟内 ≤ 0.3″ RMS</li>
 </ul>
 
-<h2>自动化与安全机制（简介）</h2>
-<ul>
-  <li>在满足安全条件（风速/湿度/云量等）时自动开启圆顶并启动观测；</li>
-  <li>根据观测计划自动切换目标、滤光片、曝光模式与焦位；</li>
-  <li>持续监控导星质量、焦面稳定性与数据吞吐情况，超出阈值时触发告警；</li>
-  <li>遇到极端天气或设备异常时，支持自动安全关停并向值班人员推送通知。</li>
-</ul>
+<p>
+  上层观测调度、环境联锁和自动化观测功能将根据设备接入与系统联调进展持续完善。
+</p>
 
 <hr>
 
@@ -67,35 +73,45 @@
 
 {% else %}
 
-<h1>Observation Control System</h1>
+<h1>Observation and Electrical Control System</h1>
 
 <p>
-  The Tianyu telescope is equipped with an integrated observation control and monitoring system,
-  coordinating the telescope, camera, focusing units, dome, and data pipelines.
-  It supports remote operation and highly automated night-time observing for long-term time-domain surveys.
+  The Tianyu Telescope uses a distributed electrical control architecture for high-precision control of the azimuth axis,
+  elevation axis, and motorized focusing mechanism. The system consists of direct-drive torque motors, servo drives,
+  absolute optical encoders, and a high-performance motion controller.
 </p>
 
 <hr>
 
-<h2>System Overview</h2>
+<h2>Distributed Control Architecture</h2>
 <p>
-  The control system can be conceptually divided into:
+  Both the azimuth and elevation axes are directly driven by torque motors, reducing mechanical transmission components
+  and improving system response and tracking stability. Distributed axis-control units work together to provide the
+  low-level foundation for telescope pointing, tracking, and focusing.
 </p>
+
+<h2>Position Feedback and Closed-Loop Control</h2>
+<p>
+  Renishaw absolute optical encoders provide high-precision position feedback. The motion controller uses the encoder
+  measurements in a PID closed-loop control system to correct position and velocity errors on the azimuth and elevation
+  axes in real time.
+</p>
+
+<h2>Main Control Performance</h2>
 <ul>
-  <li><strong>Device Layer:</strong> telescope structure, mount, focal plane hardware, cameras &amp; filter wheels, dome and environmental sensors;</li>
-  <li><strong>Control Layer:</strong> low-level drivers and control services exposing a unified interface;</li>
-  <li><strong>Scheduling Layer:</strong> observation queue generation based on survey strategy and target priorities;</li>
-  <li><strong>Data Layer:</strong> data ingest, quick quality control (QC), calibration and light-curve building pipelines;</li>
-  <li><strong>UI Layer:</strong> a web interface that presents global status, observation plans, logs and alerts.</li>
+  <li><strong>Mount type:</strong> High-precision altitude-azimuth mount</li>
+  <li><strong>Drive system:</strong> Direct-drive torque motors</li>
+  <li><strong>Azimuth range:</strong> ±360°</li>
+  <li><strong>Elevation range:</strong> 0–90°</li>
+  <li><strong>Motorized focusing accuracy:</strong> ≤ 0.01 mm</li>
+  <li><strong>Pointing accuracy:</strong> RMS ≤ 5 arcsec</li>
+  <li><strong>Tracking accuracy:</strong> ≤ 0.3 arcsec RMS over five minutes</li>
 </ul>
 
-<h2>Automation & Safety</h2>
-<ul>
-  <li>Automatic start/stop of observations when safety and weather constraints are satisfied or violated;</li>
-  <li>Automatic target switching, filter changes, exposure configuration and focus adjustments;</li>
-  <li>Continuous monitoring of guiding quality, focusing stability and data throughput with alert thresholds;</li>
-  <li>Safe shutdown mechanisms and notifications to on-duty staff in case of emergencies.</li>
-</ul>
+<p>
+  Higher-level scheduling, environmental interlocks, and automated observing functions will continue to be developed
+  and validated as device integration and system commissioning progress.
+</p>
 
 <hr>
 

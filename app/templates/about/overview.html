@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-{% if session.get('lang') == 'zh' %}
+{% if session.get('lang', 'zh') == 'zh' %}
 
 <h1>天语计划项目简介</h1>
 
@@ -17,54 +17,62 @@
     <div class="image-caption">图：天语望远镜</div>
 </div>
 
-<h2>项目背景</h2>
+<h2>项目概况</h2>
 <p>
-    天语计划（Tianyu Project，简称 JUST-P）是由上海交通大学发起和主导的天文观测项目，
-    致力于探索时间域天文学与系外行星研究。项目名称源于李政道先生提出的“以天之语，解物之道”，
-    寓意借助天文语言洞察宇宙规律。JUST-P 是 JUST 项目的子计划，现已独立发展并形成专属科研方向。
+    天语望远镜是由上海交通大学李政道研究所与中国科学院上海天文台联合研制的时域巡天专用 1 米光学望远镜，
+    部署于青海冷湖赛什腾山观测站。项目面向大视场、高时间分辨率光学巡天，核心科学目标是搜寻类木冷巨行星，
+    并捕捉超新星、近地天体等瞬变天象。
+</p>
+<p>
+    项目名称源于李政道先生提出的“以天之语，解物之道”。天语计划希望通过持续、稳定的时间序列观测，
+    从天体亮度和位置随时间的变化中研究行星系统、恒星活动、爆发现象和太阳系小天体。
 </p>
 
-<h2>项目目标</h2>
-<p>
-    项目拟建设一台具备高时间分辨率和大视场能力的光学望远镜，
-    实施长期持续的巡天观测。目标天体数量预计约一亿，重点覆盖 Kepler/TESS 的连续观测区（CVZ），
-    用于捕捉凌星现象、光变过程以及多时标的变源与瞬变天体活动。
-</p>
-
-<h2>技术参数</h2>
+<h2>核心科学目标</h2>
 <ul>
-    <li><strong>口径：</strong>1米</li>
-    <li><strong>视场：</strong>10平方度</li>
-    <li><strong>覆盖天体：</strong>约1亿</li>
-    <li><strong>采样频率：</strong>0.3秒 – 1周（可配置）</li>
-    <li><strong>重点区域：</strong>Kepler/TESS 连续观测区（CVZ）</li>
+    <li>搜寻类木冷巨行星及其凌星信号</li>
+    <li>捕捉超新星及其他快速光学瞬变事件</li>
+    <li>监测近地天体及其他太阳系小天体</li>
+    <li>获得大视场、高时间分辨率的长期光变数据</li>
 </ul>
 
-<h2>科学方向</h2>
+<h2>望远镜系统</h2>
 <p>
-    天语计划支持分钟至月级的多时间尺度观测模式，适配多样化科学需求。主要研究方向包括但不限于：
+    天语望远镜采用主焦点光学结构，由直径 1000 mm 的双曲面主镜和改正透镜组组成，系统焦比为 f/1.57，
+    设计视场对角线为 4.5°。匹配 COSMOS-66 科学相机后，单次曝光可覆盖约 8.5 平方度观测天区。
+</p>
+<p>
+    机械系统采用高精度地平式机架和力矩电机直接驱动。桁架式镜筒兼顾高刚度和较小的重力变形，
+    指向精度 RMS ≤ 5″，5 分钟内跟踪精度 ≤ 0.3″ RMS。分布式电控系统通过伺服驱动器、
+    雷尼绍绝对式光栅码盘和高性能运动控制器实现 PID 闭环控制。
 </p>
 
+<h2>主要技术参数</h2>
 <ul>
-    <li><strong>系外行星：</strong>高精度光变监测，寻找长周期、低信噪比的凌星事件</li>
-    <li><strong>变星与爆发源：</strong>周期性与随机性变化的系统研究</li>
-    <li><strong>近地天体：</strong>跟踪小行星轨迹，辅助预警</li>
-    <li><strong>TNO 掩星：</strong>观测海王星外天体的掩星事件</li>
-    <li><strong>早期超新星：</strong>快速识别与跟踪初期爆发现象</li>
-    <li><strong>快速蓝光瞬变（FBOT）：</strong>探测稀有快光变事件</li>
-    <li><strong>多信使配对：</strong>搜索伽马射线暴（GRB）和快速射电暴（FRB）的光学对应体</li>
+    <li><strong>口径：</strong>1 米</li>
+    <li><strong>光学结构：</strong>主焦点系统</li>
+    <li><strong>系统焦比：</strong>f/1.57</li>
+    <li><strong>设计视场：</strong>对角线 4.5°</li>
+    <li><strong>COSMOS-66 相机覆盖天区：</strong>约 8.5 平方度</li>
+    <li><strong>机架形式：</strong>高精度地平式机架</li>
+    <li><strong>指向精度：</strong>RMS ≤ 5″</li>
+    <li><strong>跟踪精度：</strong>5 分钟内 ≤ 0.3″ RMS</li>
+    <li><strong>探测器：</strong>8K × 8K 背照式科学 CMOS</li>
+    <li><strong>像元尺寸：</strong>10 μm/pixel</li>
+    <li><strong>最小读出噪声：</strong>0.7 e⁻</li>
+    <li><strong>暗电流：</strong>0.05 e⁻/pixel/s</li>
 </ul>
+
+<h2>联合研制与部署</h2>
+<p>
+    天语望远镜由上海交通大学李政道研究所与中国科学院上海天文台联合研制，部署于青海冷湖赛什腾山观测站。
+    冷湖高海拔、低水汽的光学观测环境，为长期时间域巡天提供了重要基础。
+</p>
 
 <h2>项目意义</h2>
 <p>
-    天语计划将补充我国在高时域分辨率巡天方面的能力，为系外行星和瞬变天体研究提供宝贵的数据资源。
-    项目也将积累未来更大型时间域设施所需的运行和处理经验。
-</p>
-
-<h2>国际合作与开放</h2>
-<p>
-    项目采用开放合作机制，欢迎全球科研人员参与数据分析与科学研究。
-    后续将搭建规范化的数据访问平台，逐步提供数据下载和接口服务。
+    天语计划将提升我国大视场、高时间分辨率光学巡天能力，为系外行星、光学瞬变和太阳系小天体研究提供长期、
+    连续的观测数据，并为望远镜自动化运行、观测调度和数据处理积累工程经验。
 </p>
 
 {% else %}
@@ -79,59 +87,70 @@
     <div class="image-caption">Fig: Tianyu Telescope</div>
 </div>
 
-<h2>Background</h2>
+<h2>Project Overview</h2>
 <p>
-    The Tianyu Project (JUST-P) is a dedicated time-domain astronomy initiative
-    led by Shanghai Jiao Tong University. Inspired by Nobel Laureate Tsung-Dao Lee’s idea
-    of “From the Language of Heaven to the Rationale of Matter,” Tianyu focuses on exoplanet
-    discovery and optical transient science. Originally a sub-project of JUST, it now follows
-    an independent scientific roadmap.
+    The Tianyu Telescope is a 1-m optical telescope dedicated to time-domain surveys. It was jointly developed by
+    the Tsung-Dao Lee Institute at Shanghai Jiao Tong University and the Shanghai Astronomical Observatory,
+    Chinese Academy of Sciences, and is deployed at the Saishiteng Mountain Observatory in Lenghu, Qinghai.
+    The project is designed for wide-field, high-time-resolution optical surveys. Its core science goals are to search
+    for cold Jupiters and capture transient celestial phenomena, including supernovae and near-Earth object passages.
+</p>
+<p>
+    The name Tianyu is inspired by Tsung-Dao Lee's idea, “From the Language of Heaven to the Rationale of Matter.”
+    Through sustained time-series observations, the project studies planetary systems, stellar variability,
+    explosive phenomena, and small bodies in the Solar System.
 </p>
 
-<h2>Goals</h2>
-<p>
-    The project aims to build a high-cadence, wide-field optical telescope
-    capable of long-term survey monitoring. It will observe ~100 million targets,
-    concentrating on the continuous viewing zone (CVZ) of Kepler/TESS to detect
-    transits, variability, and transient phenomena across a broad range of timescales.
-</p>
-
-<h2>Technical Parameters</h2>
+<h2>Core Science Objectives</h2>
 <ul>
-    <li><strong>Aperture:</strong> 1 meter</li>
-    <li><strong>Field of View:</strong> 10 deg²</li>
-    <li><strong>Target Objects:</strong> ~100M</li>
-    <li><strong>Cadence:</strong> 0.3 s – 1 week (configurable)</li>
-    <li><strong>Focus Region:</strong> Kepler/TESS CVZ</li>
+    <li>Search for cold Jupiters and their transit signals</li>
+    <li>Detect supernovae and other rapidly evolving optical transients</li>
+    <li>Observe near-Earth objects and other small Solar System bodies</li>
+    <li>Obtain long-baseline, wide-field, high-cadence photometric data</li>
 </ul>
 
-<h2>Science Topics</h2>
+<h2>Telescope System</h2>
 <p>
-    Tianyu supports multi-scale temporal monitoring (minutes to months) to meet diverse research goals.
-    Scientific directions include:
+    The telescope adopts a prime-focus optical configuration consisting of a 1,000 mm hyperbolic primary mirror
+    and a corrector lens assembly. The system has a focal ratio of f/1.57 and a designed diagonal field of view of 4.5°.
+    When paired with the COSMOS-66 scientific camera, it provides approximately 8.5 deg² of sky coverage per exposure.
+</p>
+<p>
+    The mechanical system uses a high-precision altitude-azimuth mount with direct-drive torque motors. Its rigid truss
+    structure minimizes gravitational deformation. The telescope provides RMS pointing accuracy of 5 arcsec or better
+    and tracking accuracy of 0.3 arcsec RMS or better over five minutes. A distributed electrical control system uses
+    servo drives, Renishaw absolute optical encoders, and a high-performance motion controller for PID closed-loop control.
 </p>
 
+<h2>Main Technical Parameters</h2>
 <ul>
-    <li><strong>Exoplanets:</strong> Detecting long-period, low-SNR transits</li>
-    <li><strong>Variables and Outbursts:</strong> Periodic and stochastic light curve variations</li>
-    <li><strong>NEOs:</strong> Tracking near-Earth asteroid paths</li>
-    <li><strong>TNO Occultations:</strong> Monitoring distant solar system bodies</li>
-    <li><strong>Early Supernovae:</strong> Identifying initial outbursts and triggering follow-up</li>
-    <li><strong>FBOTs:</strong> Capturing fast blue optical transients</li>
-    <li><strong>Multi-Messenger Events:</strong> Searching for optical counterparts to GRBs and FRBs</li>
+    <li><strong>Aperture:</strong> 1 m</li>
+    <li><strong>Optical configuration:</strong> Prime focus</li>
+    <li><strong>Focal ratio:</strong> f/1.57</li>
+    <li><strong>Designed field of view:</strong> 4.5° diagonal</li>
+    <li><strong>Sky coverage with the COSMOS-66 camera:</strong> Approximately 8.5 deg²</li>
+    <li><strong>Mount:</strong> High-precision altitude-azimuth mount</li>
+    <li><strong>Pointing accuracy:</strong> RMS ≤ 5 arcsec</li>
+    <li><strong>Tracking accuracy:</strong> ≤ 0.3 arcsec RMS over five minutes</li>
+    <li><strong>Detector:</strong> 8K × 8K backside-illuminated scientific CMOS</li>
+    <li><strong>Pixel size:</strong> 10 μm/pixel</li>
+    <li><strong>Minimum read noise:</strong> 0.7 e⁻</li>
+    <li><strong>Dark current:</strong> 0.05 e⁻/pixel/s</li>
 </ul>
 
-<h2>Significance</h2>
+<h2>Joint Development and Deployment</h2>
 <p>
-    Tianyu fills a crucial gap in China's time-domain survey capabilities, offering high-precision,
-    long-baseline photometric data. It will also provide valuable operational and data processing experience
-    for future large-scale observatories.
+    The Tianyu Telescope was jointly developed by the Tsung-Dao Lee Institute at Shanghai Jiao Tong University and
+    the Shanghai Astronomical Observatory, Chinese Academy of Sciences. It is deployed at the Saishiteng Mountain
+    Observatory in Lenghu, Qinghai, where the high-altitude and dry environment provides favorable conditions for
+    long-term time-domain surveys.
 </p>
 
-<h2>Open Collaboration</h2>
+<h2>Project Significance</h2>
 <p>
-    The project follows an open and collaborative model, encouraging global participation in data analysis
-    and scientific discovery. A dedicated data platform is under development to support access and integration.
+    Tianyu strengthens China's capability for wide-field, high-time-resolution optical surveys. It will provide
+    long-term observations for studies of exoplanets, optical transients, and small Solar System bodies, while also
+    contributing engineering experience in automated telescope operation, observation scheduling, and data processing.
 </p>
 
 {% endif %}

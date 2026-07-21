@@ -5,89 +5,107 @@
 {% endblock %}
 
 {% block content %}
-{% if session.get('lang') == 'zh' %}
+{% if session.get('lang', 'zh') == 'zh' %}
 
-<h1>光机系统（望远镜光学与相机）</h1>
+<h1>光机系统与科学相机</h1>
 
 <p>
-  本页面将简要介绍天语望远镜的光学设计、机械结构，以及焦平面探测器与相机配置。
-  当前为占位版本，后续会根据设计定稿与施工进展补充详细参数和示意图。
+  天语望远镜采用快速、大视场主焦点光学系统，配备高精度地平式机架和 COSMOS-66 背照式科学 CMOS 相机，
+  面向大视场、高时间分辨率的时间域巡天观测。
 </p>
 
 <hr>
 
-<h2>望远镜光学设计（占位）</h2>
+<h2>光学系统</h2>
 <p>
-  在这里将说明望远镜的光学类型（例如 Ritchey-Chrétien、三镜系统等）、主镜口径、
-  焦比、有效视场等关键指标，并配合光路示意图进行说明。
+  望远镜采用主焦点结构，由直径 1000 mm 的双曲面主镜和改正透镜组组成，系统焦比为 f/1.57。
+  光学系统设计视场对角线为 4.5°，匹配 COSMOS-66 相机后，单次曝光可覆盖约 8.5 平方度观测天区。
+</p>
+<p>
+  主镜采用低膨胀系数微晶玻璃材料，并镀有多层金属介质膜。在 400–1000 nm 波段内，
+  主镜反射率高于 95%，主镜面型精度 RMS 优于 λ/50。
 </p>
 
-<h2>机械结构与指向性能（占位）</h2>
+<h2>机械系统</h2>
 <p>
-  本节将介绍望远镜本体结构、赤道仪或镜筒支撑形式、指向与跟踪精度等信息，
-  以及与穹顶/机房之间的接口关系。
+  望远镜采用高精度地平式机架，方位轴和高度轴均由力矩电机直接驱动。镜筒采用高刚度桁架式结构，
+  具有较小的重力变形，结构固有频率高于 10 Hz，有利于维持大视场成像和跟踪稳定性。
 </p>
+<ul>
+  <li><strong>方位转动范围：</strong>±360°</li>
+  <li><strong>高度转动范围：</strong>0–90°</li>
+  <li><strong>镜筒结构：</strong>高刚度桁架式结构</li>
+  <li><strong>结构固有频率：</strong>&gt; 10 Hz</li>
+  <li><strong>电动调焦精度：</strong>≤ 0.01 mm</li>
+  <li><strong>指向精度：</strong>RMS ≤ 5″</li>
+  <li><strong>跟踪精度：</strong>5 分钟内 ≤ 0.3″ RMS</li>
+</ul>
 
-<h2>焦平面与相机配置（占位）</h2>
+<h2>COSMOS-66 科学相机</h2>
 <p>
-  这里将描述焦平面布置、探测器类型（CCD/CMOS）、像元尺寸、芯片大小、
-  单帧覆盖视场、读出方式等关键参数。后续会根据实际选型更新详细表格。
+  望远镜终端配备 COSMOS-66 背照式科学 CMOS 相机。该相机与 f/1.57 主焦点光学系统匹配，
+  用于大视场、高时间分辨率的时间域巡天观测。
 </p>
-
-<h2>滤光片与观测波段（占位）</h2>
-<p>
-  本节将列出主要使用的滤光片组及覆盖波段范围，并说明不同科学目标对应的观测模式
-  （例如系外行星监测、瞬变巡天等）。
-</p>
-
-<p style="margin-top: 2rem; color: #666; font-size: 0.95rem;">
-  本页面目前为结构占位，参数和示意图会随着设计与调试进展陆续完善。
-</p>
+<ul>
+  <li><strong>探测器规模：</strong>8K × 8K</li>
+  <li><strong>像元尺寸：</strong>10 μm/pixel</li>
+  <li><strong>最小读出噪声：</strong>0.7 e⁻</li>
+  <li><strong>暗电流：</strong>0.05 e⁻/pixel/s</li>
+  <li><strong>单次观测天区：</strong>约 8.5 平方度</li>
+</ul>
 
 {% else %}
 
-<h1>Telescope Optics & Camera System</h1>
+<h1>Optomechanical System and Scientific Camera</h1>
 
 <p>
-  This page will summarize the optical design, mechanical structure, and focal-plane
-  instrumentation of the Tianyu telescope.
-  The current version is a structural placeholder; detailed parameters and figures
-  will be added as the design and construction progress.
+  The Tianyu Telescope combines a fast, wide-field prime-focus optical system with a high-precision
+  altitude-azimuth mount and a COSMOS-66 backside-illuminated scientific CMOS camera for wide-field,
+  high-time-resolution surveys.
 </p>
 
 <hr>
 
-<h2>Telescope Optics (Placeholder)</h2>
+<h2>Optical System</h2>
 <p>
-  Here we will describe the optical configuration (e.g. Ritchey-Chrétien or other),
-  primary mirror aperture, focal ratio, and effective field of view,
-  accompanied by a schematic optical layout.
+  The telescope adopts a prime-focus optical configuration consisting of a 1,000 mm hyperbolic primary mirror
+  and a corrector lens assembly. The system has a focal ratio of f/1.57 and a designed diagonal field of view of 4.5°.
+  When paired with the COSMOS-66 camera, it provides approximately 8.5 deg² of sky coverage per exposure.
+</p>
+<p>
+  The primary mirror is made of low-expansion glass-ceramic material and uses a multilayer metal-dielectric coating.
+  Its reflectivity is above 95% over the 400–1000 nm wavelength range, and its surface figure accuracy is better than
+  λ/50 RMS.
 </p>
 
-<h2>Mechanics & Pointing (Placeholder)</h2>
+<h2>Mechanical System</h2>
 <p>
-  This section will cover the telescope structure, mount configuration,
-  pointing and tracking performance, and interfaces with the dome / enclosure.
+  The telescope uses a high-precision altitude-azimuth mount. Both the azimuth and elevation axes are directly driven
+  by torque motors. The high-rigidity truss structure minimizes gravitational deformation and has a structural natural
+  frequency above 10 Hz, helping maintain stable wide-field image quality and tracking performance.
 </p>
+<ul>
+  <li><strong>Azimuth range:</strong> ±360°</li>
+  <li><strong>Elevation range:</strong> 0–90°</li>
+  <li><strong>Telescope tube:</strong> High-rigidity truss structure</li>
+  <li><strong>Structural natural frequency:</strong> &gt; 10 Hz</li>
+  <li><strong>Motorized focusing accuracy:</strong> ≤ 0.01 mm</li>
+  <li><strong>Pointing accuracy:</strong> RMS ≤ 5 arcsec</li>
+  <li><strong>Tracking accuracy:</strong> ≤ 0.3 arcsec RMS over five minutes</li>
+</ul>
 
-<h2>Focal Plane & Detectors (Placeholder)</h2>
+<h2>COSMOS-66 Scientific Camera</h2>
 <p>
-  We will summarize the focal-plane layout, detector type (CCD/CMOS), pixel size,
-  sensor format, per-frame field coverage, and readout scheme.
-  A more detailed parameter table will be provided later.
+  The focal-plane instrument is a COSMOS-66 backside-illuminated scientific CMOS camera. It is matched to the f/1.57
+  prime-focus optical system for wide-field, high-time-resolution surveys.
 </p>
-
-<h2>Filters & Bands (Placeholder)</h2>
-<p>
-  This section will list the main filter set and wavelength coverage,
-  and outline observing modes tailored for different science cases
-  such as exoplanet monitoring and transient surveys.
-</p>
-
-<p style="margin-top: 2rem; color: #666; font-size: 0.95rem;">
-  This page is currently a placeholder; parameters and diagrams will be refined
-  as the project moves forward.
-</p>
+<ul>
+  <li><strong>Detector format:</strong> 8K × 8K</li>
+  <li><strong>Pixel size:</strong> 10 μm/pixel</li>
+  <li><strong>Minimum read noise:</strong> 0.7 e⁻</li>
+  <li><strong>Dark current:</strong> 0.05 e⁻/pixel/s</li>
+  <li><strong>Sky coverage per exposure:</strong> Approximately 8.5 deg²</li>
+</ul>
 
 {% endif %}
 {% endblock %}
