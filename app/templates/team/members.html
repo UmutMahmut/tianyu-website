@@ -3,12 +3,13 @@
 {% block title %}{{ strings.team }} - {{ strings.title }}{% endblock %}
 
 {% block content %}
+{% set is_zh = (session.get('lang', 'zh') == 'zh') %}
 <h1>{{ title }}</h1>
 
-{% if session.get('lang') == 'zh' %}
-<p>天语望远镜项目汇聚了来自上海交通大学的优秀科研团队，致力于推进时间域天文学和系外行星搜索的前沿研究。</p>
+{% if is_zh %}
+<p>天语望远镜项目汇聚了来自上海交通大学的科研人员，致力于推进时间域天文学和系外行星研究。</p>
 {% else %}
-<p>The Tianyu Telescope project brings together an excellent research team from Shanghai Jiao Tong University, dedicated to advancing frontier research in time-domain astronomy and exoplanet searches.</p>
+<p>The Tianyu Telescope project brings together researchers from Shanghai Jiao Tong University to advance time-domain astronomy and exoplanet science.</p>
 {% endif %}
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px;">
@@ -17,19 +18,19 @@
         <div style="text-align: center; padding: 30px 20px;">
             <img src="{{ url_for('static', filename='images/' + member.image) }}" 
                  style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 20px; border: 4px solid #3b82f6;"
-                 alt="{{ member.name if session.get('lang') == 'zh' else member.name_en }}"
+                 alt="{{ member.name if is_zh else member.name_en }}"
                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iI2Y4ZmFmYyIvPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjOWZhNmI3Ii8+CiAgPHBhdGggZD0iTTIwIDgwUTIwIDY1IDM1IDY1SDY1UTgwIDY1IDgwIDgwIiBmaWxsPSIjOWZhNmI3Ii8+Cjwvc3ZnPg=='">
             
             <h3 style="color: #1e3a8a; margin-bottom: 10px;">
-                {{ member.name if session.get('lang') == 'zh' else member.name_en }}
+                {{ member.name if is_zh else member.name_en }}
             </h3>
             
             <p style="color: #3b82f6; font-weight: 600; margin-bottom: 15px;">
-                {{ member.position if session.get('lang') == 'zh' else member.position_en }}
+                {{ member.position if is_zh else member.position_en }}
             </p>
             
             <p style="color: #6b7280; line-height: 1.6; text-align: left;">
-                {{ member.description if session.get('lang') == 'zh' else member.description_en }}
+                {{ member.description if is_zh else member.description_en }}
             </p>
         </div>
     </div>
@@ -39,7 +40,7 @@
 {% if not members %}
 <div style="text-align: center; padding: 60px 20px; color: #6b7280;">
     <div style="font-size: 3rem; margin-bottom: 20px;">🔬</div>
-    {% if session.get('lang') == 'zh' %}
+    {% if is_zh %}
     <h3>团队信息正在更新中</h3>
     <p>我们的团队成员信息正在完善，敬请期待！</p>
     {% else %}

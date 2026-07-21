@@ -177,10 +177,11 @@ header {
 .header-left { display: flex; align-items: center; gap: 14px; }
 
 header img {
+  display: block;
   height: 44px;
   width: auto;
-  border-radius: 12px;
-  box-shadow: var(--ty-shadow-sm);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .site-title {
@@ -374,7 +375,7 @@ footer {
 .footer-section h3 {
   margin: 0 0 10px 0;
   font-size: 1.05rem;
-  color: rgba(56,189,248,0.90);
+  color: #1565c0;
 }
 
 .footer-section ul {

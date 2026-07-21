@@ -54,7 +54,7 @@ lang_map = {
         'gallery': '画廊',
         'research': '科学研究',
         'news_placeholder': '项目最新进展、会议活动、建设动态等将发布于此。',
-        'research_placeholder': '论文发表、数据发布、科学成果将在本页面集中展示。',
+        'research_placeholder': '本页汇总天语项目白皮书、论文发表与数据开放信息。',
         'weather': '实时气象',
         'tdli_weather': '源启实时气象',
         'lenghu': '冷湖天文站',
@@ -77,8 +77,8 @@ lang_map = {
         'published': '已发表',
         'accepted': '已接收',
         'under_review': '审稿中',
-        'data_policy': '数据开放计划',
-        'data_policy_description': '天语项目计划在未来建设完毕后开放观测数据，并提供 API 和数据处理平台',
+        'data_policy': '数据访问与开放',
+        'data_policy_description': '天语项目的数据访问与开放机制将根据设备联调、科学运行和数据处理系统建设进展逐步完善。',
         'outreach_placeholder': '该部分内容尚在开发中，敬请期待！'
     },
     'en': {
@@ -102,7 +102,7 @@ lang_map = {
         'gallery': 'Gallery',
         'research': 'Research',
         'news_placeholder': 'Latest updates, events, and construction progress will be published here.',
-        'research_placeholder': 'Scientific publications and data releases will be featured here.',
+        'research_placeholder': 'This page summarizes the Tianyu Project whitepaper, publications, and data-access information.',
         'weather': 'Weather',
         'tdli_weather': 'Yuanqi Real-time Weather',
         'lenghu': 'Lenghu Station',
@@ -125,8 +125,8 @@ lang_map = {
         'published': 'Published',
         'accepted': 'Accepted',
         'under_review': 'Under Review',
-        'data_policy': 'Data Sharing Policy',
-        'data_policy_description': 'The Tianyu Project plans to open observation data after completion, providing API and data processing platforms',
+        'data_policy': 'Data Access and Release',
+        "data_policy_description": "The Tianyu Project's data-access and release framework will be developed progressively as telescope commissioning, science operations, and data-processing capabilities mature.",
         'outreach_placeholder': 'This section is under development. Stay tuned!'
     }
 }

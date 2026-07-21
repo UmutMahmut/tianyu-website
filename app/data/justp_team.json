@@ -3,14 +3,14 @@
         "name": "冯发波",
         "name_en": "Fabo Feng",
         "position": "首席研究员",
-        "position_en": "Principle Investigator",
+        "position_en": "Principal Investigator",
         "description": "",
         "description_en": "",
         "image": "ffb.jpg"
     },
     {
         "name": "芮易成",
-        "name_en": "Yicheng Rui", 
+        "name_en": "Yicheng Rui",
         "position": "软件搭建和设计",
         "position_en": "Architecture Designer",
         "description": "",
@@ -21,7 +21,7 @@
         "name": "党政明",
         "name_en": "Zhengming Dang",
         "position": "自动化控制",
-        "position_en": "Automatic Engineer", 
+        "position_en": "Automation Engineer",
         "description": "",
         "description_en": "",
         "image": "dzm.jpg"
@@ -30,7 +30,7 @@
         "name": "玉米提·麦合木提",
         "name_en": "Umut Mahmut",
         "position": "合作协调",
-        "position_en": "Cooperation Coordinator",
+        "position_en": "Collaboration Coordinator",
         "description": "",
         "description_en": "",
         "image": "umut.jpg"

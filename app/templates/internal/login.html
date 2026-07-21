@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  {% if session.get('lang') == 'en' %}
+  {% if session.get('lang', 'zh') == 'en' %}
     Internal Login - {{ strings.title if strings is defined else 'Tianyu Project' }}
   {% else %}
     内部网站登录 - {{ strings.title if strings is defined else '天语计划' }}
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-{% if session.get('lang') == 'zh' %}
+{% if session.get('lang', 'zh') == 'zh' %}
 
 <h1>内部网站登录</h1>
 

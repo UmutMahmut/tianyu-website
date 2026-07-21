@@ -13,7 +13,7 @@
     <img src="{{ url_for('static', filename='images/tianyu_scope.jpg') }}"
          style="height: 300px; width: auto;"
          alt="天语望远镜"
-         onerror="this.src='data:image/svg+xml;base64,...'">
+         onerror="this.onerror=null; this.style.display='none'; this.parentElement.querySelector('.image-caption').style.display='none';">
     <div class="image-caption">图：天语望远镜</div>
 </div>
 
@@ -83,8 +83,8 @@
     <img src="{{ url_for('static', filename='images/tianyu_scope.jpg') }}"
          style="height: 300px; width: auto;"
          alt="Tianyu Telescope"
-         onerror="this.src='data:image/svg+xml;base64,...'">
-    <div class="image-caption">Fig: Tianyu Telescope</div>
+         onerror="this.onerror=null; this.style.display='none'; this.parentElement.querySelector('.image-caption').style.display='none';">
+    <div class="image-caption">Figure: Tianyu Telescope</div>
 </div>
 
 <h2>Project Overview</h2>
@@ -93,7 +93,7 @@
     the Tsung-Dao Lee Institute at Shanghai Jiao Tong University and the Shanghai Astronomical Observatory,
     Chinese Academy of Sciences, and is deployed at the Saishiteng Mountain Observatory in Lenghu, Qinghai.
     The project is designed for wide-field, high-time-resolution optical surveys. Its core science goals are to search
-    for cold Jupiters and capture transient celestial phenomena, including supernovae and near-Earth object passages.
+    for cold Jupiters and detect supernovae, near-Earth objects, and other transient phenomena.
 </p>
 <p>
     The name Tianyu is inspired by Tsung-Dao Lee's idea, “From the Language of Heaven to the Rationale of Matter.”
@@ -111,8 +111,8 @@
 
 <h2>Telescope System</h2>
 <p>
-    The telescope adopts a prime-focus optical configuration consisting of a 1,000 mm hyperbolic primary mirror
-    and a corrector lens assembly. The system has a focal ratio of f/1.57 and a designed diagonal field of view of 4.5°.
+    The telescope uses a prime-focus optical configuration consisting of a 1,000 mm hyperbolic primary mirror
+    and a corrector lens assembly. The system has a focal ratio of f/1.57 and a designed field of view measuring 4.5° along the diagonal.
     When paired with the COSMOS-66 scientific camera, it provides approximately 8.5 deg² of sky coverage per exposure.
 </p>
 <p>
