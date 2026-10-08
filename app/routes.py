@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, request, url_for, send_from_directory, abort
 from werkzeug.security import check_password_hash
+import hmac
 import json
 import os
 from pybtex.database import parse_file
@@ -11,6 +12,10 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 INTERNAL_DOCS_DIR = "/srv/tianyu-site-docs"
 CONTROL_PASSWORD_HASH = os.getenv("CONTROL_PASSWORD_HASH")
 CONTROL_SESSION_KEY = "control_authed"
+
+LENGHU_PUSH_TOKEN = os.getenv("LENGHU_PUSH_TOKEN")
+LENGHU_DATA_DIR = os.path.join(os.path.dirname(__file__), "static", "lenghu")
+LENGHU_WEATHER_FILE = os.path.join(LENGHU_DATA_DIR, "latest_weather.json")
 
 INTERNAL_DOCS = [
     {
@@ -28,7 +33,16 @@ INTERNAL_DOCS = [
         "description_zh": "项目内部参考资料，供组内成员下载查阅。",
         "description_en": "Internal reference material for project members.",
         "updated": "2026-07-06"
+    },
+    {
+        "filename": "50CM望远镜相关文档.zip",
+        "title_zh": "50CM望远镜相关文档",
+        "title_en": "Main document of 50cm Telescope",
+        "description_zh": "项目内部参考资料，供组内成员下载查阅。",
+        "description_en": "Internal reference material for project members.",
+        "updated": "2026-10-08"
     }
+    
 ]
 
 
@@ -360,6 +374,40 @@ def research():
 def weather_yuanqi():
     strings = lang_map[get_lang()]
     return render_template('weather/tdli_weather.html', strings=strings)
+
+
+@bp.route('/api/weather/lenghu', methods=['POST'])
+def api_weather_lenghu():
+    if not LENGHU_PUSH_TOKEN:
+        return {"ok": False, "error": "server token is not configured"}, 500
+
+    authorization = request.headers.get("Authorization", "")
+    expected = f"Bearer {LENGHU_PUSH_TOKEN}"
+    if not hmac.compare_digest(authorization, expected):
+        return {"ok": False, "error": "unauthorized"}, 401
+
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return {"ok": False, "error": "invalid JSON"}, 400
+
+    try:
+        os.makedirs(LENGHU_DATA_DIR, exist_ok=True)
+        temp_file = LENGHU_WEATHER_FILE + ".tmp"
+
+        with open(temp_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+
+        os.replace(temp_file, LENGHU_WEATHER_FILE)
+    except Exception:
+        try:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+        except Exception:
+            pass
+        return {"ok": False, "error": "failed to save data"}, 500
+
+    return {"ok": True}, 200
 
 
 @bp.route('/weather/lenghu')

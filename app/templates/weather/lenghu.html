@@ -2,149 +2,1030 @@
 {% block title %}{{ strings.lenghu }} - {{ strings.weather }} - {{ strings.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ strings.lenghu }} {{ strings.weather }}</h1>
-
-{% if session.get('lang', 'zh') == 'zh' %}
-<p>
-天语望远镜已部署于青海冷湖赛什腾山观测站。本页面用于汇总冷湖站的气象与环境监测信息。
-全天相机和自动气象站的数据接入与页面联调仍在准备中，因此目前仅展示状态说明和预留入口。
-</p>
-{% else %}
-<p>
-The Tianyu Telescope is deployed at the Saishiteng Mountain Observatory in Lenghu, Qinghai.
-This page is intended to provide access to weather and environmental monitoring information
-for the Lenghu station. Data integration and page commissioning for the all-sky camera and
-automatic weather station are still in preparation, so only status information and reserved
-access points are currently shown.
-</p>
-{% endif %}
-
-<div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 10px; margin: 30px 0;">
-  <h2 style="color: #1565c0; margin-bottom: 12px; text-align: center;">
-    {% if session.get('lang', 'zh') == 'zh' %}冷湖站综合气象入口（准备中）{% else %}Lenghu Integrated Weather Monitor (Pending Integration){% endif %}
-  </h2>
-  <p style="text-align: center; margin: 0; color: #666;">
-    {% if session.get('lang', 'zh') == 'zh' %}
-    接入完成后，本页面将汇总冷湖全天相机图像与自动气象站数据，用于快速评估台址观测环境。
-    {% else %}
-    Once integration is complete, this page will aggregate all-sky images and automatic-weather-station data
-    for rapid assessment of observing conditions at Lenghu.
-    {% endif %}
-  </p>
-</div>
+{% set is_zh = session.get('lang', 'zh') == 'zh' %}
 
 <style>
+  /*
+   * Lenghu site conditions page
+   * Visual language intentionally follows the existing Yuanqi weather page:
+   * white cards, blue accent, restrained shadows, simple typography.
+   */
+  .lh-page {
+    --lh-blue: #1565c0;
+    --lh-blue-soft: #e3f2fd;
+    --lh-blue-soft-2: #bbdefb;
+    --lh-text: #111827;
+    --lh-muted: #667085;
+    --lh-border: #e3e8ef;
+    --lh-card: #ffffff;
+    --lh-bg-soft: #f6f8fb;
+    --lh-success: #1f9d55;
+    color: var(--lh-text);
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .lh-page *,
+  .lh-page *::before,
+  .lh-page *::after {
+    box-sizing: border-box;
+  }
+
+  .lh-intro {
+    margin: 0 0 20px;
+    color: var(--lh-muted);
+  }
+
+  .lh-statusbar {
+    background: linear-gradient(135deg, var(--lh-blue-soft) 0%, var(--lh-blue-soft-2) 100%);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 24px 0 20px;
+    border: 1px solid rgba(21, 101, 192, 0.08);
+  }
+
+  .lh-section-title {
+    margin: 0 0 14px;
+    color: var(--lh-blue);
+    font-size: 1.05rem;
+    font-weight: 650;
+  }
+
+  .lh-night-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .lh-night-item {
+    padding: 2px 18px;
+    min-width: 0;
+    border-left: 1px solid rgba(21, 101, 192, 0.14);
+  }
+
+  .lh-night-item:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .lh-night-label {
+    color: #56708a;
+    font-size: 0.84rem;
+    margin-bottom: 4px;
+  }
+
+  .lh-night-value {
+    font-size: 1.08rem;
+    font-weight: 650;
+    color: #16324f;
+    line-height: 1.35;
+  }
+
+  .lh-night-sub {
+    color: #667085;
+    font-size: 0.79rem;
+    margin-top: 3px;
+  }
+
+  .lh-active {
+    color: var(--lh-success);
+  }
+
   .lh-layout {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
     gap: 20px;
-    align-items: flex-start;
+    align-items: stretch;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .lh-layout > *,
+  .lh-right,
+  .lh-right > *,
+  .lh-card {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .lh-card {
+    background: var(--lh-card);
+    border-radius: 12px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+    padding: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.04);
+  }
+
+  .lh-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 12px;
+  }
+
+  .lh-card-title {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 650;
+    color: #172033;
+  }
+
+  .lh-card-note {
+    color: #7a8594;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .lh-camera-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  .lh-camera-frame {
+    flex: 1;
+    min-height: 380px;
+    border-radius: 10px;
+    background: var(--lh-bg-soft);
+    border: 1px solid var(--lh-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .lh-camera-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    object-fit: contain;
+    background: #05070b;
+  }
+
+  .lh-camera-empty {
+    color: #7b8794;
+    text-align: center;
+    padding: 28px;
+    font-size: 0.92rem;
+  }
+
+  .lh-camera-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 9px;
+    color: #6b7280;
+    font-size: 0.8rem;
     flex-wrap: wrap;
   }
-  .lh-card-grid {
+
+  .lh-right {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-rows: auto 1fr;
     gap: 16px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .lh-weather-card {
+    min-height: 0;
+  }
+
+  .lh-live-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #4f6b57;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .lh-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--lh-success);
+    display: inline-block;
+  }
+
+  .lh-weather-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 18px;
+    min-width: 0;
     width: 100%;
   }
-  .lh-card {
-    background: #ffffff;
+
+  .lh-metric {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #eef1f4;
+  }
+
+  .lh-metric-label {
+    color: #667085;
+    font-size: 0.79rem;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lh-metric-value {
+    color: #1c4f8a;
+    font-size: 0.98rem;
+    font-weight: 650;
+    line-height: 1.2;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .lh-weather-footer {
+    margin-top: 8px;
+    color: #7b8794;
+    font-size: 0.76rem;
+  }
+
+  .lh-forecast-card {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .lh-forecast-list {
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid var(--lh-border);
     border-radius: 10px;
-    border: 1px solid #dee2e6;
-    padding: 16px 18px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    background: #fff;
+    scrollbar-width: thin;
+    scrollbar-color: #b8c6d8 transparent;
   }
-  .lh-card h3 {
-    margin: 0 0 8px;
-    font-size: 1rem;
-    color: #1e3a8a;
+
+  .lh-forecast-list::-webkit-scrollbar {
+    height: 7px;
   }
-  .lh-tag {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: #e3f2fd;
-    color: #1d4ed8;
-    font-size: 0.75rem;
-    margin-left: 6px;
+
+  .lh-forecast-list::-webkit-scrollbar-track {
+    background: transparent;
   }
-  .lh-desc {
-    font-size: 0.9rem;
-    color: #4b5563;
-    margin: 8px 0 10px;
+
+  .lh-forecast-list::-webkit-scrollbar-thumb {
+    background: #b8c6d8;
+    border-radius: 8px;
   }
-  .lh-btn {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px solid #cbd5f5;
-    font-size: 0.85rem;
-    color: #6b7280;
-    text-decoration: none;
-    background: #f9fafb;
-    cursor: default;
+
+  .lh-forecast-chart {
+    display: grid;
+    grid-template-columns: 84px repeat(40, 68px);
+    min-width: max-content;
+    background: #fff;
   }
-  .lh-btn.disabled {
-    opacity: 0.7;
+
+  .lh-fc-cell,
+  .lh-fc-label {
+    border-right: 1px solid #edf1f5;
+    border-bottom: 1px solid #edf1f5;
+    padding: 6px 5px;
+    font-size: 0.68rem;
+    line-height: 1.2;
+    text-align: center;
+    background: #fff;
   }
-  @media (max-width: 900px) {
-    .lh-layout { flex-direction: column; }
+
+  .lh-fc-label {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    text-align: left;
+    font-weight: 650;
+    color: #526173;
+    background: #f8fafc;
+  }
+
+  .lh-fc-head {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #1f3550;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .lh-fc-date {
+    display: block;
+    font-size: 0.61rem;
+    font-weight: 500;
+    color: #8a96a5;
+    margin-top: 2px;
+  }
+
+  .lh-fc-icon {
+    font-size: 1.05rem;
+    line-height: 1;
+    min-height: 20px;
+    margin-top: 5px;
+  }
+
+  .lh-fc-value {
+    color: #244e79;
+    font-weight: 650;
+  }
+
+  .lh-fc-sub {
+    color: #788594;
+  }
+
+  .lh-fc-night {
+    background: #f5f9ff !important;
+  }
+
+  .lh-fc-current {
+    box-shadow: inset 0 3px 0 var(--lh-blue);
+  }
+
+  .lh-fc-line-label {
+    white-space: nowrap;
+  }
+
+  .lh-fc-label-main {
+    display: block;
+    color: #526173;
+  }
+
+  .lh-fc-label-unit {
+    display: block;
+    color: #9aa4b1;
+    font-size: 0.61rem;
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .lh-forecast-legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 9px;
+    color: #7b8794;
+    font-size: 0.72rem;
+    flex-wrap: wrap;
+  }
+
+  .lh-forecast-legend-night {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .lh-forecast-legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: #f5f9ff;
+    border: 1px solid #dbe6f3;
+  }
+  .lh-error {
+    color: #9a4d4d;
+  }
+
+  @media (max-width: 1100px) {
+    .lh-layout {
+      grid-template-columns: 1fr;
+    }
+    .lh-camera-frame,
+    .lh-camera-frame img {
+      min-height: 340px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .lh-night-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 0;
+    }
+    .lh-night-item,
+    .lh-night-item:first-child {
+      border-left: 0;
+      padding-left: 0;
+      padding-right: 12px;
+    }
+    .lh-night-item:nth-child(even) {
+      border-left: 1px solid rgba(21, 101, 192, 0.14);
+      padding-left: 12px;
+    }
+    .lh-weather-grid {
+      grid-template-columns: 1fr;
+    }
+    .lh-forecast-item {
+      flex-basis: 84px;
+      width: 84px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .lh-statusbar,
+    .lh-card {
+      padding: 14px;
+    }
+    .lh-weather-grid {
+      grid-template-columns: 1fr;
+    }
+    .lh-camera-frame,
+    .lh-camera-frame img {
+      min-height: 280px;
+    }
   }
 </style>
 
-<div class="lh-layout">
-  <div class="lh-card-grid">
-    <!-- 全天相机卡片 -->
-    <div class="lh-card">
-      <h3>
-        {% if session.get('lang', 'zh') == 'zh' %}全天相机数据{% else %}All-Sky Camera Data{% endif %}
-        <span class="lh-tag">
-          {% if session.get('lang', 'zh') == 'zh' %}待接入{% else %}Pending Integration{% endif %}
-        </span>
-      </h3>
-      <p class="lh-desc">
-        {% if session.get('lang', 'zh') == 'zh' %}
-        数据接入后，可提供冷湖站全天空图像，用于辅助判断云量、光污染和夜空质量等观测条件。
-        {% else %}
-        Once the data feed is integrated, all-sky images from Lenghu can support assessments of
-        cloud cover, light pollution, and overall sky quality.
-        {% endif %}
-      </p>
-      <a class="lh-btn disabled">
-        {% if session.get('lang', 'zh') == 'zh' %}数据入口尚未开放{% else %}Data feed not yet available{% endif %}
-      </a>
-    </div>
+<div class="lh-page">
+  <h1>{{ strings.lenghu }} {{ strings.weather }}</h1>
 
-    <!-- 自动气象站卡片 -->
-    <div class="lh-card">
-      <h3>
-        {% if session.get('lang', 'zh') == 'zh' %}自动气象站数据{% else %}Automatic Weather Station Data{% endif %}
-        <span class="lh-tag">
-          {% if session.get('lang', 'zh') == 'zh' %}待接入{% else %}Pending Integration{% endif %}
-        </span>
-      </h3>
-      <p class="lh-desc">
-        {% if session.get('lang', 'zh') == 'zh' %}
-        数据接入后，可展示温度、湿度、风速和气压等关键参数，为观测条件评估和安全判断提供参考。
-        {% else %}
-        Once integrated, the automatic-weather-station feed can present temperature, humidity, wind speed,
-        pressure, and other key parameters for observing-condition assessment and safety review.
-        {% endif %}
-      </p>
-      <a class="lh-btn disabled">
-        {% if session.get('lang', 'zh') == 'zh' %}数据页面尚未开放{% else %}Data view not yet available{% endif %}
-      </a>
+  {% if is_zh %}
+    <p class="lh-intro">
+      冷湖赛什腾山是天语望远镜开展长期时间域观测的重要台址。本页面用于实时展示现场气象与天空环境信息，并提供未来天气预报，辅助了解当前及近期观测条件。
+    </p>
+  {% else %}
+    <p class="lh-intro">
+      Saishiteng Mountain in Lenghu is an important site for long-term time-domain observations with the Tianyu Telescope.
+      This page provides a real-time view of local weather and sky conditions, together with a weather forecast for upcoming observing periods.
+    </p>
+  {% endif %}
+
+  <section class="lh-statusbar" aria-labelledby="lh-night-title">
+    <h2 class="lh-section-title" id="lh-night-title">
+      {% if is_zh %}当前天文夜状态{% else %}Current Astronomical Night{% endif %}
+    </h2>
+    <div class="lh-night-grid">
+      <div class="lh-night-item">
+        <div class="lh-night-label">{% if is_zh %}日落 / 日出{% else %}Sunset / Sunrise{% endif %}</div>
+        <div class="lh-night-value"><span id="lh-sunset">--:--</span> / <span id="lh-sunrise">--:--</span></div>
+        <div class="lh-night-sub">{% if is_zh %}当地时间{% else %}Local time{% endif %}</div>
+      </div>
+      <div class="lh-night-item">
+        <div class="lh-night-label">{% if is_zh %}天文暮光{% else %}Astronomical Twilight{% endif %}</div>
+        <div class="lh-night-value" id="lh-twilight">--:-- — --:--</div>
+        <div class="lh-night-sub">{% if is_zh %}日心天顶角对应天文暮光{% else %}Astronomical twilight window{% endif %}</div>
+      </div>
+      <div class="lh-night-item">
+        <div class="lh-night-label">{% if is_zh %}月亮{% else %}Moon{% endif %}</div>
+        <div class="lh-night-value" id="lh-moon">--</div>
+        <div class="lh-night-sub" id="lh-moon-sub">{% if is_zh %}月相计算中{% else %}Calculating moon phase{% endif %}</div>
+      </div>
+      <div class="lh-night-item">
+        <div class="lh-night-label">{% if is_zh %}当前观测时段{% else %}Current Period{% endif %}</div>
+        <div class="lh-night-value" id="lh-period">--</div>
+        <div class="lh-night-sub" id="lh-period-sub">--</div>
+      </div>
+      <div class="lh-night-item">
+        <div class="lh-night-label">{% if is_zh %}观测时间{% else %}Observing Time{% endif %}</div>
+        <div class="lh-night-value" id="lh-night-length">--</div>
+        <div class="lh-night-sub">{% if is_zh %}夜间可用时段{% else %}Approx. night window{% endif %}</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lh-layout">
+    <section class="lh-card lh-camera-card">
+      <div class="lh-card-head">
+        <h2 class="lh-card-title">{% if is_zh %}全天相机 / 最新图像{% else %}All-Sky Camera / Latest Image{% endif %}</h2>
+        <div class="lh-card-note" id="lh-camera-status">{% if is_zh %}等待图像{% else %}Waiting for image{% endif %}</div>
+      </div>
+
+      <div class="lh-camera-frame" id="lh-camera-frame">
+        <img id="lh-camera" src="/static/lenghu/latest.jpg" alt="Lenghu all-sky latest image">
+        <div class="lh-camera-empty" id="lh-camera-empty" hidden>
+          {% if is_zh %}暂无全天相机图像。设备接入后将在此显示最新画面。{% else %}No all-sky image is currently available. The latest image will appear here once the feed is connected.{% endif %}
+        </div>
+      </div>
+
+      <div class="lh-camera-meta">
+        <span>{% if is_zh %}图像状态{% else %}Image status{% endif %}: <strong id="lh-camera-time">--</strong></span>
+        <span>{% if is_zh %}自动刷新{% else %}Auto refresh{% endif %}: 60 s</span>
+      </div>
+    </section>
+
+    <div class="lh-right">
+      <section class="lh-card lh-weather-card" id="lh-weather-card">
+        <div class="lh-card-head">
+          <h2 class="lh-card-title">{% if is_zh %}当前环境条件{% else %}Current Environmental Conditions{% endif %}</h2>
+          <div class="lh-live-state"><span class="lh-dot"></span><span id="lh-live-text">{% if is_zh %}现场实测{% else %}On-site measurements{% endif %}</span></div>
+        </div>
+
+        <div class="lh-weather-grid" id="lh-weather-grid">
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}气温{% else %}Temperature{% endif %}</div><div class="lh-metric-value" data-key="temperature">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}湿度{% else %}Relative Humidity{% endif %}</div><div class="lh-metric-value" data-key="humidity">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}气压{% else %}Pressure{% endif %}</div><div class="lh-metric-value" data-key="pressure">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}云量指数{% else %}Cloud Index{% endif %}</div><div class="lh-metric-value" data-key="cloud_index">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}雨量{% else %}Rainfall{% endif %}</div><div class="lh-metric-value" data-key="rain_rate">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}风速{% else %}Wind Speed{% endif %}</div><div class="lh-metric-value" data-key="wind_speed">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}阵风风速{% else %}Wind Gust{% endif %}</div><div class="lh-metric-value" data-key="gust_speed">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}风向{% else %}Wind Direction{% endif %}</div><div class="lh-metric-value" data-key="wind_direction">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}露点{% else %}Dew Point{% endif %}</div><div class="lh-metric-value" data-key="dew_point">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}天空亮度{% else %}Sky Brightness{% endif %}</div><div class="lh-metric-value" data-key="sky_brightness">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}SQM{% else %}SQM{% endif %}</div><div class="lh-metric-value" data-key="sqm">--</div></div>
+          <div class="lh-metric"><div class="lh-metric-label">{% if is_zh %}时间{% else %}Time{% endif %}</div><div class="lh-metric-value" id="lh-weather-time-metric">--</div></div>
+        </div>
+
+        <div class="lh-weather-footer">
+          {% if is_zh %}数据来源：冷湖天文站现场气象站{% else %}Source: Lenghu on-site weather station{% endif %}
+        </div>
+      </section>
+
+      <section class="lh-card lh-forecast-card">
+        <div class="lh-card-head">
+          <h2 class="lh-card-title">{% if is_zh %}未来 36 h 观测天气预报{% else %}Next 36 h Observing Forecast{% endif %}</h2>
+          <div class="lh-card-note">{% if is_zh %}外部预报 · Open-Meteo{% else %}External forecast · Open-Meteo{% endif %}</div>
+        </div>
+
+        <div class="lh-forecast-list" id="lh-forecast-list" aria-label="Hourly weather forecast">
+          <div class="lh-forecast-item"><div class="lh-forecast-time">--:--</div><div class="lh-forecast-date">--</div><div class="lh-forecast-icon">·</div><div class="lh-forecast-desc">--</div><div class="lh-forecast-temp">--</div><div class="lh-forecast-extra">--</div></div>
+        </div>
+
+        <div class="lh-forecast-legend">
+          <span class="lh-forecast-legend-night"><span class="lh-forecast-legend-swatch"></span>{% if is_zh %}浅色背景表示天文夜时段{% else %}Light background marks astronomical night{% endif %}</span>
+          <span>{% if is_zh %}左右滑动查看完整 36 h 小时预报{% else %}Scroll horizontally to view the full 36-hour hourly forecast{% endif %}</span>
+        </div>
+
+        <div class="lh-forecast-note" id="lh-forecast-note">
+          {% if is_zh %}预报用于补充参考；实际现场条件以气象站与全天相机数据为准。{% else %}Forecasts are supplementary guidance; actual site conditions should be assessed from the on-site weather station and all-sky camera.{% endif %}
+        </div>
+      </section>
     </div>
   </div>
+
 </div>
 
-<div style="text-align: center; margin-top: 32px; padding: 16px; background: #f8f9fa; border-radius: 8px;">
-  <p style="color: #6c757d; font-style: italic; margin:0;">
-    {% if session.get('lang', 'zh') == 'zh' %}
-    冷湖站气象数据接入正在准备中，完成后将提供实时环境监测界面。
-    {% else %}
-    Weather-data integration for the Lenghu station is in preparation. A real-time environmental
-    monitoring interface will be provided after integration is complete.
-    {% endif %}
-  </p>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
+<script>
+(() => {
+  const IS_ZH = {{ is_zh | tojson }};
+  const BASE = "/static/lenghu";
+
+  // Provisional public reference coordinates for the Saishiteng Mountain Lenghu site.
+  // Replace only these two numbers if the actual Tianyu weather-station coordinates differ.
+  const LAT = 38.5980;
+  const LON = 93.9039;
+  const ELEVATION_M = 4107.2;
+
+  const TZ_OFFSET_HOURS = 8;
+
+  function bust(url) {
+    const sep = url.includes("?") ? "&" : "?";
+    return url + sep + "t=" + Date.now();
+  }
+
+  function pad2(v) { return String(v).padStart(2, "0"); }
+
+  const SITE_TIME_ZONE = "Asia/Shanghai";
+
+  function siteDateParts(date = new Date()) {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: SITE_TIME_ZONE,
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit",
+      hourCycle: "h23"
+    }).formatToParts(date);
+    const out = {};
+    for (const p of parts) out[p.type] = p.value;
+    return {
+      year: Number(out.year), month: Number(out.month), day: Number(out.day),
+      hour: Number(out.hour), minute: Number(out.minute), second: Number(out.second)
+    };
+  }
+
+  // Build an instant around local noon on a calendar date in UTC+8. Using UTC here
+  // keeps SunCalc independent of the visitor's own browser timezone.
+  function siteCalendarDate(offsetDays = 0, base = new Date()) {
+    const p = siteDateParts(base);
+    return new Date(Date.UTC(p.year, p.month - 1, p.day + offsetDays, 4, 0, 0));
+  }
+
+  function formatLocalTime(date) {
+    return new Intl.DateTimeFormat("en-GB", {
+      timeZone: SITE_TIME_ZONE,
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23"
+    }).format(date);
+  }
+
+  function formatDateTime(date) {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: SITE_TIME_ZONE,
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit",
+      hourCycle: "h23"
+    }).format(date).replace(',', ' ');
+  }
+
+  function formatHoursMinutes(ms) {
+    const mins = Math.max(0, Math.round(ms / 60000));
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${h}${IS_ZH ? "小时" : " h"} ${m}${IS_ZH ? "分" : " min"}`;
+  }
+
+  function safeDate(value) {
+    if (!value) return null;
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  function safeForecastDate(value) {
+    if (!value) return null;
+    // Open-Meteo returns local wall-clock timestamps when timezone=Asia/Shanghai is used.
+    // Explicitly attach UTC+8 so visitors outside China see the correct Lenghu hour.
+    const text = String(value);
+    const normalized = /(?:Z|[+-]\d{2}:?\d{2})$/.test(text) ? text : `${text}:00+08:00`;
+    const d = new Date(normalized);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  function getSunTimesForCalendarDate(offsetDays = 0, base = new Date()) {
+    if (!window.SunCalc) return null;
+    const target = siteCalendarDate(offsetDays, base);
+    const times = SunCalc.getTimes(target, LAT, LON);
+    return {
+      sunrise: safeDate(times.sunrise),
+      sunset: safeDate(times.sunset),
+      dawn: safeDate(times.dawn),
+      dusk: safeDate(times.dusk),
+      nauticalDawn: safeDate(times.nauticalDawn),
+      nauticalDusk: safeDate(times.nauticalDusk),
+      nightEnd: safeDate(times.nightEnd),
+      night: safeDate(times.night)
+    };
+  }
+
+  function moonText(date) {
+    if (!window.SunCalc) return { main: "--", sub: IS_ZH ? "月相计算中" : "Calculating" };
+    const illum = SunCalc.getMoonIllumination(date);
+    const phase = illum.phase;
+    let name;
+    if (phase < 0.04 || phase > 0.96) name = IS_ZH ? "新月" : "New Moon";
+    else if (phase < 0.22) name = IS_ZH ? "娥眉月" : "Waxing Crescent";
+    else if (phase < 0.28) name = IS_ZH ? "上弦月" : "First Quarter";
+    else if (phase < 0.47) name = IS_ZH ? "盈凸月" : "Waxing Gibbous";
+    else if (phase < 0.53) name = IS_ZH ? "满月" : "Full Moon";
+    else if (phase < 0.72) name = IS_ZH ? "亏凸月" : "Waning Gibbous";
+    else if (phase < 0.78) name = IS_ZH ? "下弦月" : "Last Quarter";
+    else name = IS_ZH ? "残月" : "Waning Crescent";
+    return {
+      main: name,
+      sub: `${Math.round(illum.fraction * 100)}% ${IS_ZH ? "照明" : "illumination"}`
+    };
+  }
+
+  function updateNightStatus() {
+    const now = new Date();
+    const today = getSunTimesForCalendarDate(0, now);
+    const tomorrow = getSunTimesForCalendarDate(1, now);
+    const yesterday = getSunTimesForCalendarDate(-1, now);
+
+    if (!today || !tomorrow || !yesterday) return;
+
+    const sunriseToday = today.sunrise;
+    const sunsetToday = today.sunset;
+    const sunriseTomorrow = tomorrow.sunrise;
+    const nightEndToday = today.nightEnd;
+
+    // The public display should follow Lenghu local time, not the visitor's browser timezone.
+    let nightStart = today.night;
+    let nightEnd = tomorrow.nightEnd;
+    let sunsetForDisplay = sunsetToday;
+    let sunriseForDisplay = sunriseTomorrow;
+
+    if (sunriseToday && now < sunriseToday) {
+      nightStart = yesterday.night;
+      nightEnd = today.nightEnd;
+      sunsetForDisplay = yesterday.sunset;
+      sunriseForDisplay = sunriseToday;
+    }
+
+    document.getElementById("lh-sunset").textContent = sunsetForDisplay ? formatLocalTime(sunsetForDisplay) : "--:--";
+    document.getElementById("lh-sunrise").textContent = sunriseForDisplay ? formatLocalTime(sunriseForDisplay) : "--:--";
+
+    if (nightStart && nightEnd) {
+      document.getElementById("lh-twilight").textContent = `${formatLocalTime(nightStart)} — ${formatLocalTime(nightEnd)}`;
+      document.getElementById("lh-night-length").textContent = formatHoursMinutes(nightEnd - nightStart);
+    }
+
+    const moon = moonText(now);
+    document.getElementById("lh-moon").textContent = moon.main;
+    document.getElementById("lh-moon-sub").textContent = moon.sub;
+
+    let period = IS_ZH ? "日间" : "Daytime";
+    let periodSub = IS_ZH ? "当前不在天文夜" : "Outside astronomical night";
+
+    if (nightStart && nightEnd) {
+      if (now >= nightStart && now <= nightEnd) {
+        period = IS_ZH ? "天文夜" : "Astronomical Night";
+        periodSub = IS_ZH ? "天文观测窗口" : "Astronomical observing window";
+      } else if (sunsetForDisplay && now >= sunsetForDisplay && now < nightStart) {
+        period = IS_ZH ? "暮光" : "Twilight";
+        periodSub = IS_ZH ? "日落后，天文夜开始前" : "After sunset, before astronomical night";
+      } else if (sunriseForDisplay && now > nightEnd && now <= sunriseForDisplay) {
+        period = IS_ZH ? "晨曦" : "Dawn";
+        periodSub = IS_ZH ? "天文夜结束后，日出前" : "After astronomical night, before sunrise";
+      }
+    }
+
+    const periodEl = document.getElementById("lh-period");
+    const periodSubEl = document.getElementById("lh-period-sub");
+    periodEl.textContent = period;
+    periodSubEl.textContent = periodSub;
+    periodEl.classList.toggle("lh-active", period === (IS_ZH ? "天文夜" : "Astronomical Night"));
+  }
+
+  function formatValue(key, value) {
+    if (value === null || value === undefined || value === "") return "--";
+    if (typeof value === "number") {
+      if (key === "temperature" || key === "dew_point") return `${value.toFixed(1)} °C`;
+      if (key === "humidity" || key === "cloud_index") return `${value.toFixed(1)} %`;
+      if (key === "pressure") return `${value.toFixed(1)} hPa`;
+      if (key === "wind_speed" || key === "gust_speed") return `${value.toFixed(1)} m/s`;
+      if (key === "wind_direction") return `${Math.round(value)}°`;
+      if (key === "rain_rate") return `${value.toFixed(1)} mm/h`;
+      if (key === "sky_brightness") return `${value.toFixed(2)} lux`;
+      if (key === "sqm") return `${value.toFixed(2)} mag/arcsec²`;
+      if (key === "seeing") return `${value.toFixed(2)} arcsec`;
+    }
+    return String(value);
+  }
+
+  function updateWeather() {
+    fetch(bust(BASE + "/latest_weather.json"), { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(data => {
+        document.querySelectorAll("[data-key]").forEach(el => {
+          const key = el.getAttribute("data-key");
+          el.textContent = formatValue(key, data[key]);
+        });
+
+        const rawTime = data.time || data.timestamp || data.updated_at;
+        const d = rawTime ? safeDate(rawTime) : null;
+        document.getElementById("lh-weather-time-metric").textContent = d ? formatDateTime(d) : "--";
+        document.getElementById("lh-live-text").textContent = IS_ZH ? "现场实测" : "On-site measurements";
+      })
+      .catch(() => {
+        document.getElementById("lh-live-text").textContent = IS_ZH ? "数据暂不可用" : "Data unavailable";
+        document.getElementById("lh-weather-time-metric").textContent = "--";
+      });
+  }
+
+  function updateImage() {
+    const img = document.getElementById("lh-camera");
+    const empty = document.getElementById("lh-camera-empty");
+    const status = document.getElementById("lh-camera-status");
+    const time = document.getElementById("lh-camera-time");
+
+    img.onload = () => {
+      img.hidden = false;
+      empty.hidden = true;
+      status.textContent = IS_ZH ? "在线" : "Online";
+      time.textContent = formatDateTime(new Date());
+    };
+    img.onerror = () => {
+      img.hidden = true;
+      empty.hidden = false;
+      status.textContent = IS_ZH ? "暂无图像" : "No image";
+      time.textContent = "--";
+    };
+    img.src = bust(BASE + "/latest.jpg");
+  }
+
+  function weatherIcon(code, isNight) {
+    if (code === 0) return isNight ? "☾" : "☀";
+    if (code === 1 || code === 2) return isNight ? "☾" : "🌤";
+    if (code === 3) return "☁";
+    if ([45, 48].includes(code)) return "≋";
+    if ([51, 53, 55, 56, 57].includes(code)) return "☂";
+    if ([61, 63, 65, 66, 67].includes(code)) return "☂";
+    if ([71, 73, 75, 77, 85, 86].includes(code)) return "❄";
+    if ([80, 81, 82].includes(code)) return "☂";
+    if ([95, 96, 99].includes(code)) return "⚡";
+    return "·";
+  }
+
+  function weatherDescription(code) {
+    const zh = {
+      0: "晴", 1: "少云", 2: "局部多云", 3: "阴",
+      45: "雾", 48: "雾凇",
+      51: "小毛雨", 53: "毛雨", 55: "强毛雨",
+      56: "冻毛雨", 57: "强冻毛雨",
+      61: "小雨", 63: "中雨", 65: "大雨", 66: "冻雨", 67: "强冻雨",
+      71: "小雪", 73: "中雪", 75: "大雪", 77: "雪粒",
+      80: "阵雨", 81: "较强阵雨", 82: "强阵雨",
+      85: "小阵雪", 86: "大阵雪",
+      95: "雷雨", 96: "雷雨伴冰雹", 99: "强雷雨伴冰雹"
+    };
+    const en = {
+      0: "Clear", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+      45: "Fog", 48: "Rime fog",
+      51: "Light drizzle", 53: "Drizzle", 55: "Dense drizzle",
+      56: "Freezing drizzle", 57: "Dense freezing drizzle",
+      61: "Light rain", 63: "Rain", 65: "Heavy rain", 66: "Freezing rain", 67: "Heavy freezing rain",
+      71: "Light snow", 73: "Snow", 75: "Heavy snow", 77: "Snow grains",
+      80: "Rain showers", 81: "Rain showers", 82: "Heavy rain showers",
+      85: "Snow showers", 86: "Heavy snow showers",
+      95: "Thunderstorm", 96: "Thunderstorm + hail", 99: "Severe thunderstorm + hail"
+    };
+    return (IS_ZH ? zh : en)[code] || "--";
+  }
+
+  function forecastDateParts(date) {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: SITE_TIME_ZONE,
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", hourCycle: "h23"
+    }).formatToParts(date);
+    const out = {};
+    for (const p of parts) out[p.type] = p.value;
+    return {
+      year: Number(out.year), month: Number(out.month), day: Number(out.day), hour: Number(out.hour)
+    };
+  }
+
+  function forecastTimeLabel(date) {
+    return new Intl.DateTimeFormat("en-GB", {
+      timeZone: SITE_TIME_ZONE,
+      hour: "2-digit",
+      hourCycle: "h23"
+    }).format(date);
+  }
+
+  function forecastDateLabel(date, index) {
+    const p = forecastDateParts(date);
+    const nowP = siteDateParts(new Date());
+    let prefix;
+    if (p.year === nowP.year && p.month === nowP.month && p.day === nowP.day) {
+      prefix = IS_ZH ? "今天" : "Today";
+    } else {
+      const tomorrow = siteCalendarDate(1, new Date());
+      const tomorrowP = forecastDateParts(tomorrow);
+      if (p.year === tomorrowP.year && p.month === tomorrowP.month && p.day === tomorrowP.day) {
+        prefix = IS_ZH ? "明天" : "Tomorrow";
+      } else {
+        const weekdaysZh = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+        const weekdaysEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const localNoon = new Date(Date.UTC(p.year, p.month - 1, p.day, 4, 0, 0));
+        prefix = IS_ZH ? weekdaysZh[localNoon.getUTCDay()] : weekdaysEn[localNoon.getUTCDay()];
+      }
+    }
+    return `${prefix} ${pad2(p.month)}/${pad2(p.day)}`;
+  }
+
+  function isAstronomicalNight(date) {
+    if (!window.SunCalc) return false;
+    const times = getSunTimesForCalendarDate(0, date);
+    const previous = getSunTimesForCalendarDate(-1, date);
+    const next = getSunTimesForCalendarDate(1, date);
+    if (!times || !previous || !next) return false;
+    if (times.night && times.nightEnd && date >= times.night && date <= times.nightEnd) return true;
+    if (previous.night && times.nightEnd && date >= previous.night && date <= times.nightEnd) return true;
+    if (times.night && next.nightEnd && date >= times.night && date <= next.nightEnd) return true;
+    return false;
+  }
+
+  function windArrow(deg) {
+    if (!Number.isFinite(Number(deg))) return "·";
+    const dirs = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"];
+    const idx = Math.round(Number(deg) / 45) % 8;
+    return dirs[idx];
+  }
+
+  function loadForecast() {
+    const url =
+      "https://api.open-meteo.com/v1/forecast" +
+      `?latitude=${LAT}&longitude=${LON}&elevation=${ELEVATION_M}` +
+      "&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,cloud_cover,precipitation_probability,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day" +
+      "&past_hours=4&forecast_hours=36" +
+      "&timezone=Asia%2FShanghai";
+
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(data => {
+        const h = data.hourly || {};
+        const times = h.time || [];
+        const temps = h.temperature_2m || [];
+        const humidity = h.relative_humidity_2m || [];
+        const dewPoints = h.dew_point_2m || [];
+        const clouds = h.cloud_cover || [];
+        const rainProb = h.precipitation_probability || [];
+        const precipitation = h.precipitation || [];
+        const wind = h.wind_speed_10m || [];
+        const windDir = h.wind_direction_10m || [];
+        const gusts = h.wind_gusts_10m || [];
+        const codes = h.weather_code || [];
+        const isDay = h.is_day || [];
+
+        const host = document.getElementById("lh-forecast-list");
+        host.innerHTML = "";
+
+        const chart = document.createElement("div");
+        chart.className = "lh-forecast-chart";
+
+        const currentHour = new Date();
+        currentHour.setMinutes(0, 0, 0);
+
+        const n = Math.min(40, times.length);
+
+        const addLabel = (main, unit = "") => {
+          const el = document.createElement("div");
+          el.className = "lh-fc-label";
+          el.innerHTML = `<span class="lh-fc-label-main">${main}</span><span class="lh-fc-label-unit">${unit}</span>`;
+          chart.appendChild(el);
+        };
+
+        const addCell = (html, extraClass = "") => {
+          const el = document.createElement("div");
+          el.className = "lh-fc-cell " + extraClass;
+          el.innerHTML = html;
+          chart.appendChild(el);
+        };
+
+        addLabel(IS_ZH ? "时间" : "Time");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const night = d ? isAstronomicalNight(d) : false;
+          const current = d && Math.abs(d.getTime() - currentHour.getTime()) < 30 * 60 * 1000;
+          addCell(
+            d ? `${forecastTimeLabel(d)}<span class="lh-fc-date">${forecastDateLabel(d, i)}</span>` : "--",
+            `lh-fc-head${night ? " lh-fc-night" : ""}${current ? " lh-fc-current" : ""}`
+          );
+        }
+
+        const rows = [
+          { label: IS_ZH ? "天气" : "Weather", unit: "", render: (i) => `${weatherIcon(codes[i], Number(isDay[i]) !== 1)}<span class="lh-fc-sub">${weatherDescription(codes[i])}</span>` },
+          { label: IS_ZH ? "云量" : "Cloud cover", unit: "%", render: (i) => Number.isFinite(Number(clouds[i])) ? `${Math.round(clouds[i])}%` : "--" },
+          { label: IS_ZH ? "降水概率" : "Precip. probability", unit: "%", render: (i) => Number.isFinite(Number(rainProb[i])) ? `${Math.round(rainProb[i])}%` : "--" },
+          { label: IS_ZH ? "降水量" : "Precipitation", unit: "mm", render: (i) => Number.isFinite(Number(precipitation[i])) ? `${Number(precipitation[i]).toFixed(1)}` : "--" },
+          { label: IS_ZH ? "风速" : "Wind", unit: "m/s", render: (i) => Number.isFinite(Number(wind[i])) ? `${Number(wind[i]).toFixed(1)}` : "--" },
+          { label: IS_ZH ? "阵风" : "Gust", unit: "m/s", render: (i) => Number.isFinite(Number(gusts[i])) ? `${Number(gusts[i]).toFixed(1)}` : "--" },
+          { label: IS_ZH ? "风向" : "Direction", unit: "°", render: (i) => Number.isFinite(Number(windDir[i])) ? `${windArrow(windDir[i])} ${Math.round(windDir[i])}°` : "--" },
+          { label: IS_ZH ? "气温" : "Temperature", unit: "°C", render: (i) => Number.isFinite(Number(temps[i])) ? `${Number(temps[i]).toFixed(1)}` : "--" },
+          { label: IS_ZH ? "湿度" : "Humidity", unit: "%", render: (i) => Number.isFinite(Number(humidity[i])) ? `${Math.round(humidity[i])}` : "--" },
+          { label: IS_ZH ? "露点" : "Dew point", unit: "°C", render: (i) => Number.isFinite(Number(dewPoints[i])) ? `${Number(dewPoints[i]).toFixed(1)}` : "--" }
+        ];
+
+        rows.forEach((row) => {
+          addLabel(row.label, row.unit);
+          for (let i = 0; i < n; i++) {
+            const d = safeForecastDate(times[i]);
+            const night = d ? isAstronomicalNight(d) : false;
+            const current = d && Math.abs(d.getTime() - currentHour.getTime()) < 30 * 60 * 1000;
+            addCell(row.render(i), `${night ? " lh-fc-night" : ""}${current ? " lh-fc-current" : ""}`);
+          }
+        });
+
+        host.appendChild(chart);
+
+        if (!host.children.length) throw new Error("No hourly forecast data");
+        const currentCells = host.querySelectorAll(".lh-fc-current");
+        if (currentCells.length) {
+          const target = currentCells[0];
+          host.scrollLeft = Math.max(0, target.offsetLeft - 90);
+        }
+
+        document.getElementById("lh-forecast-note").textContent = IS_ZH
+          ? "以上数据全部来自 Open-Meteo 小时预报，用于补充参考，不与现场气象站实测数据混合。"
+          : "All values above come from the Open-Meteo hourly forecast and are kept separate from the on-site measurements.";
+      })
+      .catch(() => {
+        document.getElementById("lh-forecast-list").innerHTML =
+          `<div class="lh-fc-cell" style="width:100%; min-width:300px; padding:18px; text-align:left;">${IS_ZH ? "天气预报暂时无法加载。" : "Hourly forecast is temporarily unavailable."}</div>`;
+        document.getElementById("lh-forecast-note").textContent = IS_ZH
+          ? "天气预报暂时无法加载。"
+          : "Hourly forecast is temporarily unavailable.";
+      });
+  }
+
+  updateNightStatus();
+  updateImage();
+  updateWeather();
+  loadForecast();
+
+  setInterval(updateNightStatus, 60 * 1000);
+  setInterval(updateImage, 60 * 1000);
+  setInterval(updateWeather, 60 * 1000);
+  setInterval(loadForecast, 30 * 60 * 1000);
+})();
+</script>
 {% endblock %}
