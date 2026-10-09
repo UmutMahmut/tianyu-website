@@ -257,6 +257,12 @@
     font-size: 0.76rem;
   }
 
+  /*
+   * Forecast panel: 7timer APanel "clear-sky clock" look.
+   * Black monospace grid, day-group headers in magenta, pictogram rows
+   * (pie = cloud cover, blue dots = precip probability, wind barbs,
+   * darkness strip, temperature / humidity numbers & bars).
+   */
   .lh-forecast-card {
     min-height: 0;
     display: flex;
@@ -273,115 +279,241 @@
     min-width: 0;
     width: 100%;
     max-width: 100%;
-    border: 1px solid var(--lh-border);
-    border-radius: 10px;
-    background: #fff;
+    border: 1px solid #000;
+    border-radius: 8px;
+    background: #000;
     scrollbar-width: thin;
-    scrollbar-color: #b8c6d8 transparent;
+    scrollbar-color: #444 transparent;
   }
 
   .lh-forecast-list::-webkit-scrollbar {
-    height: 7px;
+    height: 8px;
   }
 
   .lh-forecast-list::-webkit-scrollbar-track {
-    background: transparent;
+    background: #000;
   }
 
   .lh-forecast-list::-webkit-scrollbar-thumb {
-    background: #b8c6d8;
+    background: #444;
     border-radius: 8px;
   }
 
-  .lh-forecast-chart {
+  .lh-apanel {
     display: grid;
-    grid-template-columns: 84px repeat(40, 68px);
+    /* JS 按实际列数覆盖：96px + n × 46px */
+    grid-template-columns: 96px repeat(36, 46px);
     min-width: max-content;
-    background: #fff;
+    background: #000;
+    color: #e8e8e8;
+    font-family: Consolas, "Courier New", "SFMono-Regular", Menlo, monospace;
+    padding: 10px 12px 10px 8px;
   }
 
-  .lh-fc-cell,
-  .lh-fc-label {
-    border-right: 1px solid #edf1f5;
-    border-bottom: 1px solid #edf1f5;
-    padding: 6px 5px;
-    font-size: 0.68rem;
+  /* 顶部信息行：LON/LAT 与更新时间（固定在滚动区上方） */
+  .lh-ap-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #ffe14d;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    padding: 9px 12px 8px 10px;
+    background: #000;
+    border-radius: 8px 8px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    font-family: Consolas, "Courier New", "SFMono-Regular", Menlo, monospace;
+  }
+
+  .lh-ap-upd {
+    color: #9a9a9a;
+  }
+
+  .lh-forecast-list.pinned-top {
+    border-radius: 0 0 8px 8px;
+  }
+
+  /* 通用单元格 */
+  .lh-ap-cell {
+    border-right: 1px solid #1e1e1e;
+    border-bottom: 1px solid #1e1e1e;
+    padding: 4px 2px;
+    font-size: 0.70rem;
     line-height: 1.2;
     text-align: center;
-    background: #fff;
+    color: #e8e8e8;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-variant-numeric: tabular-nums;
   }
 
-  .lh-fc-label {
+  /* 左侧行标签（吸顶式固定列） */
+  .lh-ap-label {
     position: sticky;
     left: 0;
     z-index: 3;
+    align-items: flex-start;
+    justify-content: center;
     text-align: left;
-    font-weight: 650;
-    color: #526173;
-    background: #f8fafc;
-  }
-
-  .lh-fc-head {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #1f3550;
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
-
-  .lh-fc-date {
-    display: block;
-    font-size: 0.61rem;
-    font-weight: 500;
-    color: #8a96a5;
-    margin-top: 2px;
-  }
-
-  .lh-fc-icon {
-    font-size: 1.05rem;
-    line-height: 1;
-    min-height: 20px;
-    margin-top: 5px;
-  }
-
-  .lh-fc-value {
-    color: #244e79;
-    font-weight: 650;
-  }
-
-  .lh-fc-sub {
-    color: #788594;
-  }
-
-  .lh-fc-night {
-    background: #f5f9ff !important;
-  }
-
-  .lh-fc-current {
-    box-shadow: inset 0 3px 0 var(--lh-blue);
-  }
-
-  .lh-fc-line-label {
+    color: #ffffff;
+    background: #000;
+    border-right: 1px solid #3a3a3a;
+    font-size: 0.74rem;
     white-space: nowrap;
+    padding-left: 8px;
   }
 
-  .lh-fc-label-main {
-    display: block;
-    color: #526173;
+  /* 日期分组表头（品红色） */
+  .lh-ap-datecell {
+    color: #ff7ce0;
+    font-weight: 700;
+    font-size: 0.74rem;
   }
 
-  .lh-fc-label-unit {
+  .lh-ap-date-today {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 8px;
+  }
+
+  /* 日界线：品红色竖线 */
+  .lh-ap-daysep {
+    border-left: 1px solid #ff4fd8;
+  }
+
+  .lh-ap-hour {
+    font-size: 0.74rem;
+    color: #f2f2f2;
+  }
+
+  .lh-ap-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  /* 云量：白色饼图圆（填充比例 = 云量） */
+  .lh-ap-pie {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    border: 1px solid #d8d8d8;
+    background: conic-gradient(#f2f2f2 calc(var(--v) * 1%), rgba(255, 255, 255, 0.10) 0);
+  }
+
+  /* 降水概率：蓝色深浅圆点 */
+  .lh-ap-blue {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    border: 1px solid rgba(140, 190, 255, 0.45);
+  }
+
+  /* 风向箭头（旋转）+ 风速配色 */
+  .lh-ap-wind {
+    display: inline-block;
+    font-size: 1.0rem;
+    line-height: 1;
+    transform: rotate(var(--rot));
+  }
+
+  .lh-ap-wspeed {
     display: block;
-    color: #9aa4b1;
-    font-size: 0.61rem;
-    font-weight: 400;
-    margin-top: 2px;
+    font-size: 0.63rem;
+    color: #d2d2d2;
+    margin-top: 1px;
+  }
+
+  /* 阵风（橙色条）/ 湿度（黄色条）：底部对齐的竖条 */
+  .lh-ap-barwrap {
+    justify-content: flex-end;
+    padding-bottom: 3px;
+  }
+
+  /* 阵风行：竖条下方的小字数值（风速较小时竖条很矮，用数字保证可读） */
+  .lh-ap-gnum {
+    display: block;
+    font-size: 0.56rem;
+    color: #9a9a9a;
+    line-height: 1.1;
+    margin-top: 1px;
+  }
+
+  .lh-ap-bar {
+    display: block;
+    width: 10px;
+    border-radius: 1px;
+  }
+
+  /* 阵风／湿度：低饱和中性色，避免面板过于花哨（高度仍表示数值大小） */
+  .lh-ap-bar-gust {
+    background: linear-gradient(180deg, #8fa2b4, #6c7f92);
+  }
+
+  .lh-ap-bar-hum {
+    background: linear-gradient(180deg, #b9bec4, #8a9096);
+  }
+
+  /* 数值行配色 */
+  .lh-ap-num {
+    font-size: 0.72rem;
+    color: #f2f2f2;
+  }
+
+  .lh-ap-num-dim {
+    color: #8f8f8f;
+  }
+
+  .lh-ap-precip {
+    color: #6fb2ff;
+  }
+
+  .lh-ap-precip-zero {
+    color: #4a4a4a;
+  }
+
+  .lh-ap-dew {
+    color: #9fd4ff;
+  }
+
+  /* 天光行：贯穿整行的连续渐变色带（白昼 → 暮光 → 天文夜） */
+  .lh-ap-darkrow {
+    grid-column: 2 / -1;
+    display: block;
+    height: 14px;
+  }
+
+  /* 每 6 小时的竖向刻度线，便于横向阅读 */
+  .lh-ap-tick {
+    border-left: 1px solid #3d3d3d;
+  }
+
+  /* 天文夜列：极淡的靛蓝底色，横向扫读时能一眼区分夜间时段 */
+  .lh-ap-nightcol {
+    background: #070912;
+  }
+
+  /* 当前小时列：淡青描边 */
+  .lh-ap-cur {
+    outline: 1px solid rgba(0, 229, 255, 0.55);
+    outline-offset: -1px;
+  }
+
+  .lh-ap-loading {
+    padding: 18px 8px;
+    text-align: left;
+    color: #bdbdbd;
+    font-size: 0.80rem;
+    font-family: Consolas, "Courier New", monospace;
   }
 
   .lh-forecast-legend {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     margin-top: 9px;
     color: #7b8794;
     font-size: 0.72rem;
@@ -397,9 +529,26 @@
   .lh-forecast-legend-swatch {
     width: 12px;
     height: 12px;
-    border-radius: 3px;
-    background: #f5f9ff;
-    border: 1px solid #dbe6f3;
+    border-radius: 2px;
+    border: 1px solid #9aa4b1;
+  }
+
+  .lh-swatch-night {
+    background: #16267e;
+  }
+
+  .lh-swatch-twilight {
+    background: #f4f4f4;
+  }
+
+  .lh-swatch-day {
+    background: #e8c9a0;
+  }
+
+  .lh-forecast-note {
+    margin-top: 8px;
+    color: #7b8794;
+    font-size: 0.76rem;
   }
   .lh-error {
     color: #9a4d4d;
@@ -432,10 +581,6 @@
     }
     .lh-weather-grid {
       grid-template-columns: 1fr;
-    }
-    .lh-forecast-item {
-      flex-basis: 84px;
-      width: 84px;
     }
   }
 
@@ -554,13 +699,18 @@
           <div class="lh-card-note">{% if is_zh %}外部预报 · Open-Meteo{% else %}External forecast · Open-Meteo{% endif %}</div>
         </div>
 
+        <div class="lh-ap-info" id="lh-ap-info" hidden></div>
+
         <div class="lh-forecast-list" id="lh-forecast-list" aria-label="Hourly weather forecast">
-          <div class="lh-forecast-item"><div class="lh-forecast-time">--:--</div><div class="lh-forecast-date">--</div><div class="lh-forecast-icon">·</div><div class="lh-forecast-desc">--</div><div class="lh-forecast-temp">--</div><div class="lh-forecast-extra">--</div></div>
+          <div class="lh-ap-loading">{% if is_zh %}天气预报加载中…{% else %}Loading hourly forecast…{% endif %}</div>
         </div>
 
         <div class="lh-forecast-legend">
-          <span class="lh-forecast-legend-night"><span class="lh-forecast-legend-swatch"></span>{% if is_zh %}浅色背景表示天文夜时段{% else %}Light background marks astronomical night{% endif %}</span>
-          <span>{% if is_zh %}左右滑动查看完整 36 h 小时预报{% else %}Scroll horizontally to view the full 36-hour hourly forecast{% endif %}</span>
+          <span class="lh-forecast-legend-night"><span class="lh-forecast-legend-swatch lh-swatch-night"></span>{% if is_zh %}天文夜{% else %}Astronomical night{% endif %}</span>
+          <span class="lh-forecast-legend-night"><span class="lh-forecast-legend-swatch lh-swatch-twilight"></span>{% if is_zh %}晨昏暮光{% else %}Twilight{% endif %}</span>
+          <span class="lh-forecast-legend-night"><span class="lh-forecast-legend-swatch lh-swatch-day"></span>{% if is_zh %}白昼{% else %}Daytime{% endif %}</span>
+          <span>{% if is_zh %}白色圆饼填充比例＝云量；蓝色深浅＝降水概率；箭头指向风的去向，颜色代表风速{% else %}White pie fill = cloud cover; blue dots = precip. probability; arrows point downwind, color = wind speed{% endif %}</span>
+          <span>{% if is_zh %}左右滑动查看完整小时预报{% else %}Scroll horizontally to view the full hourly forecast{% endif %}</span>
         </div>
 
         <div class="lh-forecast-note" id="lh-forecast-note">
@@ -577,6 +727,18 @@
 (() => {
   const IS_ZH = {{ is_zh | tojson }};
   const BASE = "/static/lenghu";
+
+  /* =========================================================
+   *  预报数据源：Open-Meteo（免费、无需 API Key）
+   *  - 气温 / 露点 / 风速 / 阵风均为 0.1 精度（和风天气接口只返回整数）；
+   *  - 含真实阵风字段（和风天气 72h 没有阵风，之前只能拿风速顶替）；
+   *  - 按台址海拔做降尺度，避免落在低海拔格点上；
+   *  - 想锁定单一模式时，把 OM_MODEL 改成 "ecmwf_ifs025" / "gfs_seamless" 等。
+   * ========================================================= */
+  const OM_MODEL = "best_match";
+  const OM_LABEL = OM_MODEL === "best_match"
+    ? (IS_ZH ? "多模式最优" : "best match")
+    : OM_MODEL;
 
   // Provisional public reference coordinates for the Saishiteng Mountain Lenghu site.
   // Replace only these two numbers if the actual Tianyu weather-station coordinates differ.
@@ -650,8 +812,9 @@
 
   function safeForecastDate(value) {
     if (!value) return null;
-    // Open-Meteo returns local wall-clock timestamps when timezone=Asia/Shanghai is used.
-    // Explicitly attach UTC+8 so visitors outside China see the correct Lenghu hour.
+    // QWeather returns ISO 8601 timestamps with an explicit +08:00 offset,
+    // e.g. "2025-01-01T15:00+08:00". new Date() parses these correctly.
+    // For safety, still fall back to appending UTC+8 if no offset is present.
     const text = String(value);
     const normalized = /(?:Z|[+-]\d{2}:?\d{2})$/.test(text) ? text : `${text}:00+08:00`;
     const d = new Date(normalized);
@@ -892,131 +1055,376 @@
     return `${prefix} ${pad2(p.month)}/${pad2(p.day)}`;
   }
 
-  function isAstronomicalNight(date) {
-    if (!window.SunCalc) return false;
-    const times = getSunTimesForCalendarDate(0, date);
-    const previous = getSunTimesForCalendarDate(-1, date);
-    const next = getSunTimesForCalendarDate(1, date);
-    if (!times || !previous || !next) return false;
-    if (times.night && times.nightEnd && date >= times.night && date <= times.nightEnd) return true;
-    if (previous.night && times.nightEnd && date >= previous.night && date <= times.nightEnd) return true;
-    if (times.night && next.nightEnd && date >= times.night && date <= next.nightEnd) return true;
-    return false;
+  /* =========================================================
+   *  展示辅助函数（仅用于外观，不改变任何数据来源）
+   *  - skyState: 某时刻的天光状态（天文夜 / 晨昏 / 白昼）
+   *  - 降水概率 → 蓝色深浅配色（仿晴天钟 Seeing 行）
+   * ========================================================= */
+  function skyState(date) {
+    if (!window.SunCalc) return "day";
+    const inRange = (a, b) => a && b && date >= a && date <= b;
+    const today = getSunTimesForCalendarDate(0, date);
+    const yesterday = getSunTimesForCalendarDate(-1, date);
+    const tomorrow = getSunTimesForCalendarDate(1, date);
+    if (!today || !yesterday || !tomorrow) return "day";
+
+    // 天文夜窗口跨午夜，必须三条跨日匹配都要算：
+    // 昨晚暮光 → 今日曙光、今晚暮光 → 明日曙光、同一天内（罕见但保留）
+    if (inRange(today.night, today.nightEnd)) return "night";
+    if (inRange(yesterday.night, today.nightEnd)) return "night";
+    if (inRange(today.night, tomorrow.nightEnd)) return "night";
+
+    // 民用暮光带：日落 → 天文暮光开始、天文曙光结束 → 日出
+    for (const t of [today, yesterday, tomorrow]) {
+      if (inRange(t.sunset, t.night)) return "twilight";
+      if (inRange(t.nightEnd, t.sunrise)) return "twilight";
+    }
+    return "day";
   }
 
-  function windArrow(deg) {
-    if (!Number.isFinite(Number(deg))) return "·";
-    const dirs = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"];
-    const idx = Math.round(Number(deg) / 45) % 8;
-    return dirs[idx];
+  // 气温 / 露点 / 风速 / 阵风统一保留 1 位小数（Open-Meteo 原始精度）。
+  function fmtValue(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return "--";
+    return n.toFixed(1);
   }
 
+  function popBlue(v) {
+    const t = Math.min(100, Math.max(0, Number(v) || 0)) / 100;
+    return `hsl(215, 85%, ${(76 - t * 62).toFixed(0)}%)`;
+  }
+
+  function windColor(ms) {
+    const v = Number(ms);
+    if (!Number.isFinite(v)) return "#8f8f8f";
+    if (v <= 6) return "#3ddc84";
+    if (v <= 10) return "#ffd54f";
+    if (v <= 14) return "#ffab40";
+    return "#ff5252";
+  }
+
+  /* =========================================================
+   *  天气预报（Open-Meteo 逐小时预报）
+   *  - 免费、无需 API Key，直接用经纬度查询；
+   *  - 气温 / 露点 / 风速 / 阵风均为 0.1 精度，且含真实阵风；
+   *  - 传入台址海拔，让模式结果降尺度到观测站高度；
+   *  - 只取未来 36 小时，数据仅供补充参考，不与现场实测混合。
+   * ========================================================= */
   function loadForecast() {
+    const VARS = [
+      "temperature_2m", "dew_point_2m", "relative_humidity_2m", "cloud_cover",
+      "precipitation", "precipitation_probability",
+      "wind_speed_10m", "wind_gusts_10m", "wind_direction_10m",
+      "weather_code", "is_day"
+    ].join(",");
+
     const url =
-      "https://api.open-meteo.com/v1/forecast" +
-      `?latitude=${LAT}&longitude=${LON}&elevation=${ELEVATION_M}` +
-      "&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,cloud_cover,precipitation_probability,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day" +
-      "&past_hours=4&forecast_hours=36" +
-      "&timezone=Asia%2FShanghai";
+      `https://api.open-meteo.com/v1/forecast` +
+      `?latitude=${LAT.toFixed(4)}&longitude=${LON.toFixed(4)}` +
+      `&elevation=${Math.round(ELEVATION_M)}` +
+      `&hourly=${VARS}` +
+      `&wind_speed_unit=ms&temperature_unit=celsius&precipitation_unit=mm` +
+      `&timezone=Asia%2FShanghai` +
+      `&forecast_days=3` +
+      (OM_MODEL && OM_MODEL !== "best_match" ? `&models=${encodeURIComponent(OM_MODEL)}` : "");
 
     fetch(url, { cache: "no-store" })
       .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(data => {
-        const h = data.hourly || {};
-        const times = h.time || [];
-        const temps = h.temperature_2m || [];
-        const humidity = h.relative_humidity_2m || [];
-        const dewPoints = h.dew_point_2m || [];
-        const clouds = h.cloud_cover || [];
-        const rainProb = h.precipitation_probability || [];
-        const precipitation = h.precipitation || [];
-        const wind = h.wind_speed_10m || [];
-        const windDir = h.wind_direction_10m || [];
-        const gusts = h.wind_gusts_10m || [];
-        const codes = h.weather_code || [];
-        const isDay = h.is_day || [];
+        const h = (data && data.hourly) || null;
+        if (!h || !Array.isArray(h.time) || !h.time.length) {
+          throw new Error("Open-Meteo returned no hourly series");
+        }
+
+        // —— 从当前整点开始截取未来 36 小时 ——
+        const startP = siteDateParts(new Date());
+        const nowKey = `${startP.year}-${pad2(startP.month)}-${pad2(startP.day)}T${pad2(startP.hour)}:00`;
+        let start = h.time.indexOf(nowKey);
+        if (start < 0) {
+          const nowMs = new Date(`${nowKey}:00+08:00`).getTime();
+          start = h.time.findIndex(t => new Date(`${t}:00+08:00`).getTime() >= nowMs);
+        }
+        if (start < 0) start = 0;
+        const end = Math.min(h.time.length, start + 36);
+
+        const slice = (arr) => (Array.isArray(arr) ? arr.slice(start, end) : []);
+        const num = (arr) => slice(arr).map(v => (v == null ? NaN : parseFloat(v)));
+
+        // 字段名映射到渲染代码原有变量名，渲染部分无需改动。
+        const times         = slice(h.time);
+        const temps         = num(h.temperature_2m);
+        const dewPoints     = num(h.dew_point_2m);
+        const humidity      = num(h.relative_humidity_2m);
+        const clouds        = num(h.cloud_cover);
+        const precipitation = num(h.precipitation);
+        const rainProb      = num(h.precipitation_probability);
+        const wind          = num(h.wind_speed_10m);
+        const gusts         = num(h.wind_gusts_10m);
+        const windDir       = num(h.wind_direction_10m);
+        // Open-Meteo 直接返回 WMO weather_code，weatherIcon / weatherDescription 可直接使用。
+        const codes         = num(h.weather_code);
+        const isDay         = slice(h.is_day).map(v => (Number(v) === 1 ? 1 : 0));
 
         const host = document.getElementById("lh-forecast-list");
         host.innerHTML = "";
 
-        const chart = document.createElement("div");
-        chart.className = "lh-forecast-chart";
+        // —— APanel 风格面板：黑底等宽字体 + 逐小时图符行 ——
+        const panel = document.createElement("div");
+        panel.className = "lh-apanel";
 
         const currentHour = new Date();
         currentHour.setMinutes(0, 0, 0);
 
-        const n = Math.min(40, times.length);
+        // 精确对应未来 36 小时
+        const n = Math.min(36, times.length);
+        const colW = 46;
+        panel.style.gridTemplateColumns = `96px repeat(${n}, ${colW}px)`;
 
-        const addLabel = (main, unit = "") => {
+        const isCurrentHour = (d) => d && Math.abs(d.getTime() - currentHour.getTime()) < 30 * 60 * 1000;
+
+        const addLabel = (text) => {
           const el = document.createElement("div");
-          el.className = "lh-fc-label";
-          el.innerHTML = `<span class="lh-fc-label-main">${main}</span><span class="lh-fc-label-unit">${unit}</span>`;
-          chart.appendChild(el);
+          el.className = "lh-ap-cell lh-ap-label";
+          el.textContent = text;
+          panel.appendChild(el);
         };
 
-        const addCell = (html, extraClass = "") => {
+        const addCell = (html, cls = "", title = "") => {
           const el = document.createElement("div");
-          el.className = "lh-fc-cell " + extraClass;
+          el.className = "lh-ap-cell" + (cls ? " " + cls : "");
+          if (title) el.title = title;
           el.innerHTML = html;
-          chart.appendChild(el);
+          panel.appendChild(el);
         };
 
-        addLabel(IS_ZH ? "时间" : "Time");
+        // —— 日期分组（品红表头 + 日界竖线）——
+        const groups = [];
+        const dayStartIdx = new Set([0]);
+        let curGroup = null;
         for (let i = 0; i < n; i++) {
           const d = safeForecastDate(times[i]);
-          const night = d ? isAstronomicalNight(d) : false;
-          const current = d && Math.abs(d.getTime() - currentHour.getTime()) < 30 * 60 * 1000;
+          const lbl = d ? forecastDateLabel(d, i) : "--";
+          if (curGroup && curGroup.label === lbl) {
+            curGroup.count++;
+          } else {
+            curGroup = { label: lbl, count: 1, first: groups.length === 0 };
+            if (groups.length) dayStartIdx.add(i);
+            groups.push(curGroup);
+          }
+        }
+        // 天光状态逐小时预计算（每行复用，避免重复调用 SunCalc）
+        const skyArr = [];
+        const hourArr = [];
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          skyArr[i] = d ? skyState(d) : "day";
+          hourArr[i] = d ? Number(forecastTimeLabel(d)) : -1;
+        }
+
+        const sepCls = (i) => (dayStartIdx.has(i) ? " lh-ap-daysep" : "");
+        const curCls = (d) => (isCurrentHour(d) ? " lh-ap-cur" : "");
+        const tickCls = (i) => (hourArr[i] % 6 === 0 ? " lh-ap-tick" : "");
+        // 数据行通用样式：日界线 + 6 小时刻度 + 当前列 + 夜间列微底色
+        const rowCls = (i, d) => sepCls(i) + tickCls(i) + curCls(d) + (skyArr[i] === "night" ? " lh-ap-nightcol" : "");
+
+        // —— 顶部信息行（固定在滚动区上方：黄色 LON/LAT + 更新时间）——
+        const info = document.getElementById("lh-ap-info");
+        const nowP = siteDateParts(new Date());
+        const updText = IS_ZH
+          ? `更新于 ${pad2(nowP.hour)}:${pad2(nowP.minute)} 当地时间`
+          : `Updated at ${pad2(nowP.hour)}:${pad2(nowP.minute)} local`;
+        info.innerHTML =
+          `<span>LON=${LON.toFixed(2)} LAT=${LAT.toFixed(2)} ELEV=${Math.round(ELEVATION_M)}M</span>` +
+          `<span class="lh-ap-upd">${updText}</span>`;
+        info.hidden = false;
+        document.getElementById("lh-forecast-list").classList.add("pinned-top");
+
+        // —— 日期行（品红，今天段左对齐，其余按日居中）——
+        addLabel(IS_ZH ? "日期" : "Date");
+        for (const g of groups) {
+          const el = document.createElement("div");
+          el.className = "lh-ap-cell lh-ap-datecell" + (g.first ? " lh-ap-date-today" : "");
+          el.style.gridColumn = `span ${g.count}`;
+          el.textContent = g.label;
+          panel.appendChild(el);
+        }
+
+        // —— 小时行（“UTC+8”品红标签 + 两位小时）——
+        addLabel("UTC+8");
+        let curIdx = -1;
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const hh = d ? forecastTimeLabel(d) : "--";
+          if (isCurrentHour(d) && curIdx < 0) curIdx = i;
+          addCell(hh, `lh-ap-hour${rowCls(i, d)}`, d ? forecastDateLabel(d, i) + " " + hh : "");
+        }
+
+        // —— 天气行（图符，悬停显示文字描述）——
+        addLabel(IS_ZH ? "天气" : "Weather");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
           addCell(
-            d ? `${forecastTimeLabel(d)}<span class="lh-fc-date">${forecastDateLabel(d, i)}</span>` : "--",
-            `lh-fc-head${night ? " lh-fc-night" : ""}${current ? " lh-fc-current" : ""}`
+            `<span class="lh-ap-icon">${weatherIcon(codes[i], Number(isDay[i]) !== 1)}</span>`,
+            rowCls(i, d),
+            weatherDescription(codes[i])
           );
         }
 
-        const rows = [
-          { label: IS_ZH ? "天气" : "Weather", unit: "", render: (i) => `${weatherIcon(codes[i], Number(isDay[i]) !== 1)}<span class="lh-fc-sub">${weatherDescription(codes[i])}</span>` },
-          { label: IS_ZH ? "云量" : "Cloud cover", unit: "%", render: (i) => Number.isFinite(Number(clouds[i])) ? `${Math.round(clouds[i])}%` : "--" },
-          { label: IS_ZH ? "降水概率" : "Precip. probability", unit: "%", render: (i) => Number.isFinite(Number(rainProb[i])) ? `${Math.round(rainProb[i])}%` : "--" },
-          { label: IS_ZH ? "降水量" : "Precipitation", unit: "mm", render: (i) => Number.isFinite(Number(precipitation[i])) ? `${Number(precipitation[i]).toFixed(1)}` : "--" },
-          { label: IS_ZH ? "风速" : "Wind", unit: "m/s", render: (i) => Number.isFinite(Number(wind[i])) ? `${Number(wind[i]).toFixed(1)}` : "--" },
-          { label: IS_ZH ? "阵风" : "Gust", unit: "m/s", render: (i) => Number.isFinite(Number(gusts[i])) ? `${Number(gusts[i]).toFixed(1)}` : "--" },
-          { label: IS_ZH ? "风向" : "Direction", unit: "°", render: (i) => Number.isFinite(Number(windDir[i])) ? `${windArrow(windDir[i])} ${Math.round(windDir[i])}°` : "--" },
-          { label: IS_ZH ? "气温" : "Temperature", unit: "°C", render: (i) => Number.isFinite(Number(temps[i])) ? `${Number(temps[i]).toFixed(1)}` : "--" },
-          { label: IS_ZH ? "湿度" : "Humidity", unit: "%", render: (i) => Number.isFinite(Number(humidity[i])) ? `${Math.round(humidity[i])}` : "--" },
-          { label: IS_ZH ? "露点" : "Dew point", unit: "°C", render: (i) => Number.isFinite(Number(dewPoints[i])) ? `${Number(dewPoints[i]).toFixed(1)}` : "--" }
-        ];
-
-        rows.forEach((row) => {
-          addLabel(row.label, row.unit);
-          for (let i = 0; i < n; i++) {
-            const d = safeForecastDate(times[i]);
-            const night = d ? isAstronomicalNight(d) : false;
-            const current = d && Math.abs(d.getTime() - currentHour.getTime()) < 30 * 60 * 1000;
-            addCell(row.render(i), `${night ? " lh-fc-night" : ""}${current ? " lh-fc-current" : ""}`);
-          }
-        });
-
-        host.appendChild(chart);
-
-        if (!host.children.length) throw new Error("No hourly forecast data");
-        const currentCells = host.querySelectorAll(".lh-fc-current");
-        if (currentCells.length) {
-          const target = currentCells[0];
-          host.scrollLeft = Math.max(0, target.offsetLeft - 90);
+        // —— 云量行：白色圆饼，填充比例 = 云量（仿 Cloud Cover 行）——
+        addLabel(IS_ZH ? "云量" : "Cloud");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const v = Number(clouds[i]);
+          const pie = Number.isFinite(v)
+            ? `<span class="lh-ap-pie" style="--v:${Math.min(100, Math.max(0, v)).toFixed(0)}"></span>`
+            : `<span class="lh-ap-pie" style="--v:0;opacity:.3"></span>`;
+          addCell(pie, rowCls(i, d), Number.isFinite(v) ? `${Math.round(v)}%` : "--");
         }
 
+        // —— 降水概率行：蓝色深浅圆点（仿 Seeing 行配色逻辑）——
+        addLabel(IS_ZH ? "降水概率" : "Precip. Prob.");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const v = Number(rainProb[i]);
+          const dot = Number.isFinite(v)
+            ? `<span class="lh-ap-blue" style="background:${popBlue(v)}"></span>`
+            : `<span class="lh-ap-blue" style="opacity:.3"></span>`;
+          addCell(dot, rowCls(i, d), Number.isFinite(v) ? `${Math.round(v)}%` : "--");
+        }
+
+        // —— 降水量行：数值，有降水时亮蓝色 ——
+        addLabel(IS_ZH ? "降水量 mm" : "Precip. mm");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const v = Number(precipitation[i]);
+          const txt = Number.isFinite(v) ? v.toFixed(1) : "--";
+          const cls = Number.isFinite(v) && v > 0 ? "lh-ap-precip" : "lh-ap-precip-zero";
+          addCell(`<span class="lh-ap-num ${cls}">${txt}</span>`, rowCls(i, d),
+            Number.isFinite(v) ? `${v.toFixed(1)} mm` : "--");
+        }
+
+        // —— 天光行：连续渐变的昼↔夜色带（参考晴天钟 Darkness 行的观感）
+        //    用一条贯穿整行的 SVG 渐变替代逐格方块，避免夜间/白昼衔接处出现硬色块。
+        addLabel(IS_ZH ? "天光" : "Darkness");
+        {
+          const w = n * colW;
+          const stopColor = { day: "#f0d3ab", twilight: "#f6f6f6", night: "#15245c" };
+          const stopName = {
+            day: IS_ZH ? "白昼" : "Daytime",
+            twilight: IS_ZH ? "晨昏暮光" : "Twilight",
+            night: IS_ZH ? "天文夜" : "Astronomical night"
+          };
+          let stops = `<stop offset="0" stop-color="${stopColor[skyArr[0]]}"/>`;
+          let tips = "";
+          for (let i = 0; i < n; i++) {
+            // 每个小时取本机小时中点作色标，SVG 自身在相邻色标间插值，白天到夜色平滑过渡
+            stops += `<stop offset="${(((i + 0.5) / n) * 100).toFixed(2)}%" stop-color="${stopColor[skyArr[i]]}"/>`;
+            tips += `<rect x="${i * colW}" y="0" width="${colW}" height="14" fill="transparent"><title>${stopName[skyArr[i]]}</title></rect>`;
+          }
+          stops += `<stop offset="100%" stop-color="${stopColor[skyArr[n - 1]]}"/>`;
+
+          let dayLines = "";
+          for (let i = 0; i < n; i++) {
+            if (dayStartIdx.has(i)) {
+              dayLines += `<line x1="${i * colW}" y1="0" x2="${i * colW}" y2="14" stroke="#ff4fd8" stroke-opacity="0.5" stroke-width="1"/>`;
+            }
+          }
+          let curLine = "";
+          if (curIdx >= 0) {
+            curLine = `<line x1="${curIdx * colW + colW / 2}" y1="0" x2="${curIdx * colW + colW / 2}" y2="14" stroke="rgba(0,229,255,0.6)" stroke-width="1"/>`;
+          }
+
+          const strip = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          strip.setAttribute("class", "lh-ap-darkrow");
+          strip.setAttribute("width", w);
+          strip.setAttribute("height", 14);
+          strip.setAttribute("viewBox", `0 0 ${w} 14`);
+          strip.innerHTML =
+            `<defs><linearGradient id="lhDarkGrad" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse">${stops}</linearGradient></defs>` +
+            `<rect x="0" y="0" width="${w}" height="14" fill="url(#lhDarkGrad)"/>` +
+            dayLines + curLine + tips;
+          panel.appendChild(strip);
+        }
+
+        // —— 风行：箭头指向风的去向，颜色 = 风速，下方小字数值（仿 Wind 行）——
+        addLabel(IS_ZH ? "风 m/s" : "Wind m/s");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const dir = Number(windDir[i]);
+          const sp = Number(wind[i]);
+          const rot = Number.isFinite(dir) ? dir + 180 : 0;
+          const arrow = Number.isFinite(dir)
+            ? `<span class="lh-ap-wind" style="--rot:${rot.toFixed(0)}deg;color:${windColor(sp)}">↑</span>` +
+              `<span class="lh-ap-wspeed">${Number.isFinite(sp) ? fmtValue(sp) : "--"}</span>`
+            : `<span class="lh-ap-num lh-ap-num-dim">--</span>`;
+          addCell(arrow, rowCls(i, d),
+            Number.isFinite(dir) ? `${IS_ZH ? "风向" : "Dir"} ${Math.round(dir)}° · ${IS_ZH ? "风速" : "Speed"} ${Number.isFinite(sp) ? fmtValue(sp) + " m/s" : "--"}` : "--");
+        }
+
+        // —— 阵风行：灰色竖条（高度 = 阵风风速）+ 小字数值 ——
+        addLabel(IS_ZH ? "阵风" : "Gust");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const v = Number(gusts[i]);
+          const h = Number.isFinite(v) ? Math.min(22, Math.max(2, v / 30 * 22)) : 0;
+          const bar = Number.isFinite(v)
+            ? `<span class="lh-ap-bar lh-ap-bar-gust" style="height:${h.toFixed(0)}px"></span>` +
+              `<span class="lh-ap-gnum">${fmtValue(v)}</span>`
+            : `<span class="lh-ap-num lh-ap-num-dim">--</span>`;
+          addCell(bar, `lh-ap-barwrap${rowCls(i, d)}`,
+            Number.isFinite(v) ? `${fmtValue(v)} m/s` : "--");
+        }
+
+        // —— 气温行：整度数值（仿 Temperature 行）——
+        addLabel(IS_ZH ? "气温 °C" : "Temp °C");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const v = Number(temps[i]);
+          addCell(`<span class="lh-ap-num">${Number.isFinite(v) ? v.toFixed(1) : "--"}</span>`,
+            rowCls(i, d), Number.isFinite(v) ? `${fmtValue(v)} °C` : "--");
+        }
+
+        // —— 湿度行：黄色竖条，高度 = 相对湿度（仿 R Humidity 行）——
+        addLabel(IS_ZH ? "湿度" : "R Humidity");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const v = Number(humidity[i]);
+          const h = Number.isFinite(v) ? Math.min(26, Math.max(2, v / 100 * 26)) : 0;
+          const bar = Number.isFinite(v)
+            ? `<span class="lh-ap-bar lh-ap-bar-hum" style="height:${h.toFixed(0)}px"></span>`
+            : `<span class="lh-ap-num lh-ap-num-dim">--</span>`;
+          addCell(bar, `lh-ap-barwrap${rowCls(i, d)}`,
+            Number.isFinite(v) ? `${Math.round(v)}%` : "--");
+        }
+
+        // —— 露点行：数值 ——
+        addLabel(IS_ZH ? "露点 °C" : "Dew °C");
+        for (let i = 0; i < n; i++) {
+          const d = safeForecastDate(times[i]);
+          const v = Number(dewPoints[i]);
+          addCell(`<span class="lh-ap-num lh-ap-dew">${Number.isFinite(v) ? v.toFixed(1) : "--"}</span>`,
+            rowCls(i, d), Number.isFinite(v) ? `${fmtValue(v)} °C` : "--");
+        }
+
+        host.appendChild(panel);
+
+        if (!host.children.length) throw new Error("No hourly forecast data");
+        // 数据切片已从当前整点开始，面板从头显示即可（当前列自带青色描边）。
+        host.scrollLeft = 0;
+
         document.getElementById("lh-forecast-note").textContent = IS_ZH
-          ? "以上数据全部来自 Open-Meteo 小时预报，用于补充参考，不与现场气象站实测数据混合。"
-          : "All values above come from the Open-Meteo hourly forecast and are kept separate from the on-site measurements.";
+          ? `以上数据来自 Open-Meteo 逐小时预报（${OM_LABEL}，未来 ${times.length} 小时），已按台址海拔 ${Math.round(ELEVATION_M)} m 降尺度，仅用于补充参考。`
+          : `Values above come from the Open-Meteo hourly forecast (${OM_LABEL}, next ${times.length} hours), downscaled to the site elevation of ${Math.round(ELEVATION_M)} m. Supplementary guidance only.`;
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Open-Meteo forecast error:", err);
         document.getElementById("lh-forecast-list").innerHTML =
-          `<div class="lh-fc-cell" style="width:100%; min-width:300px; padding:18px; text-align:left;">${IS_ZH ? "天气预报暂时无法加载。" : "Hourly forecast is temporarily unavailable."}</div>`;
+          `<div class="lh-ap-loading">${IS_ZH ? "天气预报暂时无法加载。" : "Hourly forecast is temporarily unavailable."}</div>`;
         document.getElementById("lh-forecast-note").textContent = IS_ZH
           ? "天气预报暂时无法加载。"
           : "Hourly forecast is temporarily unavailable.";
       });
   }
-
   updateNightStatus();
   updateImage();
   updateWeather();
