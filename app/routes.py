@@ -41,6 +41,14 @@ INTERNAL_DOCS = [
         "description_zh": "项目内部参考资料，供组内成员下载查阅。",
         "description_en": "Internal reference material for project members.",
         "updated": "2026-10-08"
+    },
+    {
+        "filename": "50cm望远镜控制使用操作手册.zip",
+        "title_zh": "50cm望远镜控制使用操作手册",
+        "title_en": "50cm Telescope Control Operation Manual",
+        "description_zh": "项目内部参考资料，供组内成员下载查阅。",
+        "description_en": "Internal reference material for project members.",
+        "updated": "2026-10-16"
     }
     
 ]
